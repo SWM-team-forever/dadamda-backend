@@ -38,3 +38,6 @@ out/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
+
+# secret files
+src/main/resources/application-secret.yml
