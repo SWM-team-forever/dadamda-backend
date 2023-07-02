@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -17,14 +19,18 @@ import java.util.Date;
 public class TokenService {
     private Key secretKey;
 
+    @Value("${security.jwt.token.secret-key}")
+    private String JWT_SECRET_KEY2;
+
+    @Value("${security.jwt.token.expire-length}")
+    private Long TOKEN_PERIOD;
+
     @PostConstruct
     protected void init() {
-        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode("236979CB6F1AD6B6A6184A31E6BE37DB3818CC36871E26235DD67DCFE4041492"));
+        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET_KEY2));
     }
 
     public String generateToken(String name, String email, String role) {
-        long TOKEN_PERIOD = 1000L * 60000 * 10;
-
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("name", name);
         claims.put("role", role);
