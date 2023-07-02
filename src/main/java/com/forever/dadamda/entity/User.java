@@ -13,6 +13,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(nullable = false)
@@ -21,26 +22,19 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String email;
 
-    @Column
-    private String pictureURL;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @Builder
-    public User(String name, String email, String pictureURL, Role role) {
-
+    public User(String name, String email, Role role) {
         this.name = name;
         this.email = email;
-        this.pictureURL = pictureURL;
         this.role = role;
     }
 
-    public User update(String name, String pictureURL) {
-
+    public User update(String name) {
         this.name = name;
-        this.pictureURL = pictureURL;
         return this;
     }
 
