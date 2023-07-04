@@ -41,3 +41,4 @@ atlassian-ide-plugin.xml
 
 # secret files
 src/main/resources/application-secret.yml
+src/main/resources/application-oauth.properties
