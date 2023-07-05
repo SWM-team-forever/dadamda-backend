@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  S3_BUCKET_NAME: hello-api-deploy
+  S3_BUCKET_NAME: dadamda-deploy
 
 jobs:
   build:
@@ -48,7 +48,7 @@ jobs:
         run: cp ./scripts/*.sh ./deploy
 
       - name: Make zip file
-        run: zip -r ./hellotest.zip ./deploy
+        run: zip -r ./dadamda-api.zip ./deploy
         shell: bash
 
       - name: Configure AWS credentials
@@ -59,7 +59,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./hellotest.zip s3://$S3_BUCKET_NAME/
+        run: aws s3 cp --region ap-northeast-2 ./dadamda-api.zip s3://$S3_BUCKET_NAME/
 
       # Deploy
       - name: Deploy
@@ -68,8 +68,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
-          --application-name hellotest \
-          --deployment-group-name hellotest-group \
+          --application-name dadamda \
+          --deployment-group-name dadamda-group \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=hello-api-deploy,bundleType=zip,key=hellotest.zip \
+          --s3-location bucket=dadamda-deploy,bundleType=zip,key=dadamda-api.zip \
           --region ap-northeast-2
