@@ -31,7 +31,7 @@ jobs:
       - name: properties 파일 복사
         run: |
           echo "${{ secrets.APPLICATION_SECRET_YML }}" | base64 --decode > src/main/resources/application-secret.yml
-          echo "${{ secrets.APPLICATION_OAUTH_YML }}" | base64 --decode > src/main/resources/application-oauth.yml
+          echo "${{ secrets.APPLICATION_OAUTH_PROPERTIES }}" | base64 --decode > src/main/resources/application-oauth.properties
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
