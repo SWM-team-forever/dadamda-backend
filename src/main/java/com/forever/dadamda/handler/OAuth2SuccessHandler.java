@@ -1,4 +1,4 @@
-package com.forever.dadamda.config;
+package com.forever.dadamda.handler;
 
 import com.forever.dadamda.service.TokenService;
 import lombok.RequiredArgsConstructor;
