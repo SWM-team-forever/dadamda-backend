@@ -17,6 +17,7 @@ import java.util.Date;
 
 @Service
 public class TokenService {
+
     private Key secretKey;
 
     @Value("${security.jwt.token.secret-key}")
@@ -37,25 +38,25 @@ public class TokenService {
 
         return Jwts.builder().setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+TOKEN_PERIOD))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_PERIOD))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public boolean validateToken(String token){
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey)
-                                    .build().parseClaimsJws(token);
+                    .build().parseClaimsJws(token);
 
             return claims.getBody().getExpiration()
                     .after(new Date(System.currentTimeMillis()));
 
-        } catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public String getEmail(String token){
+    public String getEmail(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build().parseClaimsJws(token).getBody().getSubject();

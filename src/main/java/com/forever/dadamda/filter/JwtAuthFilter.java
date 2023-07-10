@@ -18,15 +18,16 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class JwtAuthFilter extends GenericFilterBean {
+
     private final TokenService tokenService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+            FilterChain chain) throws IOException, ServletException {
 
         String token = tokenService.resolveToken((HttpServletRequest) request);
 
-        if(token != null && tokenService.validateToken(token)){
+        if (token != null && tokenService.validateToken(token)) {
             String email = tokenService.getEmail(token);
 
             Authentication auth = new UsernamePasswordAuthenticationToken(email, "",
