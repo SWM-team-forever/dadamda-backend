@@ -21,14 +21,14 @@ public class TokenService {
     private Key secretKey;
 
     @Value("${security.jwt.token.secret-key}")
-    private String JWT_SECRET_KEY2;
+    private String SECRET_KEY;
 
     @Value("${security.jwt.token.expire-length}")
-    private Long TOKEN_PERIOD;
+    private Long EXPIRE_LENGTH;
 
     @PostConstruct
     protected void init() {
-        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET_KEY2));
+        secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
     }
 
     public String generateToken(String name, String email, String role) {
@@ -38,7 +38,7 @@ public class TokenService {
 
         return Jwts.builder().setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_PERIOD))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_LENGTH))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
