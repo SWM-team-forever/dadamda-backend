@@ -1,8 +1,30 @@
 spring:
-  profiles :
-    include: secret, oauth
+  profiles:
+    active: dev, dev-secret
 
-  jpa :
-    show_sql : true
-    hibernate :
-      ddl-auto : create
+---
+# 개발 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+---
+# 배포 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: update
+
+
+
