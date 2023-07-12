@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,10 +26,14 @@ public class SecurityConfig {
 
          http
                 .csrf().disable()
+                 .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                 .and()
                 .headers().frameOptions().disable()
                  .and()
                     .authorizeRequests()
-                        .antMatchers("/h2-console/**", "/actuator/**").permitAll()
+                        .antMatchers("/h2-console/**", "/actuator/**",
+                                "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .antMatchers("/api/v1/**").hasRole(Role.USER.name())
                         .anyRequest().authenticated()
                  .and()
