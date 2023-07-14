@@ -1,7 +1,7 @@
 package com.forever.dadamda.service;
 
 import com.forever.dadamda.dto.OAuthAttributes;
-import com.forever.dadamda.entity.User;
+import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,7 +44,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private User saveOrUpdate(OAuthAttributes attributes) {
 
         User user = userRepository.findByEmail(attributes.getEmail())
-                .map(entity -> entity.update(attributes.getName()))
+                .map(entity -> entity.update(attributes.getName(), attributes.getProfileUrl()))
                 .orElse(attributes.toEntity());
 
         return userRepository.save(user);

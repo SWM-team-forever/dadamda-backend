@@ -4,32 +4,9 @@ spring:
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
----
-# 개발 환경 설정 파일
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-  jpa:
-    show_sql: true
-    hibernate:
-      ddl-auto: create-drop
----
-# 배포 환경 설정 파일
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-  jpa:
-    show_sql: true
-    hibernate:
-      ddl-auto: update
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
     groups-order: DESC
     operationsSorter: method
     disable-swagger-default-url: true
@@ -41,3 +18,29 @@ springdoc:
   default-produces-media-type: application/json
   paths-to-match:
     - /api/v1/**
+
+---
+# 개발 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+---
+# 배포 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: update

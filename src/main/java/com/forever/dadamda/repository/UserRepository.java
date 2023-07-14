@@ -1,6 +1,6 @@
 package com.forever.dadamda.repository;
 
-import com.forever.dadamda.entity.User;
+import com.forever.dadamda.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
