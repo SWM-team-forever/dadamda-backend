@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApiResponse<T> {
 
-    public static final ApiResponse<String> OK = success("OK");
-
     private String resultCode;
 
     private String message;
@@ -19,6 +17,10 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>("", "", data);
+    }
+
+    public static <T> ApiResponse<T> success() {
+        return new ApiResponse<>("OK000", "OK", null);
     }
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode) {
