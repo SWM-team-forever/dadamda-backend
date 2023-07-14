@@ -1,6 +1,6 @@
 package com.forever.dadamda.entity.item;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -20,7 +20,7 @@ public class Video extends Item {
 
     private Long playTime;
 
-    private Date publishedDate;
+    private LocalDateTime publishedDate;
 
     @Column(length = 100)
     private String siteName;

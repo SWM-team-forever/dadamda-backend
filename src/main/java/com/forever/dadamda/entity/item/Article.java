@@ -1,6 +1,6 @@
 package com.forever.dadamda.entity.item;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
@@ -16,7 +16,7 @@ public class Article extends Item {
     @Column(length = 100)
     private String siteName;
 
-    private Date publishedDate;
+    private LocalDateTime publishedDate;
 
     @Column(length = 100)
     private String blogName;
