@@ -1,6 +1,6 @@
 package com.forever.dadamda.config;
 
-import com.forever.dadamda.entity.Role;
+import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.filter.JwtAuthFilter;
 import com.forever.dadamda.handler.OAuth2SuccessHandler;
 import com.forever.dadamda.service.CustomOAuth2UserService;
@@ -33,7 +33,7 @@ public class SecurityConfig {
                  .and()
                     .authorizeRequests()
                         .antMatchers("/h2-console/**", "/actuator/**",
-                                "/api-docs/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                "/","/api-docs/**", "/swagger-ui/**").permitAll()
                         .antMatchers("/api/v1/**").hasRole(Role.USER.name())
                         .anyRequest().authenticated()
                  .and()
