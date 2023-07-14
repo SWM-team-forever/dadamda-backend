@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 @Entity
 public class Article extends Item {
 
+    @Column(length = 100)
     private String author;
 
     @Column(length = 2083)
