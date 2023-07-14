@@ -17,8 +17,11 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private Long id;
+
+    @OneToMany(mappedBy = "user")
+    private List<Item> itemList = new ArrayList<>();
 
     @Column(nullable = false)
     private String name;
