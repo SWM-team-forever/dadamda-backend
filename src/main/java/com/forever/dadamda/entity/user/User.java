@@ -23,15 +23,20 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user")
     private List<Item> itemList = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(length = 320, nullable = false)
     private String email;
 
+    @Column(length = 2083, nullable = false)
     private String profileUrl;
 
+    @Column(nullable = false)
     private Provider provider;
+
+    @Column(length = 36, nullable = false)
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
