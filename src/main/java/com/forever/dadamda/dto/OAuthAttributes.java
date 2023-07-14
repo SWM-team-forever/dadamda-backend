@@ -1,7 +1,8 @@
 package com.forever.dadamda.dto;
 
-import com.forever.dadamda.entity.Role;
-import com.forever.dadamda.entity.User;
+import com.forever.dadamda.entity.user.Provider;
+import com.forever.dadamda.entity.user.Role;
+import com.forever.dadamda.entity.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,18 +15,20 @@ public class OAuthAttributes {
     private String nameAttributeKey;
     private String name;
     private String email;
-    private String pictureURL;
+    private String profileUrl;
+    private Provider provider;
 
     @Builder
     public OAuthAttributes(Map<String, Object> attributes,
             String nameAttributeKey,
-            String name, String email, String pictureURL) {
+            String name, String email, String profileUrl, Provider provider) {
 
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.name = name;
         this.email = email;
-        this.pictureURL = pictureURL;
+        this.profileUrl = profileUrl;
+        this.provider = provider;
     }
 
     public static OAuthAttributes of(String registrationId,
@@ -41,9 +44,10 @@ public class OAuthAttributes {
         return OAuthAttributes.builder()
                 .name((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
-                .pictureURL((String) attributes.get("picture"))
+                .profileUrl((String) attributes.get("picture"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
+                .provider(Provider.GOOGLE)
                 .build();
     }
 
@@ -51,6 +55,8 @@ public class OAuthAttributes {
         return User.builder()
                 .name(name)
                 .email(email)
+                .profileUrl(profileUrl)
+                .provider(provider)
                 .role(Role.USER)
                 .build();
     }

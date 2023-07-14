@@ -1,5 +1,9 @@
-package com.forever.dadamda.entity;
+package com.forever.dadamda.entity.user;
 
+import com.forever.dadamda.entity.BaseTimeEntity;
+import com.forever.dadamda.entity.item.Item;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,19 +26,26 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String email;
 
+    private String profileUrl;
+
+    private Provider provider;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @Builder
-    public User(String name, String email, Role role) {
+    public User(String name, String email, String profileUrl, Provider provider, Role role) {
         this.name = name;
         this.email = email;
+        this.profileUrl = profileUrl;
+        this.provider = provider;
         this.role = role;
     }
 
-    public User update(String name) {
+    public User update(String name, String profileUrl) {
         this.name = name;
+        this.profileUrl = profileUrl;
         return this;
     }
 
