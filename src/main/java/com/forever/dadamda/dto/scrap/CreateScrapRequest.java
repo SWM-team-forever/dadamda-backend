@@ -1,4 +1,4 @@
-package com.forever.dadamda.dto;
+package com.forever.dadamda.dto.scrap;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ScrapRequest {
+public class CreateScrapRequest {
 
     @NotBlank(message = "url을 입력해주세요.")
     @Pattern(regexp = "^((http(s?))\\:\\/\\/)([0-9a-zA-Z\\-]+\\.)+[a-zA-Z]{2,6}(\\:[0-9]+)?(\\/\\S*)?$",

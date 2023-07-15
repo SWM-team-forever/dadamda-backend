@@ -1,4 +1,4 @@
-package com.forever.dadamda.dto;
+package com.forever.dadamda.dto.scrap;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ScrapResponse {
+public class CreateScrapResponse {
 
     private String pageUrl;
 
-    public static ScrapResponse of(String pageUrl) {
-        return new ScrapResponse(pageUrl);
+    public static CreateScrapResponse of(String pageUrl) {
+        return new CreateScrapResponse(pageUrl);
     }
 }
