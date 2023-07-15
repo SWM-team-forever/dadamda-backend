@@ -12,4 +12,8 @@ public abstract class GeneralException extends RuntimeException {
         super(message);
         this.errorCode = errorCode;
     }
+
+    protected GeneralException(ErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
 }

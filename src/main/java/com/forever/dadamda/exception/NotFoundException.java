@@ -11,4 +11,8 @@ public class NotFoundException extends GeneralException {
     public NotFoundException(String message) {
         super(message, ErrorCode.NOT_EXISTS);
     }
+
+    public NotFoundException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }

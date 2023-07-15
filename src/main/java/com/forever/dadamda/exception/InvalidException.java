@@ -11,4 +11,8 @@ public class InvalidException extends GeneralException {
     public InvalidException(String message) {
         super(message, ErrorCode.INVALID);
     }
+
+    public InvalidException(ErrorCode errorCode) {
+        super(errorCode);
+    }
 }
