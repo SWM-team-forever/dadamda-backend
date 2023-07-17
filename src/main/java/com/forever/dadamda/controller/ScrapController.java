@@ -1,0 +1,32 @@
+package com.forever.dadamda.controller;
+
+import com.forever.dadamda.dto.ApiResponse;
+import com.forever.dadamda.dto.scrap.CreateScrapRequest;
+import com.forever.dadamda.dto.scrap.CreateScrapResponse;
+import com.forever.dadamda.service.item.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import net.minidev.json.parser.ParseException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+@RequiredArgsConstructor
+@RestController
+public class ScrapController {
+
+    private final ItemService itemService;
+
+    @Operation(summary = "스크랩 추가", description = "'크롬 익스텐션'과 '+ 버튼'을 통해서 스크랩을 추가할 수 있습니다.")
+    @PostMapping("/api/v1/scraps") //uri 구조 변경시, 수정해야 함.
+    public ApiResponse<CreateScrapResponse> createProduct(
+            @Valid @RequestBody CreateScrapRequest createScrapRequest) throws ParseException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+        CreateScrapResponse createScrapResponse = itemService.createScraps(email,
+                createScrapRequest.getPageUrl());
+        return ApiResponse.success(createScrapResponse);
+    }
+}
