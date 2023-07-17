@@ -16,11 +16,16 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.JOINED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @DiscriminatorColumn(name = "d_type")
 public class Item extends BaseTimeEntity {
 
@@ -43,8 +48,21 @@ public class Item extends BaseTimeEntity {
     private String title;
 
     @Column(length = 2083)
-    private String thumnailUrl;
+    private String thumbnailUrl;
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    public Item(User user, String pageUrl) {
+        this.user = user;
+        this.pageUrl = pageUrl;
+    }
+
+    public Item(User user, String pageUrl, String title, String thumbnailUrl, String description) {
+        this.user = user;
+        this.pageUrl = pageUrl;
+        this.title = title;
+        this.thumbnailUrl = thumbnailUrl;
+        this.description = description;
+    }
 }
