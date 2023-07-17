@@ -1,6 +1,6 @@
 package com.forever.dadamda.service;
 
-import com.forever.dadamda.dto.OAuthAttributes;
+import com.forever.dadamda.dto.user.OAuthAttributes;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
