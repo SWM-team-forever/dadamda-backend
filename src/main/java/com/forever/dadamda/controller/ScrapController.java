@@ -20,7 +20,7 @@ public class ScrapController {
 
     @Operation(summary = "스크랩 추가", description = "'크롬 익스텐션'과 '+ 버튼'을 통해서 스크랩을 추가할 수 있습니다.")
     @PostMapping("/api/v1/scraps") //uri 구조 변경시, 수정해야 함.
-    public ApiResponse<CreateScrapResponse> createProduct(
+    public ApiResponse<CreateScrapResponse> addScraps(
             @Valid @RequestBody CreateScrapRequest createScrapRequest) throws ParseException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
