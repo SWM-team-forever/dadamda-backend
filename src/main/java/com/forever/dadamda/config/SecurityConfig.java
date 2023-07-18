@@ -3,7 +3,7 @@ package com.forever.dadamda.config;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.filter.JwtAuthFilter;
 import com.forever.dadamda.handler.OAuth2SuccessHandler;
-import com.forever.dadamda.service.CustomOAuth2UserService;
+import com.forever.dadamda.service.user.CustomOAuth2UserService;
 import com.forever.dadamda.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

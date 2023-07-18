@@ -1,4 +1,4 @@
-package com.forever.dadamda.service;
+package com.forever.dadamda.service.user;
 
 import com.forever.dadamda.dto.user.OAuthAttributes;
 import com.forever.dadamda.entity.user.User;
