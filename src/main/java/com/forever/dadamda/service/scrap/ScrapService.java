@@ -7,8 +7,9 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ScrapRepository;
-import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.service.WebClientService;
+import com.forever.dadamda.service.user.UserService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
@@ -19,19 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ScrapService {
 
-    private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
     private final WebClientService webClientService;
 
+    private final UserService userService;
+
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
+        User user = userService.validateUser(email);
+
         //1. 해당 링크 중복 확인 (삭제된 링크면 중복 X)
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER)
-        );
         boolean isPresentItem = scrapRepository
                 .findByPageUrlAndUserAndDeletedDateIsNull(pageUrl, user).isPresent();
         if (isPresentItem) {
@@ -68,5 +69,16 @@ public class ScrapService {
                 crawlingResponse.get("description").toString(), null);
 
         scrapRepository.save(other);
+    }
+
+    @Transactional
+    public void deleteScraps(String email, Long scrapId) {
+        User user = userService.validateUser(email);
+
+        Scrap item = scrapRepository.findByIdAndUserAndDeletedDateIsNull(scrapId, user).orElseThrow(
+                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
+        );
+
+        item.updateDeletedDate(LocalDateTime.now());
     }
 }

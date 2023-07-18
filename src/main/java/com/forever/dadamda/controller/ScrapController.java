@@ -19,7 +19,7 @@ public class ScrapController {
     private final ScrapService scrapService;
 
     @Operation(summary = "스크랩 추가", description = "'크롬 익스텐션'과 '+ 버튼'을 통해서 스크랩을 추가할 수 있습니다.")
-    @PostMapping("/v1/scraps") //uri 구조 변경시, 수정해야 함.
+    @PostMapping("/v1/scraps")
     public ApiResponse<CreateScrapResponse> addScraps(
             @Valid @RequestBody CreateScrapRequest createScrapRequest) throws ParseException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -28,5 +28,18 @@ public class ScrapController {
         CreateScrapResponse createScrapResponse = scrapService.createScraps(email,
                 createScrapRequest.getPageUrl());
         return ApiResponse.success(createScrapResponse);
+    }
+
+    @Operation(summary = "스크랩 삭제", description = "한개의 스크랩을 삭제할 수 있습니다.")
+    @DeleteMapping("/v1/scraps/{scrapId}")
+    public ApiResponse<String> deleteScraps(
+            @Valid @PathVariable("scrapId") Long scrapId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        scrapService.deleteScraps(email, scrapId);
+
+        return ApiResponse.success();
     }
 }
