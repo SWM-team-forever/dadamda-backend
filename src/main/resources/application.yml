@@ -17,7 +17,7 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
   paths-to-match:
-    - /api/v1/**
+    - /v1/**
 
 ---
 # 개발 환경 설정 파일
