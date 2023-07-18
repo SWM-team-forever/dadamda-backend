@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(BindException.class)
-    private ApiResponse<Object> handleBadRequest(BindException e) {
+    private ApiResponse<Object> handleValidationError(BindException e) {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(joining("\n"));
