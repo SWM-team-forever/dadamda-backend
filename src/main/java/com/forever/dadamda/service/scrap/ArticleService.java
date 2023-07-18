@@ -1,6 +1,6 @@
-package com.forever.dadamda.service.item;
+package com.forever.dadamda.service.scrap;
 
-import com.forever.dadamda.entity.item.Article;
+import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;

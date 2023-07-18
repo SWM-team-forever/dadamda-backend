@@ -1,12 +1,12 @@
-package com.forever.dadamda.service.item;
+package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
-import com.forever.dadamda.entity.item.Item;
+import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.ItemRepository;
+import com.forever.dadamda.repository.ScrapRepository;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.service.WebClientService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ItemService {
+public class ScrapService {
 
     private final UserRepository userRepository;
-    private final ItemRepository itemRepository;
+    private final ScrapRepository scrapRepository;
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
@@ -32,7 +32,7 @@ public class ItemService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER)
         );
-        boolean isPresentItem = itemRepository
+        boolean isPresentItem = scrapRepository
                 .findByPageUrlAndUserAndDeletedDateIsNull(pageUrl, user).isPresent();
         if (isPresentItem) {
             throw new InvalidException(ErrorCode.INVALID_DUPLICATED_SCRAP);
@@ -65,10 +65,10 @@ public class ItemService {
 
     @Transactional
     public void saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
-        Item other = new Item(user, pageUrl, crawlingResponse.get("title").toString(),
+        Scrap other = new Scrap(user, pageUrl, crawlingResponse.get("title").toString(),
                 crawlingResponse.get("thumbnail_url").toString(),
-                crawlingResponse.get("description").toString());
+                crawlingResponse.get("description").toString(), null);
 
-        itemRepository.save(other);
+        scrapRepository.save(other);
     }
 }

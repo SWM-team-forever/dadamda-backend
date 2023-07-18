@@ -1,6 +1,6 @@
-package com.forever.dadamda.service.item;
+package com.forever.dadamda.service.scrap;
 
-import com.forever.dadamda.entity.item.Video;
+import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;

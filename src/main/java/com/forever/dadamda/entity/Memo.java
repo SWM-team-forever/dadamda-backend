@@ -1,6 +1,6 @@
 package com.forever.dadamda.entity;
 
-import com.forever.dadamda.entity.item.Item;
+import com.forever.dadamda.entity.scrap.Scrap;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,8 +18,8 @@ public class Memo {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @JoinColumn(name = "scrap_id", nullable = false)
+    private Scrap scrap;
 
     @Column(length = 1000)
     private String memo;

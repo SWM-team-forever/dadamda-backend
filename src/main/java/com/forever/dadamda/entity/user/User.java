@@ -1,7 +1,7 @@
 package com.forever.dadamda.entity.user;
 
 import com.forever.dadamda.entity.BaseTimeEntity;
-import com.forever.dadamda.entity.item.Item;
+import com.forever.dadamda.entity.scrap.Scrap;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -21,7 +21,7 @@ public class User extends BaseTimeEntity {
     private Long id;
 
     @OneToMany(mappedBy = "user")
-    private List<Item> itemList = new ArrayList<>();
+    private List<Scrap> scrapList = new ArrayList<>();
 
     @Column(length = 100, nullable = false)
     private String name;
