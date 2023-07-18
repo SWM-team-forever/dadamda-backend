@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @DiscriminatorColumn(name = "d_type")
