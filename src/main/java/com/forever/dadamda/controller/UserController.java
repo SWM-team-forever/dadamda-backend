@@ -15,7 +15,7 @@ public class UserController {
     private final TokenService tokenService;
 
     @GetMapping("")
-    public LoginResponse LoginResponse(@RequestParam String token) {
+    public LoginResponse loginResponse(@RequestParam String token) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         String email = tokenService.getEmail(token);
