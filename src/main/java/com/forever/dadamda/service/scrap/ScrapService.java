@@ -25,7 +25,6 @@ public class ScrapService {
     private final ArticleService articleService;
     private final ProductService productService;
     private final WebClientService webClientService;
-
     private final UserService userService;
 
     @Transactional
@@ -39,6 +38,13 @@ public class ScrapService {
             throw new InvalidException(ErrorCode.INVALID_DUPLICATED_SCRAP);
         }
 
+        saveScraps(user, pageUrl);
+
+        return CreateScrapResponse.of(pageUrl);
+    }
+
+    @Transactional
+    public Scrap saveScraps(User user, String pageUrl) throws ParseException {
         //2. 람다에게 api 요청
         JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
         String type = crawlingResponse.get("type").toString();
@@ -46,29 +52,24 @@ public class ScrapService {
         //3. DB 저장
         switch (type) {
             case "video":
-                videoService.saveVideo(crawlingResponse, user, pageUrl);
-                break;
+                return videoService.saveVideo(crawlingResponse, user, pageUrl);
             case "article":
-                articleService.saveArticle(crawlingResponse, user, pageUrl);
-                break;
+                return articleService.saveArticle(crawlingResponse, user, pageUrl);
             case "product":
-                productService.saveProduct(crawlingResponse, user, pageUrl);
-                break;
+                return productService.saveProduct(crawlingResponse, user, pageUrl);
             case "other":
-                saveOther(crawlingResponse, user, pageUrl);
-                break;
+                return saveOther(crawlingResponse, user, pageUrl);
         }
 
-        return CreateScrapResponse.of(pageUrl);
+        return null;
     }
 
     @Transactional
-    public void saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
+    public Scrap saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
         Scrap other = new Scrap(user, pageUrl, crawlingResponse.get("title").toString(),
                 crawlingResponse.get("thumbnail_url").toString(),
                 crawlingResponse.get("description").toString(), null);
-
-        scrapRepository.save(other);
+        return scrapRepository.save(other);
     }
 
     @Transactional

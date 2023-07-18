@@ -15,7 +15,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
 
     @Transactional
-    public void saveArticle(JSONObject crawlingResponse, User user, String pageUrl) {
+    public Article saveArticle(JSONObject crawlingResponse, User user, String pageUrl) {
         String authorImageUrl = null;
 
         if (crawlingResponse.get("author_image_url") != null) {
@@ -31,6 +31,6 @@ public class ArticleService {
                 //.publishedDate(LocalDateTime.parse(crawlingVideoResponse.get("published_date").toString(), formatter))
                 .siteName(crawlingResponse.get("site_name").toString()).build();
 
-        articleRepository.save(article);
+        return articleRepository.save(article);
     }
 }

@@ -15,7 +15,7 @@ public class VideoService {
     private final VideoRepository videoRepository;
 
     @Transactional
-    public void saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
+    public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
         Long watchedCnt = null;
         Long playTime = null;
 
@@ -42,6 +42,6 @@ public class VideoService {
                 .genre(crawlingResponse.get("genre").toString())
                 .build();
 
-        videoRepository.save(video);
+        return videoRepository.save(video);
     }
 }

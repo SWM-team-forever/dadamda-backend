@@ -15,7 +15,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public void saveProduct(JSONObject crawlingResponse, User user, String pageUrl) {
+    public Product saveProduct(JSONObject crawlingResponse, User user, String pageUrl) {
         Product product = Product.builder().user(user).pageUrl(pageUrl)
                 .title(crawlingResponse.get("title").toString())
                 .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
@@ -23,6 +23,6 @@ public class ProductService {
                 .price(crawlingResponse.get("price").toString())
                 .siteName(crawlingResponse.get("site_name").toString()).build();
 
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 }
