@@ -1,4 +1,4 @@
-package com.forever.dadamda.dto;
+package com.forever.dadamda.dto.user;
 
 import com.forever.dadamda.entity.user.Provider;
 import com.forever.dadamda.entity.user.Role;

@@ -34,7 +34,7 @@ public class SecurityConfig {
                     .authorizeRequests()
                         .antMatchers("/h2-console/**", "/actuator/**",
                                 "/","/api-docs/**", "/swagger-ui/**").permitAll()
-                        .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                        .antMatchers("/v1/**").hasRole(Role.USER.name())
                         .anyRequest().authenticated()
                  .and()
                     .logout()
