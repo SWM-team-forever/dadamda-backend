@@ -40,7 +40,6 @@ public class ScrapService {
 
         //2. 람다에게 api 요청
         JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
-        System.out.println(crawlingResponse);
         String type = crawlingResponse.get("type").toString();
 
         //3. DB 저장
@@ -55,7 +54,6 @@ public class ScrapService {
                 productService.saveProduct(crawlingResponse, user, pageUrl);
                 break;
             case "other":
-                System.out.println(crawlingResponse);
                 saveOther(crawlingResponse, user, pageUrl);
                 break;
         }
