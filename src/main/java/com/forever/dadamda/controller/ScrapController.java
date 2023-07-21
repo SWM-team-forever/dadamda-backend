@@ -5,12 +5,19 @@ import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
 import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapRequest;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
+import com.forever.dadamda.dto.scrap.GetArticleResponse;
+import com.forever.dadamda.dto.scrap.GetOtherResponse;
+import com.forever.dadamda.dto.scrap.GetProductResponse;
+import com.forever.dadamda.dto.scrap.GetScrapResponse;
+import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.service.MemoService;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Pageable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +52,57 @@ public class ScrapController {
 
         return ApiResponse.success();
     }
+
+    @Operation(summary = "스크랩 조회", description = "여러개의 스크랩을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps")
+    public ApiResponse<Slice<GetScrapResponse>> getScraps(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getScraps(email, pageable));
+    }
+
+    @Operation(summary = "상품 조회", description = "여러개의 상품을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/products")
+    public ApiResponse<Slice<GetProductResponse>> getProducts(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getProducts(email, pageable));
+    }
+
+    @Operation(summary = "영상 조회", description = "여러개의 영상을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/videos")
+    public ApiResponse<Slice<GetVideoResponse>> getVideos(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getVideos(email, pageable));
+    }
+
+    @Operation(summary = "아티클 조회", description = "여러개의 아티클을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/articles")
+    public ApiResponse<Slice<GetArticleResponse>> getArticles(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getArticles(email, pageable));
+    }
+
+    @Operation(summary = "기타 스크랩 조회", description = "여러개의 기타 스크랩를 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/others")
+    public ApiResponse<Slice<GetOtherResponse>> getOthers(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getOthers(email, pageable));
+    }
+
 
     @Operation(summary = "하이라이트 추가", description = "크롬 익스텐션을 사용하여, 하이라이트할 문자들과 사진을 추가할 수 있습니다.")
     @PostMapping("/v1/scraps/highlights")

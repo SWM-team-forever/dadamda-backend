@@ -4,8 +4,10 @@ import com.forever.dadamda.entity.user.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor
 public class Product extends Scrap {
