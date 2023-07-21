@@ -5,7 +5,11 @@ import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
 import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapRequest;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
+import com.forever.dadamda.dto.scrap.GetArticleResponse;
+import com.forever.dadamda.dto.scrap.GetOtherResponse;
+import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
+import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.service.MemoService;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,7 +65,7 @@ public class ScrapController {
 
     @Operation(summary = "상품 조회", description = "여러개의 상품을 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/products")
-    public ApiResponse<Slice<GetScrapResponse>> getProducts(Pageable pageable,
+    public ApiResponse<Slice<GetProductResponse>> getProducts(Pageable pageable,
             Authentication authentication) {
 
         String email = authentication.getName();
@@ -71,7 +75,7 @@ public class ScrapController {
 
     @Operation(summary = "영상 조회", description = "여러개의 영상을 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/videos")
-    public ApiResponse<Slice<GetScrapResponse>> getVideos(Pageable pageable,
+    public ApiResponse<Slice<GetVideoResponse>> getVideos(Pageable pageable,
             Authentication authentication) {
 
         String email = authentication.getName();
@@ -81,7 +85,7 @@ public class ScrapController {
 
     @Operation(summary = "아티클 조회", description = "여러개의 아티클을 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/articles")
-    public ApiResponse<Slice<GetScrapResponse>> getArticles(Pageable pageable,
+    public ApiResponse<Slice<GetArticleResponse>> getArticles(Pageable pageable,
             Authentication authentication) {
 
         String email = authentication.getName();
@@ -91,7 +95,7 @@ public class ScrapController {
 
     @Operation(summary = "기타 스크랩 조회", description = "여러개의 기타 스크랩를 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/others")
-    public ApiResponse<Slice<GetScrapResponse>> getOthers(Pageable pageable,
+    public ApiResponse<Slice<GetOtherResponse>> getOthers(Pageable pageable,
             Authentication authentication) {
 
         String email = authentication.getName();

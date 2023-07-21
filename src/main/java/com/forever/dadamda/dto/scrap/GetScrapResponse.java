@@ -17,20 +17,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GetScrapResponse {
 
+    // 공통 부분
     private Long scrapId;
     private String dType;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
+    private LocalDateTime deletedDate;
     private String description;
     private String pageUrl;
     private String siteName;
     private String thumbnailUrl;
     private String title;
+
+    // Article 부분
     private String author;
     private String authorImageUrl;
     private String blogName;
     private LocalDateTime publishedDate;
+
+    // Product 부분
     private String price;
+
+    // Video 부분
     private String channelImageUrl;
     private String channelName;
     private String embedUrl;
@@ -43,10 +51,12 @@ public class GetScrapResponse {
                 .scrapId(scrap.getId())
                 .createdDate(scrap.getCreatedDate())
                 .modifiedDate(scrap.getModifiedDate())
+                .deletedDate(scrap.getDeletedDate())
                 .description(scrap.getDescription())
                 .pageUrl(scrap.getPageUrl())
                 .siteName(scrap.getSiteName())
                 .thumbnailUrl(scrap.getThumbnailUrl())
+                .deletedDate(scrap.getDeletedDate())
                 .title(scrap.getTitle());
 
         if (scrap instanceof Article) {

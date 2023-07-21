@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
+    Optional<Slice<Product>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
 }

@@ -2,9 +2,14 @@ package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
+import com.forever.dadamda.dto.scrap.GetArticleResponse;
+import com.forever.dadamda.dto.scrap.GetOtherResponse;
+import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
+import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Other;
+import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
@@ -111,20 +116,20 @@ public class ScrapService {
     }
 
     @Transactional
-    public Slice<GetScrapResponse> getProducts(String email, Pageable pageable) {
+    public Slice<GetProductResponse> getProducts(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Slice<Scrap> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
+        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageable).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
-        Slice<GetScrapResponse> getProductsResponseSlice = scrapSlice.map(GetScrapResponse::of);
+        Slice<GetProductResponse> getProductsResponseSlice = scrapSlice.map(GetProductResponse::of);
         return getProductsResponseSlice;
     }
 
     @Transactional
-    public Slice<GetScrapResponse> getVideos(String email, Pageable pageable) {
+    public Slice<GetVideoResponse> getVideos(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
         Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(
@@ -132,12 +137,12 @@ public class ScrapService {
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
-        Slice<GetScrapResponse> getVideosResponseSlice = videoSlice.map(GetScrapResponse::of);
+        Slice<GetVideoResponse> getVideosResponseSlice = videoSlice.map(GetVideoResponse::of);
         return getVideosResponseSlice;
     }
 
     @Transactional
-    public Slice<GetScrapResponse> getArticles(String email, Pageable pageable) {
+    public Slice<GetArticleResponse> getArticles(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
         Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(
@@ -145,12 +150,12 @@ public class ScrapService {
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
-        Slice<GetScrapResponse> getArticlesResponseSlice = articleSlice.map(GetScrapResponse::of);
+        Slice<GetArticleResponse> getArticlesResponseSlice = articleSlice.map(GetArticleResponse::of);
         return getArticlesResponseSlice;
     }
 
     @Transactional
-    public Slice<GetScrapResponse> getOthers(String email, Pageable pageable) {
+    public Slice<GetOtherResponse> getOthers(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
         Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(
@@ -158,7 +163,7 @@ public class ScrapService {
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
-        Slice<GetScrapResponse> getOthersResponseSlice = otherSlice.map(GetScrapResponse::of);
+        Slice<GetOtherResponse> getOthersResponseSlice = otherSlice.map(GetOtherResponse::of);
         return getOthersResponseSlice;
     }
 }
