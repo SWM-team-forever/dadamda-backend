@@ -6,12 +6,14 @@ import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GetScrapResponse {
 
@@ -49,13 +51,15 @@ public class GetScrapResponse {
 
         if (scrap instanceof Article) {
             Article article = (Article) scrap;
-            getScrapResponse.author(article.getAuthor())
+            getScrapResponse.dType("article")
+                    .author(article.getAuthor())
                     .authorImageUrl(article.getAuthorImageUrl())
                     .blogName(article.getBlogName())
                     .publishedDate(article.getPublishedDate());
         } else if (scrap instanceof Video) {
             Video video = (Video) scrap;
-            getScrapResponse.embedUrl(video.getEmbedUrl())
+            getScrapResponse.dType("video")
+                    .embedUrl(video.getEmbedUrl())
                     .channelImageUrl(video.getChannelImageUrl())
                     .channelName(video.getChannelName())
                     .genre(video.getGenre())
@@ -63,7 +67,8 @@ public class GetScrapResponse {
                     .watchedCnt(video.getWatchedCnt());
         } else if (scrap instanceof Product) {
             Product product = (Product) scrap;
-            getScrapResponse.price(product.getPrice());
+            getScrapResponse.dType("product")
+                    .price(product.getPrice());
         }
 
         return getScrapResponse.build();

@@ -3,11 +3,14 @@ package com.forever.dadamda.controller;
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapRequest;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
+import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Pageable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +45,14 @@ public class ScrapController {
 
         return ApiResponse.success();
     }
+
+    @Operation(summary = "스크랩 조회", description = "여러개의 스크랩을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps")
+    public ApiResponse<Slice<GetScrapResponse>> getScrap(Pageable pageable, Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getScraps(email, pageable));
+    }
+
 }
