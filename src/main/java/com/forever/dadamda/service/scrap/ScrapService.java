@@ -4,12 +4,14 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.entity.scrap.Article;
+import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
+import com.forever.dadamda.repository.OtherRepository;
 import com.forever.dadamda.repository.ProductRepository;
 import com.forever.dadamda.repository.ScrapRepository;
 import com.forever.dadamda.repository.VideoRepository;
@@ -32,6 +34,7 @@ public class ScrapService {
     private final ProductRepository productRepository;
     private final VideoRepository videoRepository;
     private final ArticleRepository articleRepository;
+    private final OtherRepository otherRepository;
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
@@ -144,5 +147,18 @@ public class ScrapService {
 
         Slice<GetScrapResponse> getArticlesResponseSlice = articleSlice.map(GetScrapResponse::of);
         return getArticlesResponseSlice;
+    }
+
+    @Transactional
+    public Slice<GetScrapResponse> getOthers(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(
+                user, pageable).orElseThrow(
+                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
+        );
+
+        Slice<GetScrapResponse> getOthersResponseSlice = otherSlice.map(GetScrapResponse::of);
+        return getOthersResponseSlice;
     }
 }
