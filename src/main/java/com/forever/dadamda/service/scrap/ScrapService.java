@@ -4,15 +4,17 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.entity.scrap.Scrap;
+import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
+import com.forever.dadamda.repository.ProductRepository;
 import com.forever.dadamda.repository.ScrapRepository;
+import com.forever.dadamda.repository.VideoRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
@@ -25,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScrapService {
 
     private final ScrapRepository scrapRepository;
+    private final ProductRepository productRepository;
+    private final VideoRepository videoRepository;
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
@@ -98,5 +102,31 @@ public class ScrapService {
 
         Slice<GetScrapResponse> getScrapResponseSlice = scrapSlice.map(GetScrapResponse::of);
         return getScrapResponseSlice;
+    }
+
+    @Transactional
+    public Slice<GetScrapResponse> getProducts(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Scrap> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
+                user, pageable).orElseThrow(
+                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
+        );
+
+        Slice<GetScrapResponse> getProductsResponseSlice = scrapSlice.map(GetScrapResponse::of);
+        return getProductsResponseSlice;
+    }
+
+    @Transactional
+    public Slice<GetScrapResponse> getVideos(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(
+                user, pageable).orElseThrow(
+                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
+        );
+
+        Slice<GetScrapResponse> getVideosResponseSlice = videoSlice.map(GetScrapResponse::of);
+        return getVideosResponseSlice;
     }
 }

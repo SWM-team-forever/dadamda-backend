@@ -51,12 +51,34 @@ public class ScrapController {
 
     @Operation(summary = "스크랩 조회", description = "여러개의 스크랩을 조회할 수 있습니다.")
     @GetMapping("/v1/scraps")
-    public ApiResponse<Slice<GetScrapResponse>> getScrap(Pageable pageable, Authentication authentication) {
+    public ApiResponse<Slice<GetScrapResponse>> getScraps(Pageable pageable,
+            Authentication authentication) {
 
         String email = authentication.getName();
 
         return ApiResponse.success(scrapService.getScraps(email, pageable));
     }
+
+    @Operation(summary = "상품 조회", description = "여러개의 상품을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/products")
+    public ApiResponse<Slice<GetScrapResponse>> getProducts(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getProducts(email, pageable));
+    }
+
+    @Operation(summary = "영상 조회", description = "여러개의 영상을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/videos")
+    public ApiResponse<Slice<GetScrapResponse>> getVideos(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getVideos(email, pageable));
+    }
+
 
     @Operation(summary = "하이라이트 추가", description = "크롬 익스텐션을 사용하여, 하이라이트할 문자들과 사진을 추가할 수 있습니다.")
     @PostMapping("/v1/scraps/highlights")
