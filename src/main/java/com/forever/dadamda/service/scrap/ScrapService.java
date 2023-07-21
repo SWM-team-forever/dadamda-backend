@@ -22,12 +22,14 @@ import com.forever.dadamda.repository.ScrapRepository;
 import com.forever.dadamda.repository.VideoRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,8 +108,11 @@ public class ScrapService {
     public Slice<GetScrapResponse> getScraps(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageable).orElseThrow(
+                user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
@@ -119,8 +124,11 @@ public class ScrapService {
     public Slice<GetProductResponse> getProducts(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageable).orElseThrow(
+                user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
@@ -132,8 +140,11 @@ public class ScrapService {
     public Slice<GetVideoResponse> getVideos(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageable).orElseThrow(
+                user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
@@ -145,8 +156,11 @@ public class ScrapService {
     public Slice<GetArticleResponse> getArticles(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageable).orElseThrow(
+                user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
@@ -158,8 +172,11 @@ public class ScrapService {
     public Slice<GetOtherResponse> getOthers(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageable).orElseThrow(
+                user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
