@@ -79,6 +79,16 @@ public class ScrapController {
         return ApiResponse.success(scrapService.getVideos(email, pageable));
     }
 
+    @Operation(summary = "아티클 조회", description = "여러개의 아티클을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/articles")
+    public ApiResponse<Slice<GetScrapResponse>> getArticles(Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getArticles(email, pageable));
+    }
+
 
     @Operation(summary = "하이라이트 추가", description = "크롬 익스텐션을 사용하여, 하이라이트할 문자들과 사진을 추가할 수 있습니다.")
     @PostMapping("/v1/scraps/highlights")
