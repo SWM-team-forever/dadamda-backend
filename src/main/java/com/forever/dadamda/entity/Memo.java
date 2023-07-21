@@ -8,8 +8,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 public class Memo {
 
     @Id
@@ -26,4 +29,11 @@ public class Memo {
 
     @Column(length = 2083)
     private String memoImageUrl;
+
+    @Builder
+    public Memo(Scrap scrap, String memo, String memoImageUrl){
+        this.scrap = scrap;
+        this.memo = memo;
+        this.memoImageUrl = memoImageUrl;
+    }
 }
