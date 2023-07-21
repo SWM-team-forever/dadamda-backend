@@ -1,4 +1,4 @@
-package com.forever.dadamda.entity;
+package com.forever.dadamda.entity.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

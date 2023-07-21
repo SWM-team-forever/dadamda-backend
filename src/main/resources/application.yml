@@ -4,6 +4,21 @@ spring:
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+springdoc:
+  swagger-ui:
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /v1/**
+
 ---
 # 개발 환경 설정 파일
 spring:
@@ -14,7 +29,10 @@ spring:
   jpa:
     show_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
 ---
 # 배포 환경 설정 파일
 spring:
@@ -26,18 +44,3 @@ spring:
     show_sql: true
     hibernate:
       ddl-auto: update
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    groups-order: DESC
-    operationsSorter: method
-    disable-swagger-default-url: true
-    display-request-duration: true
-  api-docs:
-    path: /api-docs
-  show-actuator: true
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  paths-to-match:
-    - /api/v1/**

@@ -1,5 +1,6 @@
 package com.forever.dadamda.entity;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -19,4 +20,10 @@ public class BaseTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    private LocalDateTime deletedDate;
+
+    public void updateDeletedDate(@NotNull LocalDateTime deletedDate){
+        this.deletedDate = deletedDate;
+    }
 }
