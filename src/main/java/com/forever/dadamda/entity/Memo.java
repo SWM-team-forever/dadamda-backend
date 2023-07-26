@@ -27,15 +27,15 @@ public class Memo extends BaseTimeEntity {
     private Scrap scrap;
 
     @Column(length = 1000)
-    private String memo;
+    private String memoText;
 
     @Column(length = 2083)
     private String memoImageUrl;
 
     @Builder
-    public Memo(Scrap scrap, String memo, String memoImageUrl){
+    public Memo(Scrap scrap, String memoText, String memoImageUrl){
         this.scrap = scrap;
-        this.memo = memo;
+        this.memoText = memoText;
         this.memoImageUrl = memoImageUrl;
     }
 }
