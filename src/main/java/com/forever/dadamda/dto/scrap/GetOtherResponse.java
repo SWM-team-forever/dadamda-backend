@@ -2,6 +2,8 @@ package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.entity.scrap.Other;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,7 @@ public class GetOtherResponse {
     private String siteName;
     private String thumbnailUrl;
     private String title;
+    private List<GetMemoResponse> memoList;
 
     public static GetOtherResponse of(Other other) {
         return new GetOtherResponseBuilder()
@@ -30,6 +33,8 @@ public class GetOtherResponse {
                 .siteName(other.getSiteName())
                 .thumbnailUrl(other.getThumbnailUrl())
                 .title(other.getTitle())
+                .memoList(other.getMemoList().stream().map(GetMemoResponse::of).collect(
+                        Collectors.toList()))
                 .build();
     }
 }

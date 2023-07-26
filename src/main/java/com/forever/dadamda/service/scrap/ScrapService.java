@@ -68,6 +68,7 @@ public class ScrapService {
     public Scrap saveScraps(User user, String pageUrl) throws ParseException {
         //2. 람다에게 api 요청
         JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
+
         String type = crawlingResponse.get("type").toString();
 
         //3. DB 저장
@@ -109,7 +110,8 @@ public class ScrapService {
         User user = userService.validateUser(email);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
 
         Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageRequest).orElseThrow(
@@ -125,7 +127,8 @@ public class ScrapService {
         User user = userService.validateUser(email);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
 
         Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageRequest).orElseThrow(
@@ -141,7 +144,8 @@ public class ScrapService {
         User user = userService.validateUser(email);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
 
         Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageRequest).orElseThrow(
@@ -157,14 +161,16 @@ public class ScrapService {
         User user = userService.validateUser(email);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
 
         Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageRequest).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
         );
 
-        Slice<GetArticleResponse> getArticlesResponseSlice = articleSlice.map(GetArticleResponse::of);
+        Slice<GetArticleResponse> getArticlesResponseSlice = articleSlice.map(
+                GetArticleResponse::of);
         return getArticlesResponseSlice;
     }
 
@@ -173,7 +179,8 @@ public class ScrapService {
         User user = userService.validateUser(email);
 
         Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
 
         Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(
                 user, pageRequest).orElseThrow(
