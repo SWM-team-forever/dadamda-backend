@@ -2,6 +2,8 @@ package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.entity.scrap.Video;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,7 @@ public class GetVideoResponse {
     private String siteName;
     private String thumbnailUrl;
     private String title;
+    private List<GetMemoResponse> memoList;
 
     // Video 부분
     private String channelImageUrl;
@@ -44,6 +47,8 @@ public class GetVideoResponse {
                 .genre(video.getGenre())
                 .playTime(video.getPlayTime())
                 .watchedCnt(video.getWatchedCnt())
+                .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
+                        Collectors.toList()))
                 .build();
     }
 }
