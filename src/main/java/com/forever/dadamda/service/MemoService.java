@@ -46,7 +46,7 @@ public class MemoService {
         //2. 해당 pageUrl에 해당하는 스크랩에 메모를 저장한다.
         Memo memo = Memo.builder()
                 .scrap(scrap)
-                .memo(createHighlightRequest.getSelectedText())
+                .memoText(createHighlightRequest.getSelectedText())
                 .memoImageUrl(createHighlightRequest.getSelectedImageUrl())
                 .build();
 
@@ -65,7 +65,7 @@ public class MemoService {
 
         Memo memo = Memo.builder()
                 .scrap(scrap)
-                .memo(createMemoRequest.getMemoText())
+                .memoText(createMemoRequest.getMemoText())
                 .build();
 
         memoRepository.save(memo);
