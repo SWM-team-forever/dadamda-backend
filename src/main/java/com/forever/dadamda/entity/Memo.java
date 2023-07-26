@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class Memo {
+public class Memo extends BaseTimeEntity {
 
     @Id
     @GeneratedValue

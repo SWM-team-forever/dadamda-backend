@@ -31,7 +31,7 @@ public class Scrap extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
-    @Column(name = "item_id")
+    @Column(name = "scrap_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
