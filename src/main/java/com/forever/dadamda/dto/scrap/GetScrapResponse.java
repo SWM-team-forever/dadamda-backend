@@ -5,6 +5,8 @@ import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,14 +22,12 @@ public class GetScrapResponse {
     // 공통 부분
     private Long scrapId;
     private String dType;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
-    private LocalDateTime deletedDate;
     private String description;
     private String pageUrl;
     private String siteName;
     private String thumbnailUrl;
     private String title;
+    private List<GetMemoResponse> memoList;
 
     // Article 부분
     private String author;
@@ -49,15 +49,12 @@ public class GetScrapResponse {
     public static GetScrapResponse of(Scrap scrap) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
                 .scrapId(scrap.getId())
-                .createdDate(scrap.getCreatedDate())
-                .modifiedDate(scrap.getModifiedDate())
-                .deletedDate(scrap.getDeletedDate())
                 .description(scrap.getDescription())
                 .pageUrl(scrap.getPageUrl())
                 .siteName(scrap.getSiteName())
                 .thumbnailUrl(scrap.getThumbnailUrl())
-                .deletedDate(scrap.getDeletedDate())
-                .title(scrap.getTitle());
+                .title(scrap.getTitle())
+                .memoList(scrap.getMemoList().stream().map(GetMemoResponse::of).collect(Collectors.toList()));
 
         if (scrap instanceof Article) {
             Article article = (Article) scrap;
