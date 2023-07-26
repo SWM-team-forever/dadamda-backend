@@ -20,4 +20,9 @@ public class UserService {
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER)
         );
     }
+
+    @Transactional
+    public String getProfileUrl(String email){
+        return validateUser(email).getProfileUrl();
+    }
 }

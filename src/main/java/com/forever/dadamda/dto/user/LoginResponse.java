@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginResponse {
 
-    private String email;
+    private String profileUrl;
 
-    public static LoginResponse of(String email) {
-        return new LoginResponse(email);
+    public static LoginResponse of(String profileUrl) {
+        return new LoginResponse(profileUrl);
     }
 }
