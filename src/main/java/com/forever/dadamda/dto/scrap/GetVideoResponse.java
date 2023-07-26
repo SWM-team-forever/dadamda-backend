@@ -16,10 +16,6 @@ public class GetVideoResponse {
 
     // 공통 부분
     private Long scrapId;
-    private String dType;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
-    private LocalDateTime deletedDate;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -37,13 +33,10 @@ public class GetVideoResponse {
     public static GetVideoResponse of(Video video) {
         return new GetVideoResponseBuilder()
                 .scrapId(video.getId())
-                .createdDate(video.getCreatedDate())
-                .modifiedDate(video.getModifiedDate())
                 .description(video.getDescription())
                 .pageUrl(video.getPageUrl())
                 .siteName(video.getSiteName())
                 .thumbnailUrl(video.getThumbnailUrl())
-                .deletedDate(video.getDeletedDate())
                 .title(video.getTitle())
                 .channelImageUrl(video.getChannelImageUrl())
                 .channelName(video.getChannelName())
@@ -51,7 +44,6 @@ public class GetVideoResponse {
                 .genre(video.getGenre())
                 .playTime(video.getPlayTime())
                 .watchedCnt(video.getWatchedCnt())
-                .dType("video")
                 .build();
     }
 }
