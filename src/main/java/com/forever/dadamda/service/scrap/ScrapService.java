@@ -45,6 +45,7 @@ public class ScrapService {
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
+    private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
 
@@ -80,7 +81,7 @@ public class ScrapService {
             case "product":
                 return productService.saveProduct(crawlingResponse, user, pageUrl);
             case "other":
-                return saveOther(crawlingResponse, user, pageUrl);
+                return otherService.saveOther(crawlingResponse, user, pageUrl);
         }
 
         return null;

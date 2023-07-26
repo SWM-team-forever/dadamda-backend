@@ -14,12 +14,14 @@ import lombok.NoArgsConstructor;
 public class GetMemoResponse {
 
     private Long memoId;
-    private String memo;
+    private String memoText;
+    private String memoImageUrl;
 
     public static GetMemoResponse of(Memo memo) {
         return GetMemoResponse.builder()
                 .memoId(memo.getId())
-                .memo(memo.getMemo())
+                .memoText(memo.getMemoText())
+                .memoImageUrl(memo.getMemoImageUrl())
                 .build();
     }
 }
