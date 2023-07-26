@@ -1,10 +1,13 @@
 package com.forever.dadamda.service;
 
+import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
 import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
+import com.forever.dadamda.dto.scrap.CreateMemoRequest;
 import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.ScrapRepository;
 import com.forever.dadamda.service.scrap.ScrapService;
@@ -50,5 +53,21 @@ public class MemoService {
         memoRepository.save(memo);
 
         return CreateHighlightResponse.of(pageUrl);
+    }
+
+    @Transactional
+    public void createMemo(String email, CreateMemoRequest createMemoRequest) {
+        User user = userService.validateUser(email);
+
+        Scrap scrap = scrapRepository.findByIdAndUserAndDeletedDateIsNull(
+                        createMemoRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        Memo memo = Memo.builder()
+                .scrap(scrap)
+                .memo(createMemoRequest.getMemoText())
+                .build();
+
+        memoRepository.save(memo);
     }
 }
