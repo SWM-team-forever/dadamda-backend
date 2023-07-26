@@ -1,6 +1,5 @@
 package com.forever.dadamda.service.scrap;
 
-import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.OtherRepository;
@@ -20,8 +19,7 @@ public class OtherService {
         Other other = Other.builder().user(user).pageUrl(pageUrl)
                 .title(crawlingResponse.get("title").toString())
                 .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
-                .description(crawlingResponse.get("description").toString())
-                .siteName(crawlingResponse.get("site_name").toString()).build();
+                .description(crawlingResponse.get("description").toString()).build();
 
         return otherRepository.save(other);
     }
