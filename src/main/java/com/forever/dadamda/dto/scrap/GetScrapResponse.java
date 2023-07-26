@@ -20,9 +20,6 @@ public class GetScrapResponse {
     // 공통 부분
     private Long scrapId;
     private String dType;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
-    private LocalDateTime deletedDate;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -49,14 +46,10 @@ public class GetScrapResponse {
     public static GetScrapResponse of(Scrap scrap) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
                 .scrapId(scrap.getId())
-                .createdDate(scrap.getCreatedDate())
-                .modifiedDate(scrap.getModifiedDate())
-                .deletedDate(scrap.getDeletedDate())
                 .description(scrap.getDescription())
                 .pageUrl(scrap.getPageUrl())
                 .siteName(scrap.getSiteName())
                 .thumbnailUrl(scrap.getThumbnailUrl())
-                .deletedDate(scrap.getDeletedDate())
                 .title(scrap.getTitle());
 
         if (scrap instanceof Article) {

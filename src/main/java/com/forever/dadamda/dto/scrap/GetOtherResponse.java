@@ -16,10 +16,6 @@ public class GetOtherResponse {
 
     // 공통 부분
     private Long scrapId;
-    private String dType;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
-    private LocalDateTime deletedDate;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -29,16 +25,11 @@ public class GetOtherResponse {
     public static GetOtherResponse of(Other other) {
         return new GetOtherResponseBuilder()
                 .scrapId(other.getId())
-                .createdDate(other.getCreatedDate())
-                .modifiedDate(other.getModifiedDate())
-                .deletedDate(other.getDeletedDate())
                 .description(other.getDescription())
                 .pageUrl(other.getPageUrl())
                 .siteName(other.getSiteName())
                 .thumbnailUrl(other.getThumbnailUrl())
-                .deletedDate(other.getDeletedDate())
                 .title(other.getTitle())
-                .dType("other")
                 .build();
     }
 }
