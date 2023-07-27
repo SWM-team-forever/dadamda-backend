@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.user;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
@@ -22,7 +23,14 @@ public class UserService {
     }
 
     @Transactional
-    public String getProfileUrl(String email){
+    public String getProfileUrl(String email) {
         return validateUser(email).getProfileUrl();
+    }
+
+    @Transactional
+    public GetUserInfoResponse getUserInfo(String email) {
+        User user = validateUser(email);
+        return GetUserInfoResponse.of(user.getName(), user.getEmail(), user.getProvider(),
+                user.getProfileUrl());
     }
 }
