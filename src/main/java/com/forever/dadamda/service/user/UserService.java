@@ -5,6 +5,7 @@ import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,5 +37,11 @@ public class UserService {
                 .profileUrl(user.getProfileUrl())
                 .provider(user.getProvider())
                 .build();
+    }
+
+    @Transactional
+    public void deleteUser(String email) {
+        User user = validateUser(email);
+        user.updateDeletedDate(LocalDateTime.now());
     }
 }

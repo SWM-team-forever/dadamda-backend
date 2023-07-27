@@ -1,5 +1,6 @@
 package com.forever.dadamda.controller;
 
+import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.dto.user.LoginResponse;
 import com.forever.dadamda.service.TokenService;
@@ -7,6 +8,7 @@ import com.forever.dadamda.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,4 +36,12 @@ public class UserController {
         return userService.getUserInfo(email);
     }
 
+    @Operation(summary = "회원 탈퇴", description = "해당 회원 탈퇴할 수 있습니다.")
+    @DeleteMapping("/v1/user")
+    public ApiResponse<String> deleteUser(Authentication authentication) {
+        String email = authentication.getName();
+        userService.deleteUser(email);
+
+        return ApiResponse.success();
+    }
 }
