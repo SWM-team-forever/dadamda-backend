@@ -1,9 +1,11 @@
 package com.forever.dadamda.service.user;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +18,30 @@ public class UserService {
 
     @Transactional
     public User validateUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+        return userRepository.findByEmailAndDeletedDateIsNull(email).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER)
         );
     }
 
     @Transactional
-    public String getProfileUrl(String email){
+    public String getProfileUrl(String email) {
         return validateUser(email).getProfileUrl();
+    }
+
+    @Transactional
+    public GetUserInfoResponse getUserInfo(String email) {
+        User user = validateUser(email);
+        return GetUserInfoResponse.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .profileUrl(user.getProfileUrl())
+                .provider(user.getProvider())
+                .build();
+    }
+
+    @Transactional
+    public void deleteUser(String email) {
+        User user = validateUser(email);
+        user.updateDeletedDate(LocalDateTime.now());
     }
 }
