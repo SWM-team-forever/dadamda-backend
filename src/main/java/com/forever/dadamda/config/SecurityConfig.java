@@ -5,6 +5,7 @@ import com.forever.dadamda.filter.JwtAuthFilter;
 import com.forever.dadamda.handler.OAuth2SuccessHandler;
 import com.forever.dadamda.service.user.CustomOAuth2UserService;
 import com.forever.dadamda.service.TokenService;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -22,6 +26,20 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
          http
@@ -29,7 +47,9 @@ public class SecurityConfig {
                  .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                  .and()
-                .headers().frameOptions().disable()
+                    .cors().configurationSource(corsConfigurationSource())
+                 .and()
+                    .headers().frameOptions().disable()
                  .and()
                     .authorizeRequests()
                         .antMatchers("/h2-console/**", "/actuator/**",
