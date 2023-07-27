@@ -2,13 +2,12 @@ package com.forever.dadamda.dto.user;
 
 import com.forever.dadamda.entity.user.Provider;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GetUserInfoResponse {
 
     private String name;
@@ -16,8 +15,12 @@ public class GetUserInfoResponse {
     private Provider provider;
     private String profileUrl;
 
-    public static GetUserInfoResponse of(String name, String email, Provider provider,
+    @Builder
+    public GetUserInfoResponse(String name, String email, Provider provider,
             String profileUrl) {
-        return new GetUserInfoResponse(name, email, provider, profileUrl);
+        this.name = name;
+        this.email = email;
+        this.provider = provider;
+        this.profileUrl = profileUrl;
     }
 }

@@ -17,7 +17,7 @@ public class UserService {
 
     @Transactional
     public User validateUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+        return userRepository.findByEmailAndDeletedDateIsNull(email).orElseThrow(
                 () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER)
         );
     }
@@ -30,7 +30,11 @@ public class UserService {
     @Transactional
     public GetUserInfoResponse getUserInfo(String email) {
         User user = validateUser(email);
-        return GetUserInfoResponse.of(user.getName(), user.getEmail(), user.getProvider(),
-                user.getProfileUrl());
+        return GetUserInfoResponse.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .profileUrl(user.getProfileUrl())
+                .provider(user.getProvider())
+                .build();
     }
 }
