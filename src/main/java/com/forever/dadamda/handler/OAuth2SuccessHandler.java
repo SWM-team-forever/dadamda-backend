@@ -3,11 +3,11 @@ package com.forever.dadamda.handler;
 import com.forever.dadamda.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +17,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Value("${login.redirect.url}")
+    private String LOGIN_REDIRECT_URL;
 
     private final TokenService tokenService;
 
@@ -29,10 +32,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = tokenService.generateToken(email, "USER");
 
-        String targetUrl = UriComponentsBuilder.fromUriString("/")
-                .queryParam("token", token)
-                .build().toUriString();
-
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        response.sendRedirect(LOGIN_REDIRECT_URL+token);
     }
 }
