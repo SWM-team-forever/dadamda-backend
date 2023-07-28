@@ -19,7 +19,6 @@ public class ProductService {
         Product product = Product.builder().user(user).pageUrl(pageUrl)
                 .title(crawlingResponse.get("title").toString())
                 .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
-                .description(crawlingResponse.get("description").toString())
                 .price(crawlingResponse.get("price").toString())
                 .siteName(crawlingResponse.get("site_name").toString()).build();
 
