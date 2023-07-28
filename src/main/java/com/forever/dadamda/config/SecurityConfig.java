@@ -30,7 +30,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf"));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
