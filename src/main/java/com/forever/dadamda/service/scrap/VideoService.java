@@ -44,4 +44,27 @@ public class VideoService {
 
         return videoRepository.save(video);
     }
+
+    public static String formatViewCount(long count) {
+        if (count >= 100000000) {
+            double billionCount = count / 100000000.0;
+            return formatCountWithUnit(billionCount, "억회");
+        } else if (count >= 10000) {
+            double millionCount = count / 10000.0;
+            return formatCountWithUnit(millionCount, "만회");
+        } else if (count >= 1000) {
+            double thousandCount = count / 1000.0;
+            return formatCountWithUnit(thousandCount, "천회");
+        } else {
+            return Long.toString(count) + "회";
+        }
+    }
+
+    private static String formatCountWithUnit(double count, String unit) {
+        if (count == (long) count) {
+            return String.format("%d%s", (long) count, unit);
+        } else {
+            return String.format("%.1f%s", count, unit);
+        }
+    }
 }
