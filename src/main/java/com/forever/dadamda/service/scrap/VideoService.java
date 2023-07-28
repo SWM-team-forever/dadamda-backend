@@ -67,4 +67,19 @@ public class VideoService {
             return String.format("%.1f%s", count, unit);
         }
     }
+
+    public static String formatPlayTime(Long seconds) {
+        long minutes = seconds / 60;
+        long remainingSeconds = seconds % 60;
+
+        if (minutes < 1) {
+            return String.format("0:%02d", remainingSeconds);
+        } else if (minutes < 10) {
+            return String.format("%d:%02d", minutes, remainingSeconds);
+        } else {
+            long hours = minutes / 60;
+            long remainingMinutes = minutes % 60;
+            return String.format("%d:%02d:%02d", hours, remainingMinutes, remainingSeconds);
+        }
+    }
 }

@@ -31,7 +31,7 @@ public class GetVideoResponse {
     private String channelName;
     private String embedUrl;
     private String genre;
-    private Long playTime;
+    private String playTime;
     private String watchedCnt;
 
     public static GetVideoResponse of(Video video) {
@@ -46,7 +46,7 @@ public class GetVideoResponse {
                 .channelName(video.getChannelName())
                 .embedUrl(video.getEmbedUrl())
                 .genre(video.getGenre())
-                .playTime(video.getPlayTime())
+                .playTime(VideoService.formatPlayTime(video.getPlayTime()))
                 .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
                 .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
