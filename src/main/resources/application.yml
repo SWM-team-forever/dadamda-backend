@@ -41,6 +41,5 @@ spring:
       on-profile: prod
 
   jpa:
-    show_sql: true
     hibernate:
       ddl-auto: update
