@@ -1,8 +1,6 @@
 package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
-import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
-import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapRequest;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetArticleResponse;
@@ -10,6 +8,8 @@ import com.forever.dadamda.dto.scrap.GetOtherResponse;
 import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.GetVideoResponse;
+import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
+import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.service.MemoService;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -104,16 +103,15 @@ public class ScrapController {
         return ApiResponse.success(scrapService.getOthers(email, pageable));
     }
 
+    @Operation(summary = "전체 스크랩 수정", description = "스크랩을 수정할 수 있습니다.")
+    @PatchMapping("/v1/scraps")
+    public ApiResponse<String> updateScraps(
+            @RequestBody UpdateScrapRequest updateScrapRequest,
+            Authentication authentication) {
 
-    @Operation(summary = "하이라이트 추가", description = "크롬 익스텐션을 사용하여, 하이라이트할 문자들과 사진을 추가할 수 있습니다.")
-    @PostMapping("/v1/scraps/highlights")
-    public ApiResponse<CreateHighlightResponse> addHighlights(
-            @Valid @RequestBody CreateHighlightRequest createHighlightRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-
-        CreateHighlightResponse createHighlightResponse = memoService.createHighlights(email,
-                createHighlightRequest);
-        return ApiResponse.success(createHighlightResponse);
+        Scrap scrap = scrapService.updateScraps(email, updateScrapRequest);
+        memoService.updateMemos(scrap, updateScrapRequest.getMemoList());
+        return ApiResponse.success();
     }
 }

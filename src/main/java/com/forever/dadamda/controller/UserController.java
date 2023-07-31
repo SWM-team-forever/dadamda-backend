@@ -30,10 +30,10 @@ public class UserController {
 
     @Operation(summary = "회원 정보 조회", description = "해당 회원의 정보를 조회할 수 있습니다.")
     @GetMapping("/v1/user")
-    public GetUserInfoResponse getUserInfo(Authentication authentication) {
+    public ApiResponse<GetUserInfoResponse> getUserInfo(Authentication authentication) {
         String email = authentication.getName();
 
-        return userService.getUserInfo(email);
+        return ApiResponse.success(userService.getUserInfo(email));
     }
 
     @Operation(summary = "회원 탈퇴", description = "해당 회원 탈퇴할 수 있습니다.")

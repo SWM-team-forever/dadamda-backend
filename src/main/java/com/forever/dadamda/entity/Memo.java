@@ -38,4 +38,9 @@ public class Memo extends BaseTimeEntity {
         this.memoText = memoText;
         this.memoImageUrl = memoImageUrl;
     }
+
+    public void update(String memoText, String memoImageUrl){
+        this.memoText = memoText;
+        this.memoImageUrl = memoImageUrl;
+    }
 }

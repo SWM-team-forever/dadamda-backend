@@ -45,4 +45,14 @@ public class Video extends Scrap {
         this.publishedDate = publishedDate;
         this.genre = genre;
     }
+
+    public void updateVideo(String channelName, String channelImageUrl, Long watchedCnt,
+            Long playTime, LocalDateTime publishedDate, String genre) {
+        this.channelName = channelName;
+        this.channelImageUrl = channelImageUrl;
+        this.watchedCnt = watchedCnt;
+        this.playTime = playTime;
+        this.publishedDate = publishedDate;
+        this.genre = genre;
+    }
 }

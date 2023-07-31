@@ -21,4 +21,8 @@ public class Product extends Scrap {
         super(user, pageUrl, title, thumbnailUrl, description, siteName);
         this.price = price;
     }
+
+    public void updateProduct(String price) {
+        this.price = price;
+    }
 }
