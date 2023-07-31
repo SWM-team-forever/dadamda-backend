@@ -7,6 +7,7 @@ import com.forever.dadamda.dto.scrap.GetOtherResponse;
 import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.GetVideoResponse;
+import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.scrap.Product;
@@ -48,14 +49,15 @@ public class ScrapService {
     private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
+    //private final MemoService memoService;
 
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
         User user = userService.validateUser(email);
 
         //1. 해당 링크 중복 확인 (삭제된 링크면 중복 X)
-        boolean isPresentItem = scrapRepository
-                .findByPageUrlAndUserAndDeletedDateIsNull(pageUrl, user).isPresent();
+        boolean isPresentItem = scrapRepository.findByPageUrlAndUserAndDeletedDateIsNull(pageUrl,
+                user).isPresent();
         if (isPresentItem) {
             throw new InvalidException(ErrorCode.INVALID_DUPLICATED_SCRAP);
         }
@@ -88,20 +90,11 @@ public class ScrapService {
     }
 
     @Transactional
-    public Scrap saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
-        Scrap other = new Scrap(user, pageUrl, crawlingResponse.get("title").toString(),
-                crawlingResponse.get("thumbnail_url").toString(),
-                crawlingResponse.get("description").toString(), null);
-        return scrapRepository.save(other);
-    }
-
-    @Transactional
     public void deleteScraps(String email, Long scrapId) {
         User user = userService.validateUser(email);
 
-        Scrap item = scrapRepository.findByIdAndUserAndDeletedDateIsNull(scrapId, user).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Scrap item = scrapRepository.findByIdAndUserAndDeletedDateIsNull(scrapId, user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         item.updateDeletedDate(LocalDateTime.now());
     }
@@ -114,10 +107,8 @@ public class ScrapService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageRequest).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         Slice<GetScrapResponse> getScrapResponseSlice = scrapSlice.map(GetScrapResponse::of);
         return getScrapResponseSlice;
@@ -131,10 +122,8 @@ public class ScrapService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageRequest).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         Slice<GetProductResponse> getProductsResponseSlice = scrapSlice.map(GetProductResponse::of);
         return getProductsResponseSlice;
@@ -148,10 +137,8 @@ public class ScrapService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageRequest).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         Slice<GetVideoResponse> getVideosResponseSlice = videoSlice.map(GetVideoResponse::of);
         return getVideosResponseSlice;
@@ -165,10 +152,8 @@ public class ScrapService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageRequest).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         Slice<GetArticleResponse> getArticlesResponseSlice = articleSlice.map(
                 GetArticleResponse::of);
@@ -183,12 +168,26 @@ public class ScrapService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(
-                user, pageRequest).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+        Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         Slice<GetOtherResponse> getOthersResponseSlice = otherSlice.map(GetOtherResponse::of);
         return getOthersResponseSlice;
+    }
+
+    @Transactional
+    public Scrap updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
+        User user = userService.validateUser(email);
+
+        switch (updateScrapRequest.getDType()) {
+            case "product":
+                return productService.updateProduct(user, updateScrapRequest);
+            case "article":
+                return articleService.updateArticle(user, updateScrapRequest);
+            case "video":
+                return videoService.updateVideo(user, updateScrapRequest);
+            default:
+                return otherService.updateOther(user, updateScrapRequest);
+        }
     }
 }
