@@ -1,7 +1,10 @@
 package com.forever.dadamda.service.scrap;
 
+import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -26,21 +29,17 @@ public class VideoService {
             playTime = Long.parseLong(crawlingResponse.get("play_time").toString());
         }
 
-        Video video = Video.builder()
-                .user(user)
-                .pageUrl(pageUrl)
+        Video video = Video.builder().user(user).pageUrl(pageUrl)
                 .title(crawlingResponse.get("title").toString())
                 .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
                 .description(crawlingResponse.get("description").toString())
                 .embedUrl(crawlingResponse.get("embed_url").toString())
                 .channelName(crawlingResponse.get("channel_name").toString())
                 //.channelImageUrl(crawlingVideoResponse.get("channel_image_url").toString())
-                .watchedCnt(watchedCnt)
-                .playTime(playTime)
+                .watchedCnt(watchedCnt).playTime(playTime)
                 //.publishedDate(LocalDateTime.parse(crawlingVideoResponse.get("published_date").toString(), formatter))
                 .siteName(crawlingResponse.get("site_name").toString())
-                .genre(crawlingResponse.get("genre").toString())
-                .build();
+                .genre(crawlingResponse.get("genre").toString()).build();
 
         return videoRepository.save(video);
     }
@@ -81,5 +80,18 @@ public class VideoService {
             long remainingMinutes = minutes % 60;
             return String.format("%d:%02d:%02d", hours, remainingMinutes, remainingSeconds);
         }
+
+    @Transactional
+    public Video updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
+        Video video = videoRepository.findByIdAndUserAndDeletedDateIsNull(
+                        updateScrapRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        video.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
+                updateScrapRequest.getSiteName());
+        video.updateVideo(updateScrapRequest.getChannelName(),
+                updateScrapRequest.getChannelImageUrl(), updateScrapRequest.getWatchedCnt(),
+                updateScrapRequest.getPlayTime(), updateScrapRequest.getPublishedDate(),
+                updateScrapRequest.getGenre());
+        return video;
     }
 }

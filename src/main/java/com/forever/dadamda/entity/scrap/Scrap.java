@@ -61,11 +61,18 @@ public class Scrap extends BaseTimeEntity {
         this.pageUrl = pageUrl;
     }
 
-    public Scrap(User user, String pageUrl, String title, String thumbnailUrl, String description, String siteName) {
+    public Scrap(User user, String pageUrl, String title, String thumbnailUrl, String description,
+            String siteName) {
         this.user = user;
         this.pageUrl = pageUrl;
         this.title = title;
         this.thumbnailUrl = thumbnailUrl;
+        this.description = description;
+        this.siteName = siteName;
+    }
+
+    public void update(String title, String description, String siteName) {
+        this.pageUrl = title;
         this.description = description;
         this.siteName = siteName;
     }

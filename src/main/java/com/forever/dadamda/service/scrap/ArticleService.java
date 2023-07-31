@@ -1,7 +1,10 @@
 package com.forever.dadamda.service.scrap;
 
+import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -32,5 +35,21 @@ public class ArticleService {
                 .siteName(crawlingResponse.get("site_name").toString()).build();
 
         return articleRepository.save(article);
+    }
+
+    @Transactional
+    public Article updateArticle(User user, UpdateScrapRequest updateScrapRequest) {
+        Article article = articleRepository.findByIdAndUserAndDeletedDateIsNull(
+                updateScrapRequest.getScrapId(), user).orElseThrow(
+                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
+        );
+        article.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
+                updateScrapRequest.getSiteName());
+        article.updateArticle(updateScrapRequest.getAuthor(),
+                updateScrapRequest.getAuthorImageUrl(),
+                updateScrapRequest.getPublishedDate(),
+                updateScrapRequest.getBlogName());
+
+        return article;
     }
 }
