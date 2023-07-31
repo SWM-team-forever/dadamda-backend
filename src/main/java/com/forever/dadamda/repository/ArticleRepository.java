@@ -10,4 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     Optional<Slice<Article>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
+
+    Optional<Article> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
+
 }

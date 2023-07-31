@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@RestController
 @RequiredArgsConstructor
+@RestController
 public class MemoController {
 
     private final MemoService memoService;
@@ -28,5 +28,17 @@ public class MemoController {
         String email = authentication.getName();
         memoService.createMemo(email, createMemoRequest);
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "하이라이트 추가", description = "크롬 익스텐션을 사용하여, 하이라이트할 문자들과 사진을 추가할 수 있습니다.")
+    @PostMapping("/v1/scraps/highlights")
+    public ApiResponse<CreateHighlightResponse> addHighlights(
+            @Valid @RequestBody CreateHighlightRequest createHighlightRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        CreateHighlightResponse createHighlightResponse = memoService.createHighlights(email,
+                createHighlightRequest);
+        return ApiResponse.success(createHighlightResponse);
     }
 }

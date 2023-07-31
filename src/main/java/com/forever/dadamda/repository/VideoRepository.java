@@ -10,4 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
     Optional<Slice<Video>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
+
+    Optional<Video> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
+
 }
