@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.entity.scrap.Video;
+import com.forever.dadamda.service.scrap.VideoService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +31,8 @@ public class GetVideoResponse {
     private String channelName;
     private String embedUrl;
     private String genre;
-    private Long playTime;
-    private Long watchedCnt;
+    private String playTime;
+    private String watchedCnt;
 
     public static GetVideoResponse of(Video video) {
         return new GetVideoResponseBuilder()
@@ -45,8 +46,8 @@ public class GetVideoResponse {
                 .channelName(video.getChannelName())
                 .embedUrl(video.getEmbedUrl())
                 .genre(video.getGenre())
-                .playTime(video.getPlayTime())
-                .watchedCnt(video.getWatchedCnt())
+                .playTime(VideoService.formatPlayTime(video.getPlayTime()))
+                .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
                 .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
                 .build();
