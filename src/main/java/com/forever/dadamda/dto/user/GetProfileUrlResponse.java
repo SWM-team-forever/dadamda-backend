@@ -7,12 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoginResponse {
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+public class GetProfileUrlResponse {
 
     private String profileUrl;
-
-    public static LoginResponse of(String profileUrl) {
-        return new LoginResponse(profileUrl);
-    }
 }
