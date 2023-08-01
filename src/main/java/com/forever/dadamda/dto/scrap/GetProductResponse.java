@@ -18,6 +18,7 @@ public class GetProductResponse {
 
     // 공통 부분
     private Long scrapId;
+    private String dType;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -31,6 +32,7 @@ public class GetProductResponse {
     public static GetProductResponse of(Product product) {
         return new GetProductResponseBuilder()
                 .scrapId(product.getId())
+                .dType("product")
                 .description(product.getDescription())
                 .pageUrl(product.getPageUrl())
                 .siteName(product.getSiteName())

@@ -18,6 +18,7 @@ public class GetOtherResponse {
 
     // 공통 부분
     private Long scrapId;
+    private String dType;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -28,6 +29,7 @@ public class GetOtherResponse {
     public static GetOtherResponse of(Other other) {
         return new GetOtherResponseBuilder()
                 .scrapId(other.getId())
+                .dType("other")
                 .description(other.getDescription())
                 .pageUrl(other.getPageUrl())
                 .siteName(other.getSiteName())
