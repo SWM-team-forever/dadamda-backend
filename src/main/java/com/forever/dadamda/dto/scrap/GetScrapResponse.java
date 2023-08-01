@@ -48,6 +48,7 @@ public class GetScrapResponse {
 
     public static GetScrapResponse of(Scrap scrap) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
+                .dType("other")
                 .scrapId(scrap.getId())
                 .description(scrap.getDescription())
                 .pageUrl(scrap.getPageUrl())
