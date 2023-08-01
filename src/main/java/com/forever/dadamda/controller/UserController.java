@@ -1,9 +1,8 @@
 package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
+import com.forever.dadamda.dto.user.GetProfileUrlResponse;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
-import com.forever.dadamda.dto.user.LoginResponse;
-import com.forever.dadamda.service.TokenService;
 import com.forever.dadamda.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,15 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private final TokenService tokenService;
     private final UserService userService;
 
     @GetMapping("")
-    public LoginResponse loginResponse(@RequestParam String token) {
-
-        String profileUrl = userService.getProfileUrl(tokenService.getEmail(token));
-
-        return LoginResponse.of(profileUrl);
+    public ApiResponse<String> login(@RequestParam String token) {
+        return ApiResponse.success();
     }
 
     @Operation(summary = "회원 정보 조회", description = "해당 회원의 정보를 조회할 수 있습니다.")
@@ -43,5 +38,14 @@ public class UserController {
         userService.deleteUser(email);
 
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "회원 프로필 이미지 조회", description = "해당 회원 프로필 이미지를 조회할 수 있습니다.")
+    @GetMapping("/v1/user/profile")
+    public ApiResponse<GetProfileUrlResponse> getProfileUrl(Authentication authentication) {
+        String email = authentication.getName();
+        GetProfileUrlResponse getProfileUrlResponse = new GetProfileUrlResponse(
+                userService.getProfileUrl(email));
+        return ApiResponse.success(getProfileUrlResponse);
     }
 }
