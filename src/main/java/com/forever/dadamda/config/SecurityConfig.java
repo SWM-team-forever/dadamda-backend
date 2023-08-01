@@ -31,7 +31,7 @@ public class SecurityConfig {
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf"));
-        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
