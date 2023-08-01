@@ -17,7 +17,7 @@ public class UpdateScrapRequest {
     // 공통 부분
     private Long scrapId;
 
-    @JsonProperty("dType")
+    @JsonProperty("dtype")
     private String dType;
 
     private String description;
