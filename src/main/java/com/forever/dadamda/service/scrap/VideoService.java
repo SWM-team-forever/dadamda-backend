@@ -80,6 +80,7 @@ public class VideoService {
             long remainingMinutes = minutes % 60;
             return String.format("%d:%02d:%02d", hours, remainingMinutes, remainingSeconds);
         }
+    }
 
     @Transactional
     public Video updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
