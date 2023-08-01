@@ -18,6 +18,7 @@ public class GetArticleResponse {
 
     // 공통 부분
     private Long scrapId;
+    private String dType;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -33,6 +34,7 @@ public class GetArticleResponse {
 
     public static GetArticleResponse of(Article article) {
         return new GetArticleResponseBuilder()
+                .dType("article")
                 .scrapId(article.getId())
                 .description(article.getDescription())
                 .pageUrl(article.getPageUrl())

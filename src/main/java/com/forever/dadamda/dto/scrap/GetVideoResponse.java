@@ -19,6 +19,7 @@ public class GetVideoResponse {
 
     // 공통 부분
     private Long scrapId;
+    private String dType;
     private String description;
     private String pageUrl;
     private String siteName;
@@ -30,13 +31,13 @@ public class GetVideoResponse {
     private String channelImageUrl;
     private String channelName;
     private String embedUrl;
-    private String genre;
     private String playTime;
     private String watchedCnt;
 
     public static GetVideoResponse of(Video video) {
         return new GetVideoResponseBuilder()
                 .scrapId(video.getId())
+                .dType("video")
                 .description(video.getDescription())
                 .pageUrl(video.getPageUrl())
                 .siteName(video.getSiteName())
@@ -45,7 +46,6 @@ public class GetVideoResponse {
                 .channelImageUrl(video.getChannelImageUrl())
                 .channelName(video.getChannelName())
                 .embedUrl(video.getEmbedUrl())
-                .genre(video.getGenre())
                 .playTime(VideoService.formatPlayTime(video.getPlayTime()))
                 .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
                 .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
