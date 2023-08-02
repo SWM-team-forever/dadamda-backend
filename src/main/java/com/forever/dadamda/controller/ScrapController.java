@@ -83,7 +83,7 @@ public class ScrapController {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(scrapService.getProducts(email, pageable));
+        return ApiResponse.success(productService.getProducts(email, pageable));
     }
 
     @Operation(summary = "영상 조회", description = "여러개의 영상을 조회할 수 있습니다.")
@@ -93,7 +93,7 @@ public class ScrapController {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(scrapService.getVideos(email, pageable));
+        return ApiResponse.success(videoService.getVideos(email, pageable));
     }
 
     @Operation(summary = "아티클 조회", description = "여러개의 아티클을 조회할 수 있습니다.")
@@ -103,7 +103,7 @@ public class ScrapController {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(scrapService.getArticles(email, pageable));
+        return ApiResponse.success(articleService.getArticles(email, pageable));
     }
 
     @Operation(summary = "기타 스크랩 조회", description = "여러개의 기타 스크랩를 조회할 수 있습니다.")
@@ -113,7 +113,7 @@ public class ScrapController {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(scrapService.getOthers(email, pageable));
+        return ApiResponse.success(otherService.getOthers(email, pageable));
     }
 
     @Operation(summary = "전체 스크랩 수정", description = "스크랩을 수정할 수 있습니다.")
