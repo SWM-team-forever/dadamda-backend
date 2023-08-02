@@ -1,13 +1,19 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ProductRepository;
+import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserService userService;
 
     @Transactional
     public Product saveProduct(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -37,5 +44,25 @@ public class ProductService {
                 updateScrapRequest.getSiteName());
         product.updateProduct(updateScrapRequest.getPrice());
         return product;
+    }
+
+    @Transactional
+    public Long getProductCount(String email) {
+        User user = userService.validateUser(email);
+        return productRepository.countByUserAndDeletedDateIsNull(user);
+    }
+
+    @Transactional
+    public Slice<GetProductResponse> getProducts(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
+        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetProductResponse::of);
     }
 }

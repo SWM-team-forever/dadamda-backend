@@ -2,25 +2,13 @@ package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
-import com.forever.dadamda.dto.scrap.GetArticleResponse;
-import com.forever.dadamda.dto.scrap.GetOtherResponse;
-import com.forever.dadamda.dto.scrap.GetProductResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
-import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
-import com.forever.dadamda.entity.scrap.Article;
-import com.forever.dadamda.entity.scrap.Other;
-import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
-import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.ArticleRepository;
-import com.forever.dadamda.repository.OtherRepository;
-import com.forever.dadamda.repository.ProductRepository;
 import com.forever.dadamda.repository.ScrapRepository;
-import com.forever.dadamda.repository.VideoRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import org.springframework.data.domain.PageRequest;
@@ -39,17 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScrapService {
 
     private final ScrapRepository scrapRepository;
-    private final ProductRepository productRepository;
-    private final VideoRepository videoRepository;
-    private final ArticleRepository articleRepository;
-    private final OtherRepository otherRepository;
     private final VideoService videoService;
     private final ArticleService articleService;
     private final ProductService productService;
     private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
-    //private final MemoService memoService;
 
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
@@ -110,69 +93,7 @@ public class ScrapService {
         Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        Slice<GetScrapResponse> getScrapResponseSlice = scrapSlice.map(GetScrapResponse::of);
-        return getScrapResponseSlice;
-    }
-
-    @Transactional
-    public Slice<GetProductResponse> getProducts(String email, Pageable pageable) {
-        User user = userService.validateUser(email);
-
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
-                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        Slice<GetProductResponse> getProductsResponseSlice = scrapSlice.map(GetProductResponse::of);
-        return getProductsResponseSlice;
-    }
-
-    @Transactional
-    public Slice<GetVideoResponse> getVideos(String email, Pageable pageable) {
-        User user = userService.validateUser(email);
-
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(user,
-                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        Slice<GetVideoResponse> getVideosResponseSlice = videoSlice.map(GetVideoResponse::of);
-        return getVideosResponseSlice;
-    }
-
-    @Transactional
-    public Slice<GetArticleResponse> getArticles(String email, Pageable pageable) {
-        User user = userService.validateUser(email);
-
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(user,
-                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        Slice<GetArticleResponse> getArticlesResponseSlice = articleSlice.map(
-                GetArticleResponse::of);
-        return getArticlesResponseSlice;
-    }
-
-    @Transactional
-    public Slice<GetOtherResponse> getOthers(String email, Pageable pageable) {
-        User user = userService.validateUser(email);
-
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(user,
-                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        Slice<GetOtherResponse> getOthersResponseSlice = otherSlice.map(GetOtherResponse::of);
-        return getOthersResponseSlice;
+        return scrapSlice.map(GetScrapResponse::of);
     }
 
     @Transactional
@@ -189,5 +110,11 @@ public class ScrapService {
             default:
                 return otherService.updateOther(user, updateScrapRequest);
         }
+    }
+
+    @Transactional
+    public Long getScrapCount(String email) {
+        User user = userService.validateUser(email);
+        return scrapRepository.countByUserAndDeletedDateIsNull(user);
     }
 }
