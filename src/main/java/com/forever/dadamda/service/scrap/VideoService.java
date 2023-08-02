@@ -38,8 +38,7 @@ public class VideoService {
                 //.channelImageUrl(crawlingVideoResponse.get("channel_image_url").toString())
                 .watchedCnt(watchedCnt).playTime(playTime)
                 //.publishedDate(LocalDateTime.parse(crawlingVideoResponse.get("published_date").toString(), formatter))
-                .siteName(crawlingResponse.get("site_name").toString())
-                .genre(crawlingResponse.get("genre").toString()).build();
+                .siteName(crawlingResponse.get("site_name").toString()).build();
 
         return videoRepository.save(video);
     }
