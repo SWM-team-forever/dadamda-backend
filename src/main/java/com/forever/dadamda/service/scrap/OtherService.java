@@ -6,6 +6,7 @@ import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.OtherRepository;
+import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OtherService {
 
     private final OtherRepository otherRepository;
+    private final UserService userService;
 
     @Transactional
     public Other saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -35,5 +37,11 @@ public class OtherService {
         other.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         return other;
+    }
+
+    @Transactional
+    public Long getOtherCount(String email) {
+        User user = userService.validateUser(email);
+        return otherRepository.countByUserAndDeletedDateIsNull(user);
     }
 }

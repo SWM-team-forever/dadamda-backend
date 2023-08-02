@@ -49,7 +49,6 @@ public class ScrapService {
     private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
-    //private final MemoService memoService;
 
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
@@ -189,5 +188,11 @@ public class ScrapService {
             default:
                 return otherService.updateOther(user, updateScrapRequest);
         }
+    }
+
+    @Transactional
+    public Long getScrapCount(String email) {
+        User user = userService.validateUser(email);
+        return scrapRepository.countByUserAndDeletedDateIsNull(user);
     }
 }

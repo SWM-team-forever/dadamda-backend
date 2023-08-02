@@ -6,6 +6,7 @@ import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ProductRepository;
+import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserService userService;
 
     @Transactional
     public Product saveProduct(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -37,5 +39,11 @@ public class ProductService {
                 updateScrapRequest.getSiteName());
         product.updateProduct(updateScrapRequest.getPrice());
         return product;
+    }
+
+    @Transactional
+    public Long getProductCount(String email) {
+        User user = userService.validateUser(email);
+        return productRepository.countByUserAndDeletedDateIsNull(user);
     }
 }

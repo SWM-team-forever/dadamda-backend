@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.service.user.UserService;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VideoService {
 
     private final VideoRepository videoRepository;
+    private final UserService userService;
 
     @Transactional
     public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -94,5 +96,11 @@ public class VideoService {
                 updateScrapRequest.getPlayTime(), updateScrapRequest.getPublishedDate(),
                 updateScrapRequest.getGenre());
         return video;
+    }
+
+    @Transactional
+    public Long getVideoCount(String email) {
+        User user = userService.validateUser(email);
+        return videoRepository.countByUserAndDeletedDateIsNull(user);
     }
 }

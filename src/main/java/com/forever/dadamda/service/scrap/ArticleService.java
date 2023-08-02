@@ -6,6 +6,7 @@ import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
+import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final UserService userService;
 
     @Transactional
     public Article saveArticle(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -51,5 +53,11 @@ public class ArticleService {
                 updateScrapRequest.getBlogName());
 
         return article;
+    }
+
+    @Transactional
+    public Long getArticleCount(String email) {
+        User user = userService.validateUser(email);
+        return articleRepository.countByUserAndDeletedDateIsNull(user);
     }
 }
