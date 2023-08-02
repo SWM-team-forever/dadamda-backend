@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
                 version = "v1"),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Local Server"),
-                @Server(url = "https://api.dadamda.me:8080", description = "Product Server")
+                @Server(url = "https://api.dadamda.me", description = "Product Server")
         }
 )
 
