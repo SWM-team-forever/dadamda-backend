@@ -30,8 +30,10 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf"));
-        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT", "OPTIONS", "PATCH"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://dadamda.me",
+                "https://www.dadamda.me", "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf"));
+        config.setAllowedMethods(
+                Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -42,31 +44,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-         http
+        http
                 .csrf().disable()
-                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                 .and()
-                    .cors().configurationSource(corsConfigurationSource())
-                 .and()
-                    .headers().frameOptions().disable()
-                 .and()
-                    .authorizeRequests()
-                        .antMatchers("/h2-console/**", "/actuator/**",
-                                "/","/api-docs/**", "/swagger-ui/**").permitAll()
-                        .antMatchers("/v1/**").hasRole(Role.USER.name())
-                        .anyRequest().authenticated()
-                 .and()
-                    .logout()
-                        .logoutSuccessUrl("/")
-                 .and()
-                    .addFilterBefore(new JwtAuthFilter(tokenService),
-                            UsernamePasswordAuthenticationFilter.class)
-                    .oauth2Login()
-                        .successHandler(oAuth2SuccessHandler)
-                            .userInfoEndpoint()
-                            .userService(customOAuth2UserService);
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .headers().frameOptions().disable()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/h2-console/**", "/actuator/**",
+                        "/", "/api-docs/**", "/swagger-ui/**").permitAll()
+                .antMatchers("/v1/**").hasRole(Role.USER.name())
+                .anyRequest().authenticated()
+                .and()
+                .logout()
+                .logoutSuccessUrl("/")
+                .and()
+                .addFilterBefore(new JwtAuthFilter(tokenService),
+                        UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login()
+                .successHandler(oAuth2SuccessHandler)
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
 
-         return http.build();
+        return http.build();
     }
 }
