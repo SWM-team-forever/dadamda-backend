@@ -7,6 +7,7 @@ import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.OtherRepository;
+import java.util.Optional;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -26,10 +27,16 @@ public class OtherService {
 
     @Transactional
     public Other saveOther(JSONObject crawlingResponse, User user, String pageUrl) {
+
         Other other = Other.builder().user(user).pageUrl(pageUrl)
-                .title(crawlingResponse.get("title").toString())
-                .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
-                .description(crawlingResponse.get("description").toString()).build();
+                .title(Optional.ofNullable(crawlingResponse.get("title")).map(Object::toString)
+                        .orElse(null))
+                .thumbnailUrl(Optional.ofNullable(crawlingResponse.get("thumbnail_url"))
+                        .map(Object::toString).orElse(null))
+                .description(Optional.ofNullable(crawlingResponse.get("description"))
+                        .map(Object::toString)
+                        .orElse(null))
+                .build();
 
         return otherRepository.save(other);
     }
