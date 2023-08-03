@@ -11,12 +11,12 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ScrapRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,12 @@ public class ScrapService {
         //2. 람다에게 api 요청
         JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
 
-        String type = crawlingResponse.get("type").toString();
+        String type = "";
+        try {
+            type = crawlingResponse.get("type").toString();
+        } catch (NullPointerException e) {
+            throw new NotFoundException(ErrorCode.NOT_EXISTS);
+        }
 
         //3. DB 저장
         switch (type) {
@@ -65,11 +70,8 @@ public class ScrapService {
                 return articleService.saveArticle(crawlingResponse, user, pageUrl);
             case "product":
                 return productService.saveProduct(crawlingResponse, user, pageUrl);
-            case "other":
-                return otherService.saveOther(crawlingResponse, user, pageUrl);
         }
-
-        return null;
+        return otherService.saveOther(crawlingResponse, user, pageUrl);
     }
 
     @Transactional
