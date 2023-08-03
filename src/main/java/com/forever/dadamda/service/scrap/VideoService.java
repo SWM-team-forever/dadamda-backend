@@ -6,6 +6,11 @@ import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.VideoRepository;
+import com.forever.dadamda.service.TimeService;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -16,32 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class VideoService {
 
     private final VideoRepository videoRepository;
-
-    @Transactional
-    public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
-        Long watchedCnt = null;
-        Long playTime = null;
-
-        if (crawlingResponse.get("watched_cnt") != null) {
-            watchedCnt = Long.parseLong(crawlingResponse.get("watched_cnt").toString());
-        }
-        if (crawlingResponse.get("play_time") != null) {
-            playTime = Long.parseLong(crawlingResponse.get("play_time").toString());
-        }
-
-        Video video = Video.builder().user(user).pageUrl(pageUrl)
-                .title(crawlingResponse.get("title").toString())
-                .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
-                .description(crawlingResponse.get("description").toString())
-                .embedUrl(crawlingResponse.get("embed_url").toString())
-                .channelName(crawlingResponse.get("channel_name").toString())
-                //.channelImageUrl(crawlingVideoResponse.get("channel_image_url").toString())
-                .watchedCnt(watchedCnt).playTime(playTime)
-                //.publishedDate(LocalDateTime.parse(crawlingVideoResponse.get("published_date").toString(), formatter))
-                .siteName(crawlingResponse.get("site_name").toString()).build();
-
-        return videoRepository.save(video);
-    }
 
     public static String formatViewCount(long count) {
         if (count >= 100000000) {
@@ -79,6 +58,37 @@ public class VideoService {
             long remainingMinutes = minutes % 60;
             return String.format("%d:%02d:%02d", hours, remainingMinutes, remainingSeconds);
         }
+    }
+
+
+
+    @Transactional
+    public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
+
+        Video video = Video.builder().user(user).pageUrl(pageUrl)
+                .title(Optional.ofNullable(crawlingResponse.get("title")).map(Object::toString)
+                        .orElse(null))
+                .thumbnailUrl(Optional.ofNullable(crawlingResponse.get("thumbnail_url"))
+                        .map(Object::toString).orElse(null))
+                .description(Optional.ofNullable(crawlingResponse.get("description"))
+                        .map(Object::toString).orElse(null))
+                .embedUrl(Optional.ofNullable(crawlingResponse.get("embed_url")).map(Object::toString)
+                        .orElse(null))
+                .channelName(Optional.ofNullable(crawlingResponse.get("channel_name")).map(Object::toString)
+                        .orElse(null))
+                .channelImageUrl(Optional.ofNullable(crawlingResponse.get("channel_image_url"))
+                        .map(Object::toString).orElse(null))
+                .watchedCnt(Optional.ofNullable(crawlingResponse.get("watched_cnt")).map(Object::toString)
+                        .map(Long::parseLong).orElse(null))
+                .playTime(Optional.ofNullable(crawlingResponse.get("play_time")).map(Object::toString)
+                        .map(Long::parseLong).orElse(null))
+                .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date")).map(Object::toString)
+                        .map(TimeService::parseToLocalDateTime).orElse(null))
+                .siteName(Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
+                        .orElse(null))
+                .build();
+
+        return videoRepository.save(video);
     }
 
     @Transactional
