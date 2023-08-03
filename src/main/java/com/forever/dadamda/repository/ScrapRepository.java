@@ -9,7 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ScrapRepository extends JpaRepository<Scrap, Long> {
+
     Optional<Scrap> findByPageUrlAndUserAndDeletedDateIsNull(String pageUrl, User user);
+
     Optional<Scrap> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
+
     Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
+
+    Long countByUserAndDeletedDateIsNull(User user);
 }

@@ -13,4 +13,5 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     Optional<Video> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
 
+    Long countByUserAndDeletedDateIsNull(User user);
 }

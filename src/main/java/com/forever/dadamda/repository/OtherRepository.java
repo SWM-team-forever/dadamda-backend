@@ -13,4 +13,5 @@ public interface OtherRepository extends JpaRepository<Other, Long> {
 
     Optional<Other> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
 
+    Long countByUserAndDeletedDateIsNull(User user);
 }

@@ -1,9 +1,11 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.service.user.UserService;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.VideoRepository;
 import com.forever.dadamda.service.TimeService;
@@ -13,6 +15,10 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VideoService {
 
     private final VideoRepository videoRepository;
+    private final UserService userService;
 
     public static String formatViewCount(long count) {
         if (count >= 100000000) {
@@ -103,5 +110,25 @@ public class VideoService {
                 updateScrapRequest.getPlayTime(), updateScrapRequest.getPublishedDate(),
                 updateScrapRequest.getGenre());
         return video;
+    }
+
+    @Transactional
+    public Long getVideoCount(String email) {
+        User user = userService.validateUser(email);
+        return videoRepository.countByUserAndDeletedDateIsNull(user);
+    }
+
+    @Transactional
+    public Slice<GetVideoResponse> getVideos(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
+        Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return videoSlice.map(GetVideoResponse::of);
     }
 }

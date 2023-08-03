@@ -12,4 +12,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Slice<Product>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
 
     Optional<Product> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
+
+    Long countByUserAndDeletedDateIsNull(User user);
 }

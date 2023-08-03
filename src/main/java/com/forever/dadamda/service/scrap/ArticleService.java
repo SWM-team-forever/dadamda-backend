@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.scrap.GetArticleResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
@@ -8,8 +9,13 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
 import com.forever.dadamda.service.TimeService;
 import java.util.Optional;
+import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final UserService userService;
 
     @Transactional
     public Article saveArticle(JSONObject crawlingResponse, User user, String pageUrl) {
@@ -49,16 +56,34 @@ public class ArticleService {
     @Transactional
     public Article updateArticle(User user, UpdateScrapRequest updateScrapRequest) {
         Article article = articleRepository.findByIdAndUserAndDeletedDateIsNull(
-                updateScrapRequest.getScrapId(), user).orElseThrow(
-                () -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP)
-        );
+                        updateScrapRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
         article.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         article.updateArticle(updateScrapRequest.getAuthor(),
-                updateScrapRequest.getAuthorImageUrl(),
-                updateScrapRequest.getPublishedDate(),
+                updateScrapRequest.getAuthorImageUrl(), updateScrapRequest.getPublishedDate(),
                 updateScrapRequest.getBlogName());
 
         return article;
+    }
+
+    @Transactional
+    public Long getArticleCount(String email) {
+        User user = userService.validateUser(email);
+        return articleRepository.countByUserAndDeletedDateIsNull(user);
+    }
+
+    @Transactional
+    public Slice<GetArticleResponse> getArticles(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
+        Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(user,
+                pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return articleSlice.map(GetArticleResponse::of);
     }
 }

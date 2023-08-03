@@ -3,6 +3,7 @@ package com.forever.dadamda.config;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
@@ -16,7 +17,11 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(title = "다담다 API 명세서",
                 description = "신개념 컨텐츠 맞춤 스크랩 서비스, 다담다",
-                version = "v1")
+                version = "v1"),
+        servers = {
+                @Server(url = "http://localhost:8080", description = "Local Server"),
+                @Server(url = "https://api.dadamda.me", description = "Product Server")
+        }
 )
 
 @RequiredArgsConstructor
