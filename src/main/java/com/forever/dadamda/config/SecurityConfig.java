@@ -31,7 +31,7 @@ public class SecurityConfig {
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://dadamda.me",
-                "https://www.dadamda.me", "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf"));
+                "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj"));
         config.setAllowedMethods(
                 Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
