@@ -6,6 +6,8 @@ import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
+import com.forever.dadamda.service.TimeService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -19,20 +21,27 @@ public class ArticleService {
 
     @Transactional
     public Article saveArticle(JSONObject crawlingResponse, User user, String pageUrl) {
-        String authorImageUrl = null;
-
-        if (crawlingResponse.get("author_image_url") != null) {
-            authorImageUrl = crawlingResponse.get("author_image_url").toString();
-        }
 
         Article article = Article.builder().user(user).pageUrl(pageUrl)
-                .title(crawlingResponse.get("title").toString())
-                .thumbnailUrl(crawlingResponse.get("thumbnail_url").toString())
-                .description(crawlingResponse.get("description").toString())
-                .author(crawlingResponse.get("author").toString()).authorImageUrl(authorImageUrl)
-                .blogName(crawlingResponse.get("blog_name").toString())
-                //.publishedDate(LocalDateTime.parse(crawlingVideoResponse.get("published_date").toString(), formatter))
-                .siteName(crawlingResponse.get("site_name").toString()).build();
+                .title(Optional.ofNullable(crawlingResponse.get("title")).map(Object::toString)
+                        .orElse(null))
+                .thumbnailUrl(Optional.ofNullable(crawlingResponse.get("thumbnail_url"))
+                        .map(Object::toString).orElse(null))
+                .description(Optional.ofNullable(crawlingResponse.get("description"))
+                        .map(Object::toString).orElse(null))
+                .author(Optional.ofNullable(crawlingResponse.get("author")).map(Object::toString)
+                        .orElse(null))
+                .authorImageUrl(Optional.ofNullable(crawlingResponse.get("author_image_url"))
+                        .map(Object::toString).orElse(null))
+                .blogName(
+                        Optional.ofNullable(crawlingResponse.get("blog_name")).map(Object::toString)
+                                .orElse(null))
+                .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date"))
+                        .map(Object::toString).map(
+                                TimeService::parseToLocalDateTime).orElse(null))
+                .siteName(
+                        Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
+                                .orElse(null)).build();
 
         return articleRepository.save(article);
     }
