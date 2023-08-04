@@ -21,13 +21,13 @@ jobs:
         uses: samin/mysql-action@v1
         with:
           character set server: 'utf8'
-          mysql database: 'dadamda-temp'
-          mysql user: 'smilejune'
+          mysql database: 'dadamda'
+          mysql user: 'dadamda'
           mysql password: ${{ secrets.MYSQL_PASSWORD }}
 
       - name: properties 파일 복사
         run: |
-          echo "${{ secrets.APPLICATION_PROD_SECRET_YML }}" | base64 --decode > src/main/resources/application-prod-secret.yml
+          echo "${{ secrets.APPLICATION_TEST_SECRET_YML }}" | base64 --decode > src/main/resources/application.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

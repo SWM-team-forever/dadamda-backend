@@ -43,3 +43,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+---
+# 테스트 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
