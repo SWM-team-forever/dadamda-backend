@@ -1,8 +1,10 @@
-name: API server CI/CD
+name: Create Release
 
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
 
 env:
   S3_BUCKET_NAME: dadamda-deploy
@@ -80,3 +82,15 @@ jobs:
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=dadamda-deploy,bundleType=zip,key=dadamda-api.zip \
           --region ap-northeast-2
+          
+      - name: 버전 정보 추출
+        run: echo "##[set-output name=version;]$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
+        id: extract_version_name
+
+      - name: Release 생성
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract_version_name.outputs.version }}
+          release_name: ${{ steps.extract_version_name.outputs.version }}
