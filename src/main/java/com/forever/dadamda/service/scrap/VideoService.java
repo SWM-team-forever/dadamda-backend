@@ -50,6 +50,9 @@ public class VideoService {
     }
 
     public static String formatPlayTime(Long seconds) {
+        if(seconds == null) {
+            return null;
+        }
         long minutes = seconds / 60;
         long remainingSeconds = seconds % 60;
 

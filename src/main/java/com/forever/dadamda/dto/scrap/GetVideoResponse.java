@@ -1,8 +1,8 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.entity.scrap.Video;
+import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.scrap.VideoService;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -33,6 +33,7 @@ public class GetVideoResponse {
     private String embedUrl;
     private String playTime;
     private String watchedCnt;
+    private Long publishedDate;
 
     public static GetVideoResponse of(Video video) {
         return new GetVideoResponseBuilder()
@@ -50,6 +51,7 @@ public class GetVideoResponse {
                 .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
                 .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
+                .publishedDate(TimeService.fromLocalDateTime(video.getPublishedDate()))
                 .build();
     }
 }
