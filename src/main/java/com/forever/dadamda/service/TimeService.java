@@ -11,4 +11,8 @@ public class TimeService{
     public static LocalDateTime fromUnixTime(long unixTime) {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTime), ZoneOffset.UTC);
     }
+
+    public static Long fromLocalDateTime(LocalDateTime localDateTime) {
+        return localDateTime.toEpochSecond(ZoneOffset.UTC);
+    }
 }

@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.entity.scrap.Article;
+import com.forever.dadamda.service.TimeService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class GetArticleResponse {
     private String author;
     private String authorImageUrl;
     private String blogName;
-    private LocalDateTime publishedDate;
+    private Long publishedDate;
 
     public static GetArticleResponse of(Article article) {
         return new GetArticleResponseBuilder()
@@ -44,7 +45,7 @@ public class GetArticleResponse {
                 .author(article.getAuthor())
                 .authorImageUrl(article.getAuthorImageUrl())
                 .blogName(article.getBlogName())
-                .publishedDate(article.getPublishedDate())
+                .publishedDate(TimeService.fromLocalDateTime(article.getPublishedDate()))
                 .memoList(article.getMemoList().stream().map(GetMemoResponse::of).collect(Collectors.toList()))
                 .build();
     }

@@ -4,6 +4,7 @@ import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
+import com.forever.dadamda.service.TimeService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class GetScrapResponse {
     private String author;
     private String authorImageUrl;
     private String blogName;
-    private LocalDateTime publishedDate;
+    private Long publishedDate;
 
     // Product 부분
     private String price;
@@ -63,7 +64,7 @@ public class GetScrapResponse {
                     .author(article.getAuthor())
                     .authorImageUrl(article.getAuthorImageUrl())
                     .blogName(article.getBlogName())
-                    .publishedDate(article.getPublishedDate());
+                    .publishedDate(TimeService.fromLocalDateTime(article.getPublishedDate()));
         } else if (scrap instanceof Video) {
             Video video = (Video) scrap;
             getScrapResponse.dType("video")
