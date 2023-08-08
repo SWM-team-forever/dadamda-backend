@@ -5,14 +5,11 @@ import com.forever.dadamda.dto.scrap.GetVideoResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
-import com.forever.dadamda.service.user.UserService;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.VideoRepository;
 import com.forever.dadamda.service.TimeService;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import com.forever.dadamda.service.user.UserService;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
@@ -68,7 +65,6 @@ public class VideoService {
     }
 
 
-
     @Transactional
     public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
 
@@ -79,20 +75,26 @@ public class VideoService {
                         .map(Object::toString).orElse(null))
                 .description(Optional.ofNullable(crawlingResponse.get("description"))
                         .map(Object::toString).orElse(null))
-                .embedUrl(Optional.ofNullable(crawlingResponse.get("embed_url")).map(Object::toString)
-                        .orElse(null))
-                .channelName(Optional.ofNullable(crawlingResponse.get("channel_name")).map(Object::toString)
+                .embedUrl(
+                        Optional.ofNullable(crawlingResponse.get("embed_url")).map(Object::toString)
+                                .orElse(null))
+                .channelName(Optional.ofNullable(crawlingResponse.get("channel_name"))
+                        .map(Object::toString)
                         .orElse(null))
                 .channelImageUrl(Optional.ofNullable(crawlingResponse.get("channel_image_url"))
                         .map(Object::toString).orElse(null))
-                .watchedCnt(Optional.ofNullable(crawlingResponse.get("watched_cnt")).map(Object::toString)
+                .watchedCnt(Optional.ofNullable(crawlingResponse.get("watched_cnt"))
+                        .map(Object::toString)
                         .map(Long::parseLong).orElse(null))
-                .playTime(Optional.ofNullable(crawlingResponse.get("play_time")).map(Object::toString)
-                        .map(Long::parseLong).orElse(null))
-                .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date")).map(Object::toString)
-                        .map(TimeService::parseToLocalDateTime).orElse(null))
-                .siteName(Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
-                        .orElse(null))
+                .playTime(
+                        Optional.ofNullable(crawlingResponse.get("play_time")).map(Object::toString)
+                                .map(Long::parseLong).orElse(null))
+                .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date"))
+                        .map(Object::toString).map(Long::parseLong)
+                        .map(TimeService::fromUnixTime).orElse(null))
+                .siteName(
+                        Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
+                                .orElse(null))
                 .build();
 
         return videoRepository.save(video);

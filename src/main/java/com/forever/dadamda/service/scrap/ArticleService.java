@@ -8,8 +8,8 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.ArticleRepository;
 import com.forever.dadamda.service.TimeService;
-import java.util.Optional;
 import com.forever.dadamda.service.user.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
@@ -44,8 +44,8 @@ public class ArticleService {
                         Optional.ofNullable(crawlingResponse.get("blog_name")).map(Object::toString)
                                 .orElse(null))
                 .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date"))
-                        .map(Object::toString).map(
-                                TimeService::parseToLocalDateTime).orElse(null))
+                        .map(Object::toString).map(Long::parseLong).map(
+                                TimeService::fromUnixTime).orElse(null))
                 .siteName(
                         Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
                                 .orElse(null)).build();

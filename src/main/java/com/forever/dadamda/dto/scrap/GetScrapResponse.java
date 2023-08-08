@@ -4,7 +4,8 @@ import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
-import java.time.LocalDateTime;
+import com.forever.dadamda.service.TimeService;
+import com.forever.dadamda.service.scrap.VideoService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -33,7 +34,7 @@ public class GetScrapResponse {
     private String author;
     private String authorImageUrl;
     private String blogName;
-    private LocalDateTime publishedDate;
+    private Long publishedDate;
 
     // Product 부분
     private String price;
@@ -42,9 +43,8 @@ public class GetScrapResponse {
     private String channelImageUrl;
     private String channelName;
     private String embedUrl;
-    private String genre;
-    private Long playTime;
-    private Long watchedCnt;
+    private String playTime;
+    private String watchedCnt;
 
     public static GetScrapResponse of(Scrap scrap) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
@@ -55,7 +55,8 @@ public class GetScrapResponse {
                 .siteName(scrap.getSiteName())
                 .thumbnailUrl(scrap.getThumbnailUrl())
                 .title(scrap.getTitle())
-                .memoList(scrap.getMemoList().stream().map(GetMemoResponse::of).collect(Collectors.toList()));
+                .memoList(scrap.getMemoList().stream().map(GetMemoResponse::of)
+                        .collect(Collectors.toList()));
 
         if (scrap instanceof Article) {
             Article article = (Article) scrap;
@@ -63,16 +64,15 @@ public class GetScrapResponse {
                     .author(article.getAuthor())
                     .authorImageUrl(article.getAuthorImageUrl())
                     .blogName(article.getBlogName())
-                    .publishedDate(article.getPublishedDate());
+                    .publishedDate(TimeService.fromLocalDateTime(article.getPublishedDate()));
         } else if (scrap instanceof Video) {
             Video video = (Video) scrap;
             getScrapResponse.dType("video")
                     .embedUrl(video.getEmbedUrl())
                     .channelImageUrl(video.getChannelImageUrl())
                     .channelName(video.getChannelName())
-                    .genre(video.getGenre())
-                    .playTime(video.getPlayTime())
-                    .watchedCnt(video.getWatchedCnt());
+                    .playTime(VideoService.formatPlayTime(video.getPlayTime()))
+                    .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()));
         } else if (scrap instanceof Product) {
             Product product = (Product) scrap;
             getScrapResponse.dType("product")
