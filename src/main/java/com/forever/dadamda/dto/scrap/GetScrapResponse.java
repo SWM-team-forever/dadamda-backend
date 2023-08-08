@@ -72,7 +72,8 @@ public class GetScrapResponse {
                     .channelImageUrl(video.getChannelImageUrl())
                     .channelName(video.getChannelName())
                     .playTime(VideoService.formatPlayTime(video.getPlayTime()))
-                    .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()));
+                    .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
+                    .publishedDate(TimeService.fromLocalDateTime(video.getPublishedDate()));
         } else if (scrap instanceof Product) {
             Product product = (Product) scrap;
             getScrapResponse.dType("product")

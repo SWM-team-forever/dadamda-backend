@@ -1,0 +1,35 @@
+name: Lint Code Base
+
+on:
+  push:
+    branches-ignore: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build:
+    name: Lint Code Base
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      ################################
+      # Run Linter against code base #
+      ################################
+      - name: Lint Code Base
+        uses: super-linter/super-linter@v5
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: develop
+          VALIDATE_XML: true
+          JAVA_FILE_NAME: intellij-java-google-style.xml
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
