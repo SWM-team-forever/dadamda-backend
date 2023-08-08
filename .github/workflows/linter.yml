@@ -30,5 +30,6 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: develop
+          VALIDATE_XML: true
           JAVA_FILE_NAME: intellij-java-google-style.xml
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
