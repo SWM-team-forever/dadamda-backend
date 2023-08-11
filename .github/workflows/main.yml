@@ -30,7 +30,7 @@ jobs:
 
       - name: properties 파일 복사
         run: |
-          echo "${{ secrets.APPLICATION_PROD_SECRET_YML }}" | base64 --decode > src/main/resources/application-prod-secret.yml
+          echo "${{ secrets.APPLICATION_DEV_SECRET_YML }}" | base64 --decode > src/main/resources/application-dev-secret.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
