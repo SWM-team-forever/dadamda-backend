@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev, dev-secret
+    active: local, local-secret
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -20,11 +20,11 @@ springdoc:
     - /v1/**
 
 ---
-# 개발 환경 설정 파일
+# 로컬 환경 설정 파일
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: local
 
   jpa:
     show_sql: true
@@ -34,11 +34,11 @@ spring:
       hibernate:
         format_sql: true
 ---
-# 배포 환경 설정 파일
+# 개발 서버 환경 설정 파일
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: dev
 
   jpa:
     hibernate:

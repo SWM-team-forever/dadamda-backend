@@ -3,8 +3,8 @@ package com.forever.dadamda.config;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.filter.JwtAuthFilter;
 import com.forever.dadamda.handler.OAuth2SuccessHandler;
-import com.forever.dadamda.service.user.CustomOAuth2UserService;
 import com.forever.dadamda.service.TokenService;
+import com.forever.dadamda.service.user.CustomOAuth2UserService;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +31,8 @@ public class SecurityConfig {
 
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://dadamda.me",
-                "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj"));
+                "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj",
+                "https://dev.dadamda.me"));
         config.setAllowedMethods(
                 Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));

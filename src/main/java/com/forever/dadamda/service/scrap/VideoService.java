@@ -37,13 +37,17 @@ public class VideoService {
             double thousandCount = count / 1000.0;
             return formatCountWithUnit(thousandCount, "천회");
         } else {
-            return Long.toString(count) + "회";
+            return count + "회";
         }
     }
 
     private static String formatCountWithUnit(double count, String unit) {
-        if (count == (long) count) {
-            return String.format("%d%s", (long) count, unit);
+        if (count >= 10.0) {
+            if (count == (long) count) {
+                return String.format("%d%s", (long) count, unit);
+            } else {
+                return String.format("%.1f%s", count, unit);
+            }
         } else {
             return String.format("%.1f%s", count, unit);
         }
