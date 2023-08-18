@@ -1,4 +1,4 @@
-name: Dev API Server Release
+name: Dev API Server deploy
 
 on:
   push:
