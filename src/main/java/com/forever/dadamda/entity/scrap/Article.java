@@ -38,11 +38,8 @@ public class Article extends Scrap {
         this.blogName = blogName;
     }
 
-    public void updateArticle(String author, String authorImageUrl, LocalDateTime publishedDate,
-            String blogName) {
+    public void updateArticle(String author, String blogName) {
         this.author = author;
-        this.authorImageUrl = authorImageUrl;
-        this.publishedDate = publishedDate;
         this.blogName = blogName;
     }
 }

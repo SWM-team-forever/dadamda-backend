@@ -21,26 +21,17 @@ public class UpdateScrapRequest {
     private String dType;
 
     private String description;
-    private String pageUrl;
     private String siteName;
-    private String thumbnailUrl;
     private String title;
     private List<GetMemoResponse> memoList;
 
     // Article 부분
     private String author;
-    private String authorImageUrl;
     private String blogName;
-    private LocalDateTime publishedDate;
 
     // Product 부분
     private String price;
 
     // Video 부분
-    private String channelImageUrl;
     private String channelName;
-    private String embedUrl;
-    private String genre;
-    private Long playTime;
-    private Long watchedCnt;
 }

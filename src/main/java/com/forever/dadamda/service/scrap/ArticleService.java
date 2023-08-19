@@ -61,7 +61,6 @@ public class ArticleService {
         article.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         article.updateArticle(updateScrapRequest.getAuthor(),
-                updateScrapRequest.getAuthorImageUrl(), updateScrapRequest.getPublishedDate(),
                 updateScrapRequest.getBlogName());
 
         return article;
