@@ -114,10 +114,7 @@ public class VideoService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
         video.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
-        video.updateVideo(updateScrapRequest.getChannelName(),
-                updateScrapRequest.getChannelImageUrl(), updateScrapRequest.getWatchedCnt(),
-                updateScrapRequest.getPlayTime(), updateScrapRequest.getPublishedDate(),
-                updateScrapRequest.getGenre());
+        video.updateVideo(updateScrapRequest.getChannelName());
         return video;
     }
 
