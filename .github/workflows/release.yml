@@ -56,4 +56,4 @@ jobs:
       - name: Auto Scaling Group Update
         id: asg-update
         run: |
-            aws autoscaling update-auto-scaling-group --auto-scaling-group-name dadamda-api-asg --launch-template dadamda-api-template-for-auto-scaling --min-size 2 --max-size 4 --desired-capacity 2 --region ap-northeast-2
+            aws autoscaling update-auto-scaling-group --auto-scaling-group-name dadamda-api-asg --launch-template LaunchTemplateId=lt-0a6a01f89ac2eac38 --min-size 2 --max-size 4 --desired-capacity 2 --region ap-northeast-2
