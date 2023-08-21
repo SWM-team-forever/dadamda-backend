@@ -9,10 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
 @Entity
+@ToString(exclude = "scrapList")
 public class User extends BaseTimeEntity {
 
     @Id

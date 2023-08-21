@@ -28,10 +28,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             , Authentication authentication) throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        log.info("onAuthenticationSuccess oAuth2User: {}", oAuth2User.getAttributes());
         String email = oAuth2User.getAttribute("email");
 
         String token = tokenService.generateToken(email, "USER");
-
+        log.info("onAuthenticationSuccess token: {}", token);
+        log.info("onAuthenticationSuccess redirect url: {}", LOGIN_REDIRECT_URL+token);
         response.sendRedirect(LOGIN_REDIRECT_URL+token);
     }
 }
