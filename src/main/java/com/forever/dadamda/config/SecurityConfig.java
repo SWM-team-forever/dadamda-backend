@@ -2,6 +2,7 @@ package com.forever.dadamda.config;
 
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.filter.JwtAuthFilter;
+import com.forever.dadamda.handler.OAuth2FailureHandler;
 import com.forever.dadamda.handler.OAuth2SuccessHandler;
 import com.forever.dadamda.service.TokenService;
 import com.forever.dadamda.service.user.CustomOAuth2UserService;
@@ -24,6 +25,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenService tokenService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -67,6 +69,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
                 .successHandler(oAuth2SuccessHandler)
+                .failureHandler(oAuth2FailureHandler)
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService);
 
