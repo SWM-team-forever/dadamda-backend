@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.user.OAuthAttributes;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -17,6 +18,7 @@ import java.util.Collections;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
@@ -35,7 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 userNameAttributeName, oAuth2User.getAttributes());
 
         User user = saveOrUpdate(attributes);
-
+        log.info("loadUser user: {}", user);
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
                 attributes.getAttributes(), attributes.getNameAttributeKey());
@@ -46,7 +48,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         User user = userRepository.findByEmailAndDeletedDateIsNull(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getProfileUrl()))
                 .orElse(attributes.toEntity());
-
         return userRepository.save(user);
     }
 }
