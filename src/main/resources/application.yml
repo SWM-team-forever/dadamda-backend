@@ -43,6 +43,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+---
+# 배포 서버 환경 설정 파일
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 ---
 # 테스트 환경 설정 파일
