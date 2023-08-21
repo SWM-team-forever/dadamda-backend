@@ -2,6 +2,7 @@ package com.forever.dadamda.entity.user;
 
 import com.forever.dadamda.entity.BaseTimeEntity;
 import com.forever.dadamda.entity.scrap.Scrap;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @ToString(exclude = "scrapList")
-public class User extends BaseTimeEntity {
+public class User extends BaseTimeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
