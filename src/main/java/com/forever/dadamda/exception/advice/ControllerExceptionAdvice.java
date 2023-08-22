@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
 
-    @ResponseStatus(HttpStatus.OK)
+    /**
+     * 400 Bad Request (잘못된 요청, Validation Exception)
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BindException.class)
     private ApiResponse<Object> handleValidationError(BindException e) {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
