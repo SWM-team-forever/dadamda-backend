@@ -66,7 +66,7 @@ public class ScrapController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "스크랩 조회", description = "여러개의 스크랩을 조회할 수 있습니다.")
+    @Operation(summary = "스크랩 조회", description = "여러 개의 스크랩을 조회할 수 있습니다.")
     @GetMapping("/v1/scraps")
     public ApiResponse<Slice<GetScrapResponse>> getScraps(Pageable pageable,
             Authentication authentication) {
@@ -74,6 +74,16 @@ public class ScrapController {
         String email = authentication.getName();
 
         return ApiResponse.success(scrapService.getScraps(email, pageable));
+    }
+
+    @Operation(summary = "스크랩 단 건 조회", description = "한 개의 스크랩을 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/{scrapId}")
+    public ApiResponse<GetScrapResponse> getScrap(@PathVariable("scrapId") Long scrapId,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.getScrap(email, scrapId));
     }
 
     @Operation(summary = "상품 조회", description = "여러개의 상품을 조회할 수 있습니다.")

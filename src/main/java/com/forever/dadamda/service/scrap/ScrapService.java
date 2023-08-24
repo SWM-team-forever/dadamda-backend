@@ -99,6 +99,16 @@ public class ScrapService {
     }
 
     @Transactional
+    public GetScrapResponse getScrap(String email, Long scrapId) {
+        User user = userService.validateUser(email);
+
+        Scrap scrap = scrapRepository.findByIdAndUserAndDeletedDateIsNull(scrapId, user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return GetScrapResponse.of(scrap);
+    }
+
+    @Transactional
     public Scrap updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
         User user = userService.validateUser(email);
 
