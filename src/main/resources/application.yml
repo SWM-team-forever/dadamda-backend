@@ -1,9 +1,6 @@
 spring:
   profiles:
-    active: local, local-secret
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    active: local, local-secret, test, test-secret
 
 springdoc:
   swagger-ui:
