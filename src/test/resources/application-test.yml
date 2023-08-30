@@ -9,8 +9,3 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
-
-# 스프링 시큐리티 설정
-security.jwt.token:
-  secret-key: test
-  expire-length : 1000000000
