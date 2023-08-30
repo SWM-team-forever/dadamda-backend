@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.13'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'jacoco'
 }
 
 group = 'com.forever'
@@ -21,39 +22,59 @@ repositories {
     mavenCentral()
 }
 
+test {
+    finalizedBy jacocoTestReport
+    useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.enabled true
+    }
+}
+
 dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // oauth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'com.h2database:h2'
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    //swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
-
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
+    // redis
+//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
 }
