@@ -16,6 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @ToString(exclude = "scrapList")
+@Table(name = "users")
 public class User extends BaseTimeEntity implements Serializable {
 
     @Id
