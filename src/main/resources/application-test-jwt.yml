@@ -1,0 +1,6 @@
+#2023-08-30 12:40 security.jwt.token 설정
+# test를 위해서, 임의로 만든 값입니다.
+
+security.jwt.token:
+  secret-key: e3116ee289507800f274429c97a9973be80fba655bd35f3752d6ee31058f275eff74d97ea0
+  expire-length : 10000000000000
