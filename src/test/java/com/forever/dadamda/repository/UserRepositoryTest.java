@@ -2,7 +2,6 @@ package com.forever.dadamda.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.forever.dadamda.DadamdaApplication;
 import com.forever.dadamda.entity.user.Provider;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.entity.user.User;
@@ -11,11 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 @DataJpaTest
-@ContextConfiguration(classes = {DadamdaApplication.class})
 @TestPropertySource(locations = "classpath:application-test.yml")
 public class UserRepositoryTest {
     @Autowired
