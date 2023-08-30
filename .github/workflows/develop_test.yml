@@ -4,13 +4,12 @@ on:
   pull_request:
     branches: [ develop ]
 
+permissions:
+  pull-requests: write
+
 jobs:
   test:
     runs-on: ubuntu-22.04
-
-    permissions:
-      issues: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v2
