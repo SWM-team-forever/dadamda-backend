@@ -78,4 +78,16 @@ public class ScrapController {
         String email = authentication.getName();
         return ApiResponse.success(GetScrapCountResponse.of(scrapService.getScrapCount(email)));
     }
+
+    @Operation(summary = "스크랩 검색", description = "스크랩을 검색할 수 있습니다.")
+    @GetMapping("/v1/scraps/search")
+    public ApiResponse<Slice<GetScrapResponse>> searchScraps(
+            @RequestParam("keyword") String keyword,
+            Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(scrapService.searchScraps(email, keyword, pageable));
+    }
 }

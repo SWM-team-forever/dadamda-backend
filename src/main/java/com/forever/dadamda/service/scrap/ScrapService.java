@@ -119,4 +119,16 @@ public class ScrapService {
         User user = userService.validateUser(email);
         return scrapRepository.countByUserAndDeletedDateIsNull(user);
     }
+
+    @Transactional
+    public Slice<GetScrapResponse> searchScraps(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Scrap> scrapSlice = scrapRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetScrapResponse::of);
+    }
 }
