@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local, local-secret, test, test-jwt
+    active: local, local-secret
 
 springdoc:
   swagger-ui:
