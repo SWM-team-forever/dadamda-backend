@@ -3,7 +3,6 @@ package com.forever.dadamda.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.forever.dadamda.DadamdaApplication;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.Provider;
 import com.forever.dadamda.entity.user.Role;
@@ -16,9 +15,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 public class ScrapServiceTest {
 
