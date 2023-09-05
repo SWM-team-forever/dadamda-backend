@@ -1,7 +1,7 @@
-package com.forever.dadamda.dto.scrap;
+package com.forever.dadamda.dto.scrap.other;
 
+import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.scrap.Other;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;

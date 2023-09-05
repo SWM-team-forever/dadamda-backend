@@ -1,12 +1,12 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.GetOtherResponse;
+import com.forever.dadamda.dto.scrap.other.GetOtherResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.OtherRepository;
+import com.forever.dadamda.repository.scrap.OtherRepository;
 import java.util.Optional;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;

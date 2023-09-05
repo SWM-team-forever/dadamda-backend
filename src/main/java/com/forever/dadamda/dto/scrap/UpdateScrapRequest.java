@@ -1,7 +1,7 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
+import com.forever.dadamda.dto.memo.GetMemoResponse;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

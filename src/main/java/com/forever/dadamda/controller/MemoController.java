@@ -1,9 +1,9 @@
 package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
-import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
-import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
-import com.forever.dadamda.dto.scrap.CreateMemoRequest;
+import com.forever.dadamda.dto.memo.CreateHighlightRequest;
+import com.forever.dadamda.dto.memo.CreateHighlightResponse;
+import com.forever.dadamda.dto.memo.CreateMemoRequest;
 import com.forever.dadamda.service.MemoService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
