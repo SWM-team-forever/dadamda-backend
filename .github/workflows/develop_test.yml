@@ -23,7 +23,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test with Gradle
-        run: ./gradlew -Dspring.profiles.active=test,test-jwt test
+        run: ./gradlew --info test
 
       - name: Test Coverage Report
         id: jacoco
