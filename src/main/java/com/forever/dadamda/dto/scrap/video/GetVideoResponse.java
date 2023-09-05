@@ -1,5 +1,6 @@
-package com.forever.dadamda.dto.scrap;
+package com.forever.dadamda.dto.scrap.video;
 
+import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.scrap.VideoService;

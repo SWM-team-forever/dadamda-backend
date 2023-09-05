@@ -1,4 +1,4 @@
-package com.forever.dadamda.dto.scrap;
+package com.forever.dadamda.dto.memo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

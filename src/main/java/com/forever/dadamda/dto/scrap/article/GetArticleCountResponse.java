@@ -1,11 +1,12 @@
-package com.forever.dadamda.dto.scrap;
+package com.forever.dadamda.dto.scrap.article;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor(staticName = "of")
-public class GetVideoCountResponse {
+public class GetArticleCountResponse {
 
     private Long count;
+
 }

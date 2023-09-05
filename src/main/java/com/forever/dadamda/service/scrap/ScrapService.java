@@ -8,7 +8,7 @@ import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.ScrapRepository;
+import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
