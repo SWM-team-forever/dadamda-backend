@@ -9,3 +9,29 @@ spring:
     hibernate:
       ddl-auto: create-drop
     database-platform: org.hibernate.dialect.H2Dialect
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test
+            client-secret: test
+            redirect-uri : test
+            scope: test
+
+security :
+  jwt :
+    token:
+      secret-key: tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt
+      expire-length : 10000000000000
+
+crawling:
+  server :
+    post:
+      api:
+        endPoint: test
+
+login:
+  redirect:
+    url: "test"
