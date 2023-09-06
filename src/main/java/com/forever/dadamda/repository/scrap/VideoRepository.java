@@ -14,4 +14,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     Optional<Video> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
 
     Long countByUserAndDeletedDateIsNull(User user);
+
+    Optional<Slice<Video>> findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(User user, String title, String description, Pageable pageable);
 }
