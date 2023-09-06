@@ -1,16 +1,16 @@
 package com.forever.dadamda.service;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.CreateHighlightRequest;
-import com.forever.dadamda.dto.scrap.CreateHighlightResponse;
-import com.forever.dadamda.dto.scrap.CreateMemoRequest;
-import com.forever.dadamda.dto.scrap.GetMemoResponse;
+import com.forever.dadamda.dto.memo.CreateHighlightRequest;
+import com.forever.dadamda.dto.memo.CreateHighlightResponse;
+import com.forever.dadamda.dto.memo.CreateMemoRequest;
+import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.MemoRepository;
-import com.forever.dadamda.repository.ScrapRepository;
+import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.scrap.ScrapService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
