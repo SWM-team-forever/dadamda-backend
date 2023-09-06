@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -36,4 +37,15 @@ public class ProductController {
                 GetProductCountResponse.of(productService.getProductCount(email)));
     }
 
+    @Operation(summary = "상품 스크랩 검색", description = "타이틀과 설명의 키워드로 상품 스크랩을 검색할 수 있습니다.")
+    @GetMapping("/v1/scraps/products/search")
+    public ApiResponse<Slice<GetProductResponse>> searchProducts(
+            @RequestParam("keyword") String keyword,
+            Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(productService.searchProducts(email, keyword, pageable));
+    }
 }
