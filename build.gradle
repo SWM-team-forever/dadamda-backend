@@ -36,6 +36,17 @@ jacocoTestReport {
     reports {
         xml.enabled true
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ["com/forever/dadamda/dto/**",
+                              "com/forever/dadamda/exception/**",
+                              "com/forever/dadamda/filter/**",
+                              "com/forever/dadamda/config/**",
+                              "com/forever/dadamda/handler/**"])
+        }))
+    }
 }
 
 dependencies {

@@ -72,4 +72,16 @@ public class ProductService {
 
         return scrapSlice.map(GetProductResponse::of);
     }
+
+    @Transactional
+    public Slice<GetProductResponse> searchProducts(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Product> scrapSlice = productRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetProductResponse::of);
+    }
 }
