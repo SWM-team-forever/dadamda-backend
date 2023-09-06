@@ -137,4 +137,16 @@ public class VideoService {
 
         return videoSlice.map(GetVideoResponse::of);
     }
+
+    @Transactional
+    public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Video> scrapSlice = videoRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetVideoResponse::of);
+    }
 }
