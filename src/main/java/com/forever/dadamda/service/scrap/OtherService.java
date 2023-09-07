@@ -70,4 +70,16 @@ public class OtherService {
 
         return otherSlice.map(GetOtherResponse::of);
     }
+
+    @Transactional
+    public Slice<GetOtherResponse> searchOthers(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Other> otherSlice = otherRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return otherSlice.map(GetOtherResponse::of);
+    }
 }
