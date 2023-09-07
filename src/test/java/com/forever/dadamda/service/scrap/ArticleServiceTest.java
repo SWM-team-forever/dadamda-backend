@@ -16,21 +16,20 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 @Sql(scripts = "classpath:truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 @Sql(scripts = "classpath:setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 @TestPropertySource(locations = "classpath:application-test.yml")
-public class VideoServiceTest {
+public class ArticleServiceTest {
 
     @Autowired
-    private VideoService videoService;
+    private ArticleService articleService;
 
     String email = "1234@naver.com";
 
-    @Test   //한 개의 비디오에 해당하는 키워드를 검색했을 때 1개의 비디오을 반환하는지 확인
-    void should_Return_two_videos_When_Searching_for_a_keyword_that_corresponds_to_two_videos() {
+    @Test   //아티클에 해당하지 않는 키워드를 검색했을 때 0개의 아티클을 반환하는지 확인
+    void should_Return_zero_article_When_Searching_for_a_keyword_that_not_corresponds_to_article() {
         //given
         //when
         //then
-        int searchedArticleNumber = videoService.searchVideos(email, "오늘",
-                PageRequest.of(0, 10)).getNumberOfElements();
+        int searchedArticleNumber = articleService.searchArticles(email, "MAC", PageRequest.of(0, 10)).getNumberOfElements();
 
-        assertEquals(searchedArticleNumber, 2);
+        assertEquals( searchedArticleNumber, 0);
     }
 }
