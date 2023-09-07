@@ -11,3 +11,6 @@ VALUES (1, 2, 'https://www.youtube.com/123', '오늘의 일기 1', 'Today is sun
 
 INSERT INTO scrap (user_id, scrap_id, page_url, title, description, site_name, d_type, watched_cnt, play_time, published_date)
 VALUES (1, 3, 'https://www.youtube.com/1234', '오늘의 일기 2', 'Today is rainy', 'Youtube', 'Video', 100, 1000, '2020-01-01');
+
+INSERT INTO scrap (user_id, scrap_id, page_url, title, description, site_name, d_type, published_date)
+VALUES (1, 4, 'https://www.velog.com/1234', '오늘의 일기 3', 'Today is rainy', 'Velog', 'Article', '2020-01-01');
