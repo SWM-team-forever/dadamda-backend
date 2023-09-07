@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -34,5 +35,17 @@ public class ArticleController {
         String email = authentication.getName();
         return ApiResponse.success(
                 GetArticleCountResponse.of(articleService.getArticleCount(email)));
+    }
+
+    @Operation(summary = "아티클 스크랩 검색", description = "타이틀과 설명의 키워드로 아티클 스크랩을 검색할 수 있습니다.")
+    @GetMapping("/v1/scraps/articles/search")
+    public ApiResponse<Slice<GetArticleResponse>> searchArticles(
+            @RequestParam("keyword") String keyword,
+            Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(articleService.searchArticles(email, keyword, pageable));
     }
 }

@@ -85,4 +85,16 @@ public class ArticleService {
 
         return articleSlice.map(GetArticleResponse::of);
     }
+
+    @Transactional
+    public Slice<GetArticleResponse> searchArticles(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Article> scrapSlice = articleRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetArticleResponse::of);
+    }
 }
