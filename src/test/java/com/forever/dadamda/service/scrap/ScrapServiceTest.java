@@ -31,7 +31,8 @@ public class ScrapServiceTest {
     Long notExistentScrapId = 100L;
 
     @Test
-    void IfExistentMemberDeletesOneScrapThenReturnSuccess() {
+    void should_return_success_When_existent_member_deletes_one_scrap() {
+        // IfExistentMemberDeletesOneScrapThenReturnSuccess
         //given
         //when
         scrapService.deleteScraps(email, existentScrapId);
@@ -41,7 +42,7 @@ public class ScrapServiceTest {
     }
 
     @Test
-    void IfExistentMemberDeletesNonExistentScrapThenReturnNotFoundException() {
+    void should_return_not_found_exception_When_existent_member_deletes_not_existent_scrap() {
         //given
         //when
         //then
@@ -50,7 +51,7 @@ public class ScrapServiceTest {
     }
 
     @Test
-    void IfNonExistentMemberDeletesScrapThenReturnNotFoundException() {
+    void should_return_not_found_exception_When_not_existent_member_deletes_scrap() {
         //given
         //when
         //then
