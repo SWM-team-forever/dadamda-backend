@@ -28,7 +28,7 @@ public class ScrapServiceTest {
 
     String email = "1234@naver.com";
     Long existentScrapId = 1L;
-    Long notExistentScrapId = 4L;
+    Long notExistentScrapId = 100L;
 
     @Test
     void IfExistentMemberDeletesOneScrapThenReturnSuccess() {
