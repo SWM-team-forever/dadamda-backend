@@ -14,4 +14,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
 
     Long countByUserAndDeletedDateIsNull(User user);
+
+    Optional<Slice<Article>> findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(User user, String title, String description, Pageable pageable);
 }
