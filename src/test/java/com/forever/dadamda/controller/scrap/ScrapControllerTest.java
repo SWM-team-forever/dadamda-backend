@@ -48,4 +48,28 @@ public class ScrapControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("Coupang의 맥북 상품"));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_title_of_the_1st_note_is_Hello_When_the_notes_are_sorted_in_ascending_order_based_on_their_created_date() throws Exception {
+        // 메모의 created date가 생성된 날짜 오래된 순서대로 정렬될 때, 1번째 메모의 title이 "Hello"라면 테스트 통과
+        mockMvc.perform(get("/v1/scraps")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].memoText").value("Hello 1"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_created_date_of_the_1st_note_is_2023_01_01_When_the_notes_are_sorted_in_ascending_order_based_on_their_created_date() throws Exception {
+        // 메모의 created date가 생성된 날짜 오래된 순서대로 정렬될 때, 1번째 메모의 created_date가 2023-01-01이라면 테스트 통과
+        mockMvc.perform(get("/v1/scraps")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].createdDate").value("2023-01-01T11:11:01"));
+    }
 }
