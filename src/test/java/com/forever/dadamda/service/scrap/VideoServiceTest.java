@@ -23,14 +23,14 @@ public class VideoServiceTest {
 
     String email = "1234@naver.com";
 
-    @Test   //한 개의 상품에 해당하는 키워드를 검색했을 때 1개의 상품을 반환하는지 확인
-    void should_Return_two_product_When_Searching_for_a_keyword_that_corresponds_to_two_videos() {
+    @Test   //한 개의 비디오에 해당하는 키워드를 검색했을 때 1개의 비디오을 반환하는지 확인
+    void should_Return_two_videos_When_Searching_for_a_keyword_that_corresponds_to_two_videos() {
         //given
         //when
         //then
-        int searchedProductNumber = videoService.searchVideos(email, "오늘",
+        int searchedArticleNumber = videoService.searchVideos(email, "오늘",
                 PageRequest.of(0, 10)).getNumberOfElements();
 
-        assertEquals(searchedProductNumber, 2);
+        assertEquals(searchedArticleNumber, 2);
     }
 }
