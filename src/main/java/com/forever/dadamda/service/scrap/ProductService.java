@@ -1,12 +1,12 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.GetProductResponse;
+import com.forever.dadamda.dto.scrap.product.GetProductResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.ProductRepository;
+import com.forever.dadamda.repository.scrap.ProductRepository;
 import java.util.Optional;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +69,18 @@ public class ProductService {
 
         Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetProductResponse::of);
+    }
+
+    @Transactional
+    public Slice<GetProductResponse> searchProducts(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Product> scrapSlice = productRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return scrapSlice.map(GetProductResponse::of);
     }

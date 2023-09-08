@@ -1,5 +1,6 @@
 package com.forever.dadamda.dto.scrap;
 
+import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;

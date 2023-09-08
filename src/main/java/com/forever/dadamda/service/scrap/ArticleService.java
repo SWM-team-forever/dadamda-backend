@@ -1,12 +1,12 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.GetArticleResponse;
+import com.forever.dadamda.dto.scrap.article.GetArticleResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.ArticleRepository;
+import com.forever.dadamda.repository.scrap.ArticleRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
 import java.util.Optional;
@@ -84,5 +84,17 @@ public class ArticleService {
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return articleSlice.map(GetArticleResponse::of);
+    }
+
+    @Transactional
+    public Slice<GetArticleResponse> searchArticles(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Article> scrapSlice = articleRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetArticleResponse::of);
     }
 }

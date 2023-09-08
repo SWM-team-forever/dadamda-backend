@@ -2,40 +2,32 @@ package com.forever.dadamda.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.forever.dadamda.entity.user.Provider;
-import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.entity.user.User;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @DataJpaTest
+@ActiveProfiles("test")
+@Sql(scripts = "classpath:truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "classpath:setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 @TestPropertySource(locations = "classpath:application-test.yml")
 public class UserRepositoryTest {
+
     @Autowired
     private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        User user = User.builder()
-                .name("koko")
-                .provider(Provider.GOOGLE)
-                .role(Role.USER)
-                .email("1234@naver.com")
-                .profileUrl("https://www.naver.com")
-                .build();
-
-        userRepository.save(user);
-    }
+    String email = "1234@naver.com";
 
     @Test
     void IfUserExistsThenFindByEmailAndDeletedDateIsNullReturnsSuccess() {
         // given
         //when
-        Optional<User> result = userRepository.findByEmailAndDeletedDateIsNull("1234@naver.com");
+        Optional<User> result = userRepository.findByEmailAndDeletedDateIsNull(email);
 
         // then
         assertThat(result.isPresent()).isTrue();

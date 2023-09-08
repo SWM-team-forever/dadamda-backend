@@ -1,12 +1,12 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.GetOtherResponse;
+import com.forever.dadamda.dto.scrap.other.GetOtherResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.OtherRepository;
+import com.forever.dadamda.repository.scrap.OtherRepository;
 import java.util.Optional;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +67,18 @@ public class OtherService {
 
         Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return otherSlice.map(GetOtherResponse::of);
+    }
+
+    @Transactional
+    public Slice<GetOtherResponse> searchOthers(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Other> otherSlice = otherRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return otherSlice.map(GetOtherResponse::of);
     }

@@ -1,12 +1,12 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.dto.scrap.GetVideoResponse;
+import com.forever.dadamda.dto.scrap.video.GetVideoResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.VideoRepository;
+import com.forever.dadamda.repository.scrap.VideoRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
 import java.util.Optional;
@@ -136,5 +136,17 @@ public class VideoService {
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return videoSlice.map(GetVideoResponse::of);
+    }
+
+    @Transactional
+    public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Video> scrapSlice = videoRepository
+                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        user, keyword, keyword, pageable)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        return scrapSlice.map(GetVideoResponse::of);
     }
 }

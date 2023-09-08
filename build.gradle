@@ -36,6 +36,17 @@ jacocoTestReport {
     reports {
         xml.enabled true
     }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: ["com/forever/dadamda/dto/**",
+                              "com/forever/dadamda/exception/**",
+                              "com/forever/dadamda/filter/**",
+                              "com/forever/dadamda/config/**",
+                              "com/forever/dadamda/handler/**"])
+        }))
+    }
 }
 
 dependencies {
@@ -74,7 +85,10 @@ dependencies {
     //swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
 
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter:6.28.0'
+
     // redis
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
 }

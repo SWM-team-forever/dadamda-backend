@@ -1,4 +1,4 @@
-package com.forever.dadamda.repository;
+package com.forever.dadamda.repository.scrap;
 
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
@@ -17,4 +17,5 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
 
     Long countByUserAndDeletedDateIsNull(User user);
+    Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(User user, String title, String description, Pageable pageable);
 }
