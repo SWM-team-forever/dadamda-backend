@@ -20,6 +20,9 @@ spring:
             redirect-uri : test
             scope: test
 
+  session:
+    store-type: none
+
 security :
   jwt :
     token:

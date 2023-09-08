@@ -89,6 +89,6 @@ dependencies {
     implementation 'io.sentry:sentry-spring-boot-starter:6.28.0'
 
     // redis
-//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis:2.6.1'
 }
