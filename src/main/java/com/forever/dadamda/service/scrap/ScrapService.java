@@ -33,6 +33,7 @@ public class ScrapService {
     private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
+    private final PlaceService placeService;
 
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
@@ -70,6 +71,8 @@ public class ScrapService {
                 return articleService.saveArticle(crawlingResponse, user, pageUrl);
             case "product":
                 return productService.saveProduct(crawlingResponse, user, pageUrl);
+            case "place" :
+                return placeService.savePlace(crawlingResponse, user, pageUrl);
         }
         return otherService.saveOther(crawlingResponse, user, pageUrl);
     }
