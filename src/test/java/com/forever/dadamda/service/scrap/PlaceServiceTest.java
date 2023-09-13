@@ -1,9 +1,15 @@
 package com.forever.dadamda.service.scrap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
+import com.forever.dadamda.entity.scrap.Place;
+import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.repository.UserRepository;
+import com.forever.dadamda.repository.scrap.PlaceRepository;
 import java.math.BigDecimal;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +27,12 @@ public class PlaceServiceTest {
 
     @Autowired
     private PlaceService placeService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PlaceRepository placeRepository;
 
     String email = "1234@naver.com";
 
@@ -41,5 +53,29 @@ public class PlaceServiceTest {
 
         assertEquals(longitude.scale(), 14);
         assertEquals(longitude.precision(), 17);
+    }
+
+    @Test
+    void should_it_is_saved_as_the_first_scrap_When_storing_place_in_a_blank_scrap_db() {
+        // 아무 것도 없는 DB에 장소 스크랩 저장시, DB에 첫 번째 스크랩으로 저장되는지 확인
+        //given
+        placeRepository.deleteAll();
+
+        User user = userRepository.findById(1L).get();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("title", "서울역 1호선");
+        jsonObject.put("address", "서울 용산구 한강대로 405 (우)04320");
+        jsonObject.put("lat", 37.422);
+        jsonObject.put("lng", -122.084);
+        jsonObject.put("phonenum", "02-1544-7788");
+        jsonObject.put("zipcode", "123456");
+
+        //when
+        Place place = placeService.savePlace(jsonObject, user,
+                "https://www.kakao.map.com/maps/place/kakao");
+
+        //then
+        assertThat(place.getTitle()).isEqualTo(placeRepository.findById(1L).get().getTitle());
     }
 }
