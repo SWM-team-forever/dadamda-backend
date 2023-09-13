@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
@@ -13,8 +14,8 @@ import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -35,6 +36,9 @@ public class ScrapService {
     private final UserService userService;
     private final PlaceService placeService;
 
+    @Value("${crawling.server.post.api.endPoint}")
+    private String crawlingApiEndPoint;
+
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
         User user = userService.validateUser(email);
@@ -53,17 +57,10 @@ public class ScrapService {
 
     @Transactional
     public Scrap saveScraps(User user, String pageUrl) throws ParseException {
-        //2. 람다에게 api 요청
-        JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
+        WebClientBodyResponse crawlingResponse = webClientService.crawlingItem(crawlingApiEndPoint, pageUrl);
 
-        String type = "";
-        try {
-            type = crawlingResponse.get("type").toString();
-        } catch (NullPointerException e) {
-            throw new NotFoundException(ErrorCode.NOT_EXISTS);
-        }
+        String type = crawlingResponse.getType();
 
-        //3. DB 저장
         switch (type) {
             case "video":
                 return videoService.saveVideo(crawlingResponse, user, pageUrl);

@@ -1,11 +1,12 @@
 package com.forever.dadamda.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
+import com.forever.dadamda.dto.webClient.WebClientResponse;
 import java.util.HashMap;
 import java.util.Map;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,27 +14,35 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class WebClientService {
 
-    @Value("${crawling.server.post.api.endPoint}")
-    private String crawlingApiEndPoint;
-
     @Transactional
-    public JSONObject crawlingItem(String pageUrl) throws ParseException {
+    public WebClientBodyResponse crawlingItem(String crawlingApiEndPoint, String pageUrl) {
         Map<String, Object> bodyMap = new HashMap<>();
         bodyMap.put("url", pageUrl);
+
         WebClient webClient = WebClient.builder().baseUrl(crawlingApiEndPoint).build();
 
-        Map<String, Object> response = webClient.post()
+        WebClientResponse webClientResponse = webClient.post()
                 .bodyValue(bodyMap)
                 .retrieve()
-                .bodyToMono(Map.class)
+                .bodyToMono(WebClientResponse.class)
                 .block();
 
-        JSONParser jsonParser = new JSONParser();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        Object obj = jsonParser.parse(response.get("body").toString());
+        WebClientBodyResponse webClientBodyResponse;
+        try {
+            if (webClientResponse == null) {
+                throw new RuntimeException("webClientResponse is null");
+            }
+            webClientBodyResponse = objectMapper.readValue(
+                    webClientResponse.getBody(),
+                    WebClientBodyResponse.class);
 
-        JSONObject jsonObject = (JSONObject) obj;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-        return jsonObject;
+        return webClientBodyResponse;
     }
 }
