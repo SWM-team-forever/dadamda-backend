@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.repository.scrap.PlaceRepository;
 import java.math.BigDecimal;
-import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,16 +63,16 @@ public class PlaceServiceTest {
 
         User user = userRepository.findById(1L).get();
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("title", "서울역 1호선");
-        jsonObject.put("address", "서울 용산구 한강대로 405 (우)04320");
-        jsonObject.put("lat", 37.422);
-        jsonObject.put("lng", -122.084);
-        jsonObject.put("phonenum", "02-1544-7788");
-        jsonObject.put("zipcode", "123456");
+        WebClientBodyResponse webClientBodyResponse = WebClientBodyResponse.builder()
+                .title("서울역 1호선")
+                .address("서울 용산구 한강대로 405 (우)04320")
+                .latitude(new BigDecimal("37.422"))
+                .longitude(new BigDecimal("-122.084"))
+                .phoneNumber("02-1544-7788")
+                .build();
 
         //when
-        Place place = placeService.savePlace(jsonObject, user,
+        Place place = placeService.savePlace(webClientBodyResponse, user,
                 "https://www.kakao.map.com/maps/place/kakao");
 
         //then

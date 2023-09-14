@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import java.math.BigDecimal;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,4 +53,14 @@ public class WebClientBodyResponse {
     @JsonProperty("homepage")
     private String homepageUrl;
     private String category;
+
+    @Builder
+    public WebClientBodyResponse(String title, String address, BigDecimal latitude,
+            BigDecimal longitude, String phoneNumber) {
+        this.address = address;
+        this.title = title;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.phoneNumber = phoneNumber;
+    }
 }
