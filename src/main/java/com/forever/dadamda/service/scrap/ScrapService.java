@@ -13,6 +13,7 @@ import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +44,6 @@ public class ScrapService {
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
         User user = userService.validateUser(email);
 
-        //1. 해당 링크 중복 확인 (삭제된 링크면 중복 X)
         boolean isPresentItem = scrapRepository.findByPageUrlAndUserAndDeletedDateIsNull(pageUrl,
                 user).isPresent();
         if (isPresentItem) {
@@ -59,19 +59,23 @@ public class ScrapService {
     public Scrap saveScraps(User user, String pageUrl) throws ParseException {
         WebClientBodyResponse crawlingResponse = webClientService.crawlingItem(crawlingApiEndPoint, pageUrl);
 
-        String type = crawlingResponse.getType();
-
-        switch (type) {
-            case "video":
-                return videoService.saveVideo(crawlingResponse, user, pageUrl);
-            case "article":
-                return articleService.saveArticle(crawlingResponse, user, pageUrl);
-            case "product":
-                return productService.saveProduct(crawlingResponse, user, pageUrl);
-            case "place" :
-                return placeService.savePlace(crawlingResponse, user, pageUrl);
-        }
-        return otherService.saveOther(crawlingResponse, user, pageUrl);
+        return Optional.ofNullable(crawlingResponse)
+                .map(response -> {
+                    String type = response.getType();
+                    switch (type) {
+                        case "video":
+                            return videoService.saveVideo(response, user, pageUrl);
+                        case "article":
+                            return articleService.saveArticle(response, user, pageUrl);
+                        case "product":
+                            return productService.saveProduct(response, user, pageUrl);
+                        case "place":
+                            return placeService.savePlace(response, user, pageUrl);
+                        default:
+                            return otherService.saveOther(response, user, pageUrl);
+                    }
+                })
+                .orElse(otherService.saveOther(new WebClientBodyResponse(), user, pageUrl));
     }
 
     @Transactional
