@@ -1,6 +1,5 @@
 package com.forever.dadamda.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
@@ -10,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class WebClientService {
@@ -21,28 +21,32 @@ public class WebClientService {
 
         WebClient webClient = WebClient.builder().baseUrl(crawlingApiEndPoint).build();
 
-        WebClientResponse webClientResponse = webClient.post()
-                .bodyValue(bodyMap)
-                .retrieve()
-                .bodyToMono(WebClientResponse.class)
-                .block();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        WebClientBodyResponse webClientBodyResponse;
         try {
-            if (webClientResponse == null) {
-                throw new RuntimeException("webClientResponse is null");
-            }
-            webClientBodyResponse = objectMapper.readValue(
-                    webClientResponse.getBody(),
+            WebClientResponse webClientResponse = webClient.post()
+                    .bodyValue(bodyMap)
+                    .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        System.out.println("Response status code: " + clientResponse.statusCode());
+                        throw new RuntimeException("4xx");
+                    })
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        System.out.println("Response status code: " + clientResponse.statusCode());
+                        throw new RuntimeException("5xx");
+                    })
+                    .bodyToMono(WebClientResponse.class)
+                    .block();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            return objectMapper.readValue(
+                    webClientResponse != null ? webClientResponse.getBody() : null,
                     WebClientBodyResponse.class);
 
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+
+        } catch (Exception e) {
+            return null;
         }
 
-        return webClientBodyResponse;
     }
 }
