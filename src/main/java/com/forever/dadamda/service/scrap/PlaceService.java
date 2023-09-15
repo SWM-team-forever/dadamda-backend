@@ -40,7 +40,7 @@ public class PlaceService {
     public Place savePlace(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
 
         Place place = Place.builder()
-                .user(user).pageUrl(pageUrl)
+                .user(user).pageUrl(crawlingResponse.getPageUrl())
                 .title(crawlingResponse.getTitle())
                 .thumbnailUrl(crawlingResponse.getThumbnailUrl())
                 .description(crawlingResponse.getDescription())
