@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,9 +16,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Sql(scripts = "classpath:truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = "classpath:setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-@TestPropertySource(locations = "classpath:application-test.yml")
+@Sql(scripts = "/truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "/scrap-setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 public class ScrapControllerTest {
 
     @Autowired
@@ -71,5 +69,19 @@ public class ScrapControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].createdDate").value("2023-01-01T11:11:01"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_all_saved_categories_are_gotten_When_getting_all_scraps() throws Exception {
+        // 전체 스크랩 조회할 때, 모든 카테고리가 조회되는지 확인
+        mockMvc.perform(get("/v1/scraps")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].dtype").value("place"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].dtype").value("article"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[3].dtype").value("video"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[5].dtype").value("product"));
     }
 }

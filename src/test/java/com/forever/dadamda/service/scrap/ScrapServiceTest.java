@@ -27,7 +27,7 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts = "/truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = "/setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "/scrap-setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 public class ScrapServiceTest {
 
     @Autowired
