@@ -23,6 +23,8 @@ public class PlaceControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    Long placeCount = 2L;
+
     @Test
     @WithCustomMockUser
     public void should_latitude_is_returned_in_the_decimal_type_When_getting_place_list() throws Exception {
@@ -36,5 +38,15 @@ public class PlaceControllerTest {
                         .value("서울 빌딩"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].latitude")
                         .value(37.00000000000000));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_the_number_of_the_existent_places_When_getting_place_count()
+            throws Exception {
+        //
+        mockMvc.perform(get("/v1/scraps/places/count").header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count").value(placeCount));
     }
 }
