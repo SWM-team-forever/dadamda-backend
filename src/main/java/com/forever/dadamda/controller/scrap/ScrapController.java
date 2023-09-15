@@ -6,7 +6,6 @@ import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapCountResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
-import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.service.MemoService;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,8 +66,7 @@ public class ScrapController {
             Authentication authentication) {
 
         String email = authentication.getName();
-        Scrap scrap = scrapService.updateScraps(email, updateScrapRequest);
-        memoService.updateMemos(scrap, updateScrapRequest.getMemoList());
+        scrapService.updateScraps(email, updateScrapRequest);
         return ApiResponse.success();
     }
 

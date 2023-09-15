@@ -37,14 +37,13 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(User user, UpdateScrapRequest updateScrapRequest) {
+    public void updateProduct(User user, UpdateScrapRequest updateScrapRequest) {
         Product product = productRepository.findByIdAndUserAndDeletedDateIsNull(
                         updateScrapRequest.getScrapId(), user)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
         product.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         product.updateProduct(updateScrapRequest.getPrice());
-        return product;
     }
 
     @Transactional
