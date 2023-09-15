@@ -42,7 +42,7 @@ public class ArticleService {
     }
 
     @Transactional
-    public Article updateArticle(User user, UpdateScrapRequest updateScrapRequest) {
+    public void updateArticle(User user, UpdateScrapRequest updateScrapRequest) {
         Article article = articleRepository.findByIdAndUserAndDeletedDateIsNull(
                         updateScrapRequest.getScrapId(), user)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
@@ -51,7 +51,6 @@ public class ArticleService {
         article.updateArticle(updateScrapRequest.getAuthor(),
                 updateScrapRequest.getBlogName());
 
-        return article;
     }
 
     @Transactional

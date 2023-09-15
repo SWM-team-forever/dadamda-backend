@@ -1,8 +1,6 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.forever.dadamda.dto.memo.GetMemoResponse;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +21,6 @@ public class UpdateScrapRequest {
     private String description;
     private String siteName;
     private String title;
-    private List<GetMemoResponse> memoList;
 
     // Article 부분
     private String author;

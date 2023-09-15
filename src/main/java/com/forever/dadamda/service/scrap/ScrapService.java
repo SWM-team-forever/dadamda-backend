@@ -103,18 +103,21 @@ public class ScrapService {
     }
 
     @Transactional
-    public Scrap updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
+    public void updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
         User user = userService.validateUser(email);
 
         switch (updateScrapRequest.getDType()) {
             case "product":
-                return productService.updateProduct(user, updateScrapRequest);
+                productService.updateProduct(user, updateScrapRequest);
+                return;
             case "article":
-                return articleService.updateArticle(user, updateScrapRequest);
+                articleService.updateArticle(user, updateScrapRequest);
+                return;
             case "video":
-                return videoService.updateVideo(user, updateScrapRequest);
+                videoService.updateVideo(user, updateScrapRequest);
+                return;
             default:
-                return otherService.updateOther(user, updateScrapRequest);
+                otherService.updateOther(user, updateScrapRequest);
         }
     }
 

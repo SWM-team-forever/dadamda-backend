@@ -37,13 +37,12 @@ public class OtherService {
     }
 
     @Transactional
-    public Other updateOther(User user, UpdateScrapRequest updateScrapRequest) {
+    public void updateOther(User user, UpdateScrapRequest updateScrapRequest) {
         Other other = otherRepository.findByIdAndUserAndDeletedDateIsNull(
                 updateScrapRequest.getScrapId(), user).orElseThrow(() -> new NotFoundException(
-                ErrorCode.NOT_EXISTS_SCRAP)); //동일한 함수가 3개 이상 반복되므로 validateScrap으로 함수 따로 빼기
+                ErrorCode.NOT_EXISTS_SCRAP));
         other.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
-        return other;
     }
 
     @Transactional
