@@ -5,8 +5,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.memo.DeleteMemoRequest;
+import com.forever.dadamda.dto.memo.UpdateMemoRequest;
+import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.MemoRepository;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,5 +56,22 @@ public class MemoServiceTest {
 
         //then
         assertThat((memoRepository.findById(1L)).get().getDeletedDate()).isNotNull();
+    }
+
+    @Test
+    void should_update_date_and_memo_text_are_updated_becomes_not_null_When_modifying_a_note() {
+        // 스크랩의 메모를 수정할 때, update_date와 memo_text가 업데이트된다.
+        UpdateMemoRequest updateMemoRequest = UpdateMemoRequest.builder().memoText("안녕하세요!")
+                .scrapId(1L).memoId(1L).build();
+
+        //when
+        memoService.updateMemo(existentEmail, updateMemoRequest);
+
+        //then
+        LocalDateTime memoPreviousUpdateDate = LocalDateTime.of(2023, 1, 1, 11, 11, 1);
+
+        Memo memo = (memoRepository.findById(1L)).get();
+        assertThat(memo.getModifiedDate()).isAfter(memoPreviousUpdateDate);
+        assertThat(memo.getMemoText()).isEqualTo("안녕하세요!");
     }
 }

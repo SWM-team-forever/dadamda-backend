@@ -1,9 +1,11 @@
 package com.forever.dadamda.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.memo.DeleteMemoRequest;
+import com.forever.dadamda.dto.memo.UpdateMemoRequest;
 import com.forever.dadamda.mock.WithCustomMockUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +72,54 @@ public class MemoControllerTest {
                         .content(content)
                 )
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_return_400_error_When_modifying_memoText_to_blank()
+            throws Exception {
+        //memoText를 공백으로 수정할 때, 400 에러를 반환하는지 확인
+        //given
+        UpdateMemoRequest updateMemoRequest = UpdateMemoRequest.builder()
+                .memoText(" ")
+                .scrapId(1L)
+                .memoId(1L)
+                .build();
+        String content = objectMapper.writeValueAsString(updateMemoRequest);
+
+        //when
+        //then
+        String result = "{\"resultCode\":\"BR000\",\"message\":\"must not be blank\",\"data\":null}";
+
+        mockMvc.perform(patch("/v1/scraps/memo")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                        .content(content)
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.content().string(result));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_modified_normally_When_modifying_an_existing_memo()
+            throws Exception {
+        //존재하는 메모 수정할 때, 정상적으로 수정된다.
+        //given
+        UpdateMemoRequest updateMemoRequest = UpdateMemoRequest.builder()
+                .memoText("안녕하세요!")
+                .scrapId(1L)
+                .memoId(1L)
+                .build();
+
+        String content = objectMapper.writeValueAsString(updateMemoRequest);
+
+        //when
+        //then
+        mockMvc.perform(patch("/v1/scraps/memo")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-AUTH-TOKEN", "aaaaaaa")
+                .content(content)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
