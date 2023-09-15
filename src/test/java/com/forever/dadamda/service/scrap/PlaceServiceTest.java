@@ -34,7 +34,10 @@ public class PlaceServiceTest {
     @Autowired
     private PlaceRepository placeRepository;
 
-    String email = "1234@naver.com";
+    private final String email = "1234@naver.com";
+    private final String existingPageUrl = "https://www.kakao.map.com/maps/place/kakao";
+    private final String changedPageUrl = "https://www.kakao.map.com/maps/place/kakao2";
+
 
     @Test
     void should_the_precision_of_latitude_and_longitude_are_expressed_up_to_14_digits_When_getting_place_list() {
@@ -64,12 +67,9 @@ public class PlaceServiceTest {
         User user = userRepository.findById(1L).get();
 
         WebClientBodyResponse webClientBodyResponse = WebClientBodyResponse.builder()
-                .title("서울역 1호선")
-                .address("서울 용산구 한강대로 405 (우)04320")
-                .latitude(new BigDecimal("37.422"))
-                .longitude(new BigDecimal("-122.084"))
-                .phoneNumber("02-1544-7788")
-                .build();
+                .title("서울역 1호선").address("서울 용산구 한강대로 405 (우)04320")
+                .latitude(new BigDecimal("37.422")).longitude(new BigDecimal("-122.084"))
+                .phoneNumber("02-1544-7788").build();
 
         //when
         Place place = placeService.savePlace(webClientBodyResponse, user,
@@ -77,5 +77,26 @@ public class PlaceServiceTest {
 
         //then
         assertThat(place.getTitle()).isEqualTo(placeRepository.findById(1L).get().getTitle());
+    }
+
+    @Test
+    void should_it_is_saved_as_pageUrl_received_through_WebClientBodyResponse_When_saving_a_place() {
+        // WebClientBodyResponse를 통해 받은 pageUrl로 저장되는지 확인
+        //given
+        placeRepository.deleteAll();
+
+        User user = userRepository.findById(1L).get();
+
+        WebClientBodyResponse webClientBodyResponse = WebClientBodyResponse.builder()
+                .pageUrl(changedPageUrl).title("서울역 1호선").address("서울 용산구 한강대로 405 (우)04320")
+                .latitude(new BigDecimal("37.422")).longitude(new BigDecimal("-122.084"))
+                .phoneNumber("02-1544-7788").build();
+
+        //when
+        Place place = placeService.savePlace(webClientBodyResponse, user, existingPageUrl);
+
+        //then
+        assertThat(place.getPageUrl()).isEqualTo(changedPageUrl);
+        assertThat(placeRepository.findById(1L).get().getPageUrl()).isEqualTo(changedPageUrl);
     }
 }
