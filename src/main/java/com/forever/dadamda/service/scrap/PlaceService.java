@@ -56,4 +56,10 @@ public class PlaceService {
 
         return placeRepository.save(place);
     }
+
+    @Transactional
+    public Long getPlaceCount(String email) {
+        User user = userService.validateUser(email);
+        return placeRepository.countByUserAndDeletedDateIsNull(user);
+    }
 }

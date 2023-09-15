@@ -1,6 +1,7 @@
 package com.forever.dadamda.controller.scrap;
 
 import com.forever.dadamda.dto.ApiResponse;
+import com.forever.dadamda.dto.scrap.place.GetPlaceCountResponse;
 import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
 import com.forever.dadamda.service.scrap.PlaceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,5 +26,12 @@ public class PlaceController {
         String email = authentication.getName();
 
         return ApiResponse.success(placeService.getPlaces(email, pageable));
+    }
+
+    @Operation(summary = "장소 스크랩 개수 조회", description = "장소 스크랩 개수를 조회할 수 있습니다.")
+    @GetMapping("/v1/scraps/places/count")
+    public ApiResponse<GetPlaceCountResponse> getOtherScrap(Authentication authentication) {
+        String email = authentication.getName();
+        return ApiResponse.success(GetPlaceCountResponse.of(placeService.getPlaceCount(email)));
     }
 }
