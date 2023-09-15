@@ -1,39 +1,50 @@
 package com.forever.dadamda.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
+import com.forever.dadamda.dto.webClient.WebClientResponse;
 import java.util.HashMap;
 import java.util.Map;
-import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class WebClientService {
 
-    @Value("${crawling.server.post.api.endPoint}")
-    private String crawlingApiEndPoint;
-
     @Transactional
-    public JSONObject crawlingItem(String pageUrl) throws ParseException {
+    public WebClientBodyResponse crawlingItem(String crawlingApiEndPoint, String pageUrl) {
         Map<String, Object> bodyMap = new HashMap<>();
         bodyMap.put("url", pageUrl);
+
         WebClient webClient = WebClient.builder().baseUrl(crawlingApiEndPoint).build();
 
-        Map<String, Object> response = webClient.post()
-                .bodyValue(bodyMap)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block();
+        try {
+            WebClientResponse webClientResponse = webClient.post()
+                    .bodyValue(bodyMap)
+                    .retrieve()
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        throw new RuntimeException("4xx");
+                    })
+                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        throw new RuntimeException("5xx");
+                    })
+                    .bodyToMono(WebClientResponse.class)
+                    .block();
 
-        JSONParser jsonParser = new JSONParser();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        Object obj = jsonParser.parse(response.get("body").toString());
+            return objectMapper.readValue(
+                    webClientResponse != null ? webClientResponse.getBody() : null,
+                    WebClientBodyResponse.class);
 
-        JSONObject jsonObject = (JSONObject) obj;
 
-        return jsonObject;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 }

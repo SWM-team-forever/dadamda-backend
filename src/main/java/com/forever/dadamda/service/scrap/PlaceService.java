@@ -1,7 +1,9 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
+import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.scrap.PlaceRepository;
@@ -32,5 +34,26 @@ public class PlaceService {
         return placeRepository.findAllByUserAndDeletedDateIsNull(user, pageRequest)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP))
                 .map(GetPlaceResponse::of);
+    }
+
+    @Transactional
+    public Place savePlace(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
+
+        Place place = Place.builder()
+                .user(user).pageUrl(crawlingResponse.getPageUrl())
+                .title(crawlingResponse.getTitle())
+                .thumbnailUrl(crawlingResponse.getThumbnailUrl())
+                .description(crawlingResponse.getDescription())
+                .address(crawlingResponse.getAddress())
+                .latitude(crawlingResponse.getLatitude())
+                .longitude(crawlingResponse.getLongitude())
+                .phoneNumber(crawlingResponse.getPhoneNumber())
+                .zipCode(crawlingResponse.getZipCode())
+                .homepageUrl(crawlingResponse.getHomepageUrl())
+                .category(crawlingResponse.getCategory())
+                .siteName(crawlingResponse.getSiteName())
+                .build();
+
+        return placeRepository.save(place);
     }
 }
