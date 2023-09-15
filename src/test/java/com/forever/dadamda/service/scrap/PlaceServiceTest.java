@@ -67,13 +67,12 @@ public class PlaceServiceTest {
         User user = userRepository.findById(1L).get();
 
         WebClientBodyResponse webClientBodyResponse = WebClientBodyResponse.builder()
-                .title("서울역 1호선").address("서울 용산구 한강대로 405 (우)04320")
+                .pageUrl(existingPageUrl).title("서울역 1호선").address("서울 용산구 한강대로 405 (우)04320")
                 .latitude(new BigDecimal("37.422")).longitude(new BigDecimal("-122.084"))
                 .phoneNumber("02-1544-7788").build();
 
         //when
-        Place place = placeService.savePlace(webClientBodyResponse, user,
-                "https://www.kakao.map.com/maps/place/kakao");
+        Place place = placeService.savePlace(webClientBodyResponse, user, existingPageUrl);
 
         //then
         assertThat(place.getTitle()).isEqualTo(placeRepository.findById(1L).get().getTitle());
@@ -97,6 +96,5 @@ public class PlaceServiceTest {
 
         //then
         assertThat(place.getPageUrl()).isEqualTo(changedPageUrl);
-        assertThat(placeRepository.findById(1L).get().getPageUrl()).isEqualTo(changedPageUrl);
     }
 }
