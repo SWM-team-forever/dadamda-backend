@@ -4,11 +4,15 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.memo.CreateHighlightRequest;
 import com.forever.dadamda.dto.memo.CreateHighlightResponse;
 import com.forever.dadamda.dto.memo.CreateMemoRequest;
+import com.forever.dadamda.dto.memo.DeleteMemoRequest;
+import com.forever.dadamda.dto.memo.UpdateMemoRequest;
 import com.forever.dadamda.service.MemoService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +44,25 @@ public class MemoController {
         CreateHighlightResponse createHighlightResponse = memoService.createHighlights(email,
                 createHighlightRequest);
         return ApiResponse.success(createHighlightResponse);
+    }
+
+    @Operation(summary = "1개 메모 삭제", description = "단 건의 메모를 삭제합니다.")
+    @DeleteMapping("/v1/scraps/memo")
+    public ApiResponse deleteMemo(
+            @Valid @RequestBody DeleteMemoRequest deleteMemoRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+        memoService.deleteMemo(email, deleteMemoRequest);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "메모 수정", description = "단 건의 메모를 수정합니다.")
+    @PatchMapping("/v1/scraps/memo")
+    public ApiResponse<String> updateMemo(
+            @Valid @RequestBody UpdateMemoRequest updateMemoRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+        memoService.updateMemo(email, updateMemoRequest);
+        return ApiResponse.success();
     }
 }

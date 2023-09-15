@@ -91,14 +91,13 @@ public class VideoService {
     }
 
     @Transactional
-    public Video updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
+    public void updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
         Video video = videoRepository.findByIdAndUserAndDeletedDateIsNull(
                         updateScrapRequest.getScrapId(), user)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
         video.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         video.updateVideo(updateScrapRequest.getChannelName());
-        return video;
     }
 
     @Transactional

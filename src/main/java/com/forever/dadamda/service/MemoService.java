@@ -4,7 +4,8 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.memo.CreateHighlightRequest;
 import com.forever.dadamda.dto.memo.CreateHighlightResponse;
 import com.forever.dadamda.dto.memo.CreateMemoRequest;
-import com.forever.dadamda.dto.memo.GetMemoResponse;
+import com.forever.dadamda.dto.memo.DeleteMemoRequest;
+import com.forever.dadamda.dto.memo.UpdateMemoRequest;
 import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
@@ -14,7 +15,6 @@ import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.scrap.ScrapService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
 import org.springframework.stereotype.Service;
@@ -75,27 +75,32 @@ public class MemoService {
     }
 
     @Transactional
-    public void updateMemos(Scrap scrap, List<GetMemoResponse> getMemoResponseList) {
-        for (GetMemoResponse getMemoResponse : getMemoResponseList) {
-            if (getMemoResponse.getMemoId() > 0) {
-                Memo memo = memoRepository.findByIdAndDeletedDateIsNull(
-                        getMemoResponse.getMemoId()).orElseThrow(
-                        () -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMO));
+    public void deleteMemo(String email, DeleteMemoRequest deleteMemoRequest) {
+        User user = userService.validateUser(email);
 
-                if (getMemoResponse.getMemoText() == null
-                        && getMemoResponse.getMemoImageUrl() == null) {
-                    memo.updateDeletedDate(LocalDateTime.now());
-                } else {
-                    memo.update(getMemoResponse.getMemoText(), getMemoResponse.getMemoImageUrl());
-                }
-            } else {
-                Memo memo = Memo.builder()
-                        .scrap(scrap)
-                        .memoText(getMemoResponse.getMemoText())
-                        .build();
+        Scrap scrap = scrapRepository.findByIdAndUserAndDeletedDateIsNull(
+                        deleteMemoRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-                memoRepository.save(memo);
-            }
-        }
+        Memo memo = memoRepository.findMemoByIdAndScrapAndDeletedDateIsNull(
+                        deleteMemoRequest.getMemoId(), scrap)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMO));
+
+        memo.updateDeletedDate(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateMemo(String email, UpdateMemoRequest updateMemoRequest) {
+        User user = userService.validateUser(email);
+
+        Scrap scrap = scrapRepository.findByIdAndUserAndDeletedDateIsNull(
+                        updateMemoRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        Memo memo = memoRepository.findMemoByIdAndScrapAndDeletedDateIsNull(
+                        updateMemoRequest.getMemoId(), scrap)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMO));
+
+        memo.update(updateMemoRequest.getMemoText());
     }
 }
