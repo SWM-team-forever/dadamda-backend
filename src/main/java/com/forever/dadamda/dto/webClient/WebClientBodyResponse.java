@@ -55,8 +55,9 @@ public class WebClientBodyResponse {
     private String category;
 
     @Builder
-    public WebClientBodyResponse(String title, String address, BigDecimal latitude,
+    public WebClientBodyResponse(String pageUrl, String title, String address, BigDecimal latitude,
             BigDecimal longitude, String phoneNumber) {
+        this.pageUrl = pageUrl;
         this.address = address;
         this.title = title;
         this.latitude = latitude;
