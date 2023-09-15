@@ -26,11 +26,9 @@ public class WebClientService {
                     .bodyValue(bodyMap)
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
-                        System.out.println("Response status code: " + clientResponse.statusCode());
                         throw new RuntimeException("4xx");
                     })
                     .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
-                        System.out.println("Response status code: " + clientResponse.statusCode());
                         throw new RuntimeException("5xx");
                     })
                     .bodyToMono(WebClientResponse.class)
