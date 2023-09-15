@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.memo.CreateHighlightRequest;
 import com.forever.dadamda.dto.memo.CreateHighlightResponse;
 import com.forever.dadamda.dto.memo.CreateMemoRequest;
+import com.forever.dadamda.dto.memo.DeleteMemoRequest;
 import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Scrap;
@@ -97,5 +98,20 @@ public class MemoService {
                 memoRepository.save(memo);
             }
         }
+    }
+
+    @Transactional
+    public void deleteMemo(String email, DeleteMemoRequest deleteMemoRequest) {
+        User user = userService.validateUser(email);
+
+        Scrap scrap = scrapRepository.findByIdAndUserAndDeletedDateIsNull(
+                        deleteMemoRequest.getScrapId(), user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+
+        Memo memo = memoRepository.findMemoByIdAndScrapAndDeletedDateIsNull(
+                        deleteMemoRequest.getMemoId(), scrap)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMO));
+
+        memo.updateDeletedDate(LocalDateTime.now());
     }
 }
