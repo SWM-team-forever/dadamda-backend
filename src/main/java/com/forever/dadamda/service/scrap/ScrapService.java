@@ -131,9 +131,13 @@ public class ScrapService {
     public Slice<GetScrapResponse> searchScraps(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
         Slice<Scrap> scrapSlice = scrapRepository
                 .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageable)
+                        user, keyword, keyword, pageRequest)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return scrapSlice.map(GetScrapResponse::of);

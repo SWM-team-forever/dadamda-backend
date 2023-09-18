@@ -28,14 +28,14 @@ public class VideoControllerTest {
     @Test
     @WithCustomMockUser
     public void should_videos_are_sorted_in_created_date_When_searching_for_multiple_scraps() throws Exception {
-        //여러 개의 스크랩 검색시, 생성 날짜 순서 대로 정렬 되었는 지 확인
+        //여러 개의 스크랩 검색시, 최신 순서 대로 정렬 되었는 지 확인
         mockMvc.perform(get("/v1/scraps/videos/search")
                         .param("keyword", "오늘")
                         .param("page", "0")
                         .param("size", "10")
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("오늘의 일기 1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("오늘의 일기 2"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("오늘의 일기 2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("오늘의 일기 1"));
     }
 }

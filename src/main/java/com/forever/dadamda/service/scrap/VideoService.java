@@ -124,9 +124,13 @@ public class VideoService {
     public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
         Slice<Video> scrapSlice = videoRepository
                 .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageable)
+                        user, keyword, keyword, pageRequest)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return scrapSlice.map(GetVideoResponse::of);
