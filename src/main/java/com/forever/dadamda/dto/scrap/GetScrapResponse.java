@@ -2,11 +2,13 @@ package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.dto.memo.GetMemoResponse;
 import com.forever.dadamda.entity.scrap.Article;
+import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.scrap.VideoService;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -47,6 +49,16 @@ public class GetScrapResponse {
     private String playTime;
     private String watchedCnt;
 
+    // Place 부분
+    private String address;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+    private String phoneNumber;
+    private String zipCode;
+    private String homepageUrl;
+    private String category;
+
+
     public static GetScrapResponse of(Scrap scrap) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
                 .dType("other")
@@ -79,6 +91,16 @@ public class GetScrapResponse {
             Product product = (Product) scrap;
             getScrapResponse.dType("product")
                     .price(product.getPrice());
+        } else if (scrap instanceof Place) {
+            Place place = (Place) scrap;
+            getScrapResponse.dType("place")
+                    .address(place.getAddress())
+                    .latitude(place.getLatitude())
+                    .longitude(place.getLongitude())
+                    .phoneNumber(place.getPhoneNumber())
+                    .zipCode(place.getZipCode())
+                    .homepageUrl(place.getHomepageUrl())
+                    .category(place.getCategory());
         }
 
         return getScrapResponse.build();

@@ -97,4 +97,19 @@ public class PlaceServiceTest {
         //then
         assertThat(place.getPageUrl()).isEqualTo(changedPageUrl);
     }
+
+    @Test
+    void should_it_returns_0_When_getting_the_number_of_non_existent_place_scrap() {
+        // 존재하지 않는 장소 스크랩의 개수 조회시, 0개가 조회되는지 확인
+        //given
+        placeRepository.deleteAll();
+
+        User user = userRepository.findById(1L).get();
+
+        //when
+        Long placeCount = placeService.getPlaceCount(email);
+
+        //then
+        assertThat(placeCount).isEqualTo(0);
+    }
 }

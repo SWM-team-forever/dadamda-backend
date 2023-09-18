@@ -31,7 +31,7 @@ public class OtherController {
 
     @Operation(summary = "기타 스크랩 개수 조회", description = "기타 스크랩 개수 정보를 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/others/count")
-    public ApiResponse<GetOtherCountResponse> getOtherScrap(Authentication authentication) {
+    public ApiResponse<GetOtherCountResponse> getOtherCount(Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(GetOtherCountResponse.of(otherService.getOtherCount(email)));
     }

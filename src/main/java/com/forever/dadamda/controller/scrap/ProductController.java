@@ -31,7 +31,7 @@ public class ProductController {
 
     @Operation(summary = "상품 스크랩 개수 조회", description = "상품 스크랩 개수 정보를 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/products/count")
-    public ApiResponse<GetProductCountResponse> getProductScrap(Authentication authentication) {
+    public ApiResponse<GetProductCountResponse> getProductCount(Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(
                 GetProductCountResponse.of(productService.getProductCount(email)));
