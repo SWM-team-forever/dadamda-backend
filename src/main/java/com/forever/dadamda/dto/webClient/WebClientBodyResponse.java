@@ -55,13 +55,15 @@ public class WebClientBodyResponse {
     private String category;
 
     @Builder
-    public WebClientBodyResponse(String pageUrl, String title, String address, BigDecimal latitude,
-            BigDecimal longitude, String phoneNumber) {
+    public WebClientBodyResponse(String type, String pageUrl, String title, String address, BigDecimal latitude,
+            BigDecimal longitude, String phoneNumber, Long publishedDate) {
+        this.type = type;
         this.pageUrl = pageUrl;
         this.address = address;
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
         this.phoneNumber = phoneNumber;
+        this.publishedDate = publishedDate;
     }
 }
