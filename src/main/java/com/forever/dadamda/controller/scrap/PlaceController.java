@@ -30,7 +30,7 @@ public class PlaceController {
 
     @Operation(summary = "장소 스크랩 개수 조회", description = "장소 스크랩 개수를 조회할 수 있습니다.")
     @GetMapping("/v1/scraps/places/count")
-    public ApiResponse<GetPlaceCountResponse> getOtherScrap(Authentication authentication) {
+    public ApiResponse<GetPlaceCountResponse> getPlaceCount(Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(GetPlaceCountResponse.of(placeService.getPlaceCount(email)));
     }
