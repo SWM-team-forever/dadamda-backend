@@ -5,6 +5,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
+import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
@@ -111,5 +113,27 @@ public class ScrapServiceTest {
         assertThat(scrapService.saveScraps(user, pageUrl)).isInstanceOf(Other.class);
         assertThat(scrapRepository.findByPageUrlAndUserAndDeletedDateIsNull(pageUrl, user)
                 .isPresent()).isTrue();
+    }
+
+    @Test
+    void should_one_article_scrap_is_saved_When_webClientService_crawlingItem_returns_article() throws ParseException {
+        //given
+        memoRepository.deleteAll();
+        scrapRepository.deleteAll();
+
+        WebClientBodyResponse webClientBodyResponse = new WebClientBodyResponse().builder()
+                .title("title")
+                .type("article")
+                .build();
+
+        BDDMockito.when(webClientService.crawlingItem("test", pageUrl))
+                .thenReturn(webClientBodyResponse);
+
+        User user = userRepository.findById(1L).get();
+
+        //when
+        //then
+        assertThat(scrapService.saveScraps(user, pageUrl)).isInstanceOf(Article.class);
+        assertThat(scrapRepository.count()).isEqualTo(1);
     }
 }

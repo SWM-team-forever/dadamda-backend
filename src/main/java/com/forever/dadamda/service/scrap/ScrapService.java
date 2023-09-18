@@ -75,7 +75,7 @@ public class ScrapService {
                             return otherService.saveOther(response, user, pageUrl);
                     }
                 })
-                .orElse(otherService.saveOther(new WebClientBodyResponse(), user, pageUrl));
+                .orElseGet(() -> otherService.saveOther(new WebClientBodyResponse(), user, pageUrl));
     }
 
     @Transactional
