@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,9 +16,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Sql(scripts = "classpath:truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = "classpath:setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-@TestPropertySource(locations = "classpath:application-test.yml")
+@Sql(scripts = "/truncate.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = "/setup.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
 public class ScrapControllerTest {
 
     @Autowired
@@ -47,6 +45,31 @@ public class ScrapControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("Coupang의 맥북 상품"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_return_400_error_When_no_keyword_is_entered() throws Exception {
+        // 검색시 입력한 keyword가 없는 경우 에러 발생
+        mockMvc.perform(get("/v1/scraps/search")
+                        .param("keyword", " ")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_return_no_scrap_When_searching_keywords_for_deleted_scrap() throws Exception {
+        // 삭제된 스크랩의 키워드 검색할 때 검색되지 않음
+        mockMvc.perform(get("/v1/scraps/search")
+                        .param("keyword", "내일")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0]").doesNotExist());
     }
 
     @Test

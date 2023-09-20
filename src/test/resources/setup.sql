@@ -17,6 +17,9 @@ VALUES (1, 3, 'https://www.youtube.com/1234', '오늘의 일기 2', 'Today is ra
 INSERT INTO scrap (user_id, scrap_id, page_url, title, description, site_name, d_type, published_date, created_date)
 VALUES (1, 4, 'https://www.velog.com/1234', '오늘의 일기 3', 'Today is rainy', 'Velog', 'Article', '2020-01-01', '2023-01-03 11:11:01');
 
+INSERT INTO scrap (user_id, scrap_id, page_url, title, description, site_name, d_type, published_date, created_date, deleted_date)
+VALUES (1, 5, 'https://www.velog.com/1234', '내일의 날씨', 'Tomorrow is rainy', 'Velog', 'Article', '2020-01-01', '2023-01-04 11:11:01', '2023-01-05 11:11:01');
+
 -- 메모 데이터 삽입
 INSERT INTO memo (scrap_id, memo_id, memo_text, created_date)
 VALUES (1, 1, 'Hello 1', '2023-01-01 11:11:01');
