@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface ScrapRepository extends JpaRepository<Scrap, Long> {
+public interface ScrapRepository extends JpaRepository<Scrap, Long>, ScrapRepositoryCustom {
 
     Optional<Scrap> findByPageUrlAndUserAndDeletedDateIsNull(String pageUrl, User user);
 
@@ -17,5 +17,4 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
 
     Long countByUserAndDeletedDateIsNull(User user);
-    Optional<Slice<Scrap>> findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(User user, String title, String description, Pageable pageable);
 }
