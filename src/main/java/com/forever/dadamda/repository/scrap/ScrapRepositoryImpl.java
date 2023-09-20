@@ -18,7 +18,8 @@ public class ScrapRepositoryImpl implements ScrapRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<Scrap> searchKeywordInScrapOrderByCreatedDateDesc(User user, String keyword, Pageable pageable) {
+    public Slice<Scrap> searchKeywordInScrapOrderByCreatedDateDesc(User user, String keyword,
+            Pageable pageable) {
         List<Scrap> contents = queryFactory
                 .selectFrom(scrap)
                 .where(
