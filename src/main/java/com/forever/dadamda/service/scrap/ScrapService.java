@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
@@ -12,9 +13,10 @@ import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import net.minidev.json.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -33,12 +35,15 @@ public class ScrapService {
     private final OtherService otherService;
     private final WebClientService webClientService;
     private final UserService userService;
+    private final PlaceService placeService;
+
+    @Value("${crawling.server.post.api.endPoint}")
+    private String crawlingApiEndPoint;
 
     @Transactional
     public CreateScrapResponse createScraps(String email, String pageUrl) throws ParseException {
         User user = userService.validateUser(email);
 
-        //1. 해당 링크 중복 확인 (삭제된 링크면 중복 X)
         boolean isPresentItem = scrapRepository.findByPageUrlAndUserAndDeletedDateIsNull(pageUrl,
                 user).isPresent();
         if (isPresentItem) {
@@ -52,26 +57,25 @@ public class ScrapService {
 
     @Transactional
     public Scrap saveScraps(User user, String pageUrl) throws ParseException {
-        //2. 람다에게 api 요청
-        JSONObject crawlingResponse = webClientService.crawlingItem(pageUrl);
+        WebClientBodyResponse crawlingResponse = webClientService.crawlingItem(crawlingApiEndPoint, pageUrl);
 
-        String type = "";
-        try {
-            type = crawlingResponse.get("type").toString();
-        } catch (NullPointerException e) {
-            throw new NotFoundException(ErrorCode.NOT_EXISTS);
-        }
-
-        //3. DB 저장
-        switch (type) {
-            case "video":
-                return videoService.saveVideo(crawlingResponse, user, pageUrl);
-            case "article":
-                return articleService.saveArticle(crawlingResponse, user, pageUrl);
-            case "product":
-                return productService.saveProduct(crawlingResponse, user, pageUrl);
-        }
-        return otherService.saveOther(crawlingResponse, user, pageUrl);
+        return Optional.ofNullable(crawlingResponse)
+                .map(response -> {
+                    String type = response.getType();
+                    switch (type) {
+                        case "video":
+                            return videoService.saveVideo(response, user, pageUrl);
+                        case "article":
+                            return articleService.saveArticle(response, user, pageUrl);
+                        case "product":
+                            return productService.saveProduct(response, user, pageUrl);
+                        case "place":
+                            return placeService.savePlace(response, user, pageUrl);
+                        default:
+                            return otherService.saveOther(response, user, pageUrl);
+                    }
+                })
+                .orElseGet(() -> otherService.saveOther(new WebClientBodyResponse(), user, pageUrl));
     }
 
     @Transactional
@@ -99,18 +103,21 @@ public class ScrapService {
     }
 
     @Transactional
-    public Scrap updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
+    public void updateScraps(String email, UpdateScrapRequest updateScrapRequest) {
         User user = userService.validateUser(email);
 
         switch (updateScrapRequest.getDType()) {
             case "product":
-                return productService.updateProduct(user, updateScrapRequest);
+                productService.updateProduct(user, updateScrapRequest);
+                return;
             case "article":
-                return articleService.updateArticle(user, updateScrapRequest);
+                articleService.updateArticle(user, updateScrapRequest);
+                return;
             case "video":
-                return videoService.updateVideo(user, updateScrapRequest);
+                videoService.updateVideo(user, updateScrapRequest);
+                return;
             default:
-                return otherService.updateOther(user, updateScrapRequest);
+                otherService.updateOther(user, updateScrapRequest);
         }
     }
 
@@ -124,10 +131,8 @@ public class ScrapService {
     public Slice<GetScrapResponse> searchScraps(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Slice<Scrap> scrapSlice = scrapRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageable)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        Slice<Scrap> scrapSlice = scrapRepository.searchKeywordInScrapOrderByCreatedDateDesc(user,
+                keyword, pageable);
 
         return scrapSlice.map(GetScrapResponse::of);
     }

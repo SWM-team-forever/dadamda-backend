@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.scrap;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.dto.scrap.video.GetVideoResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
@@ -9,9 +10,7 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.scrap.VideoRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import net.minidev.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -73,49 +72,32 @@ public class VideoService {
 
 
     @Transactional
-    public Video saveVideo(JSONObject crawlingResponse, User user, String pageUrl) {
+    public Video saveVideo(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
 
         Video video = Video.builder().user(user).pageUrl(pageUrl)
-                .title(Optional.ofNullable(crawlingResponse.get("title")).map(Object::toString)
-                        .orElse(null))
-                .thumbnailUrl(Optional.ofNullable(crawlingResponse.get("thumbnail_url"))
-                        .map(Object::toString).orElse(null))
-                .description(Optional.ofNullable(crawlingResponse.get("description"))
-                        .map(Object::toString).orElse(null))
-                .embedUrl(
-                        Optional.ofNullable(crawlingResponse.get("embed_url")).map(Object::toString)
-                                .orElse(null))
-                .channelName(Optional.ofNullable(crawlingResponse.get("channel_name"))
-                        .map(Object::toString)
-                        .orElse(null))
-                .channelImageUrl(Optional.ofNullable(crawlingResponse.get("channel_image_url"))
-                        .map(Object::toString).orElse(null))
-                .watchedCnt(Optional.ofNullable(crawlingResponse.get("watched_cnt"))
-                        .map(Object::toString)
-                        .map(Long::parseLong).orElse(null))
-                .playTime(
-                        Optional.ofNullable(crawlingResponse.get("play_time")).map(Object::toString)
-                                .map(Long::parseLong).orElse(null))
-                .publishedDate(Optional.ofNullable(crawlingResponse.get("published_date"))
-                        .map(Object::toString).map(Long::parseLong)
-                        .map(TimeService::fromUnixTime).orElse(null))
-                .siteName(
-                        Optional.ofNullable(crawlingResponse.get("site_name")).map(Object::toString)
-                                .orElse(null))
+                .title(crawlingResponse.getTitle())
+                .thumbnailUrl(crawlingResponse.getThumbnailUrl())
+                .description(crawlingResponse.getDescription())
+                .embedUrl(crawlingResponse.getEmbedUrl())
+                .channelName(crawlingResponse.getChannelName())
+                .channelImageUrl(crawlingResponse.getChannelImageUrl())
+                .watchedCnt(crawlingResponse.getWatchedCnt())
+                .playTime(crawlingResponse.getPlayTime())
+                .publishedDate(TimeService.fromUnixTime(crawlingResponse.getPublishedDate()))
+                .siteName(crawlingResponse.getSiteName())
                 .build();
 
         return videoRepository.save(video);
     }
 
     @Transactional
-    public Video updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
+    public void updateVideo(User user, UpdateScrapRequest updateScrapRequest) {
         Video video = videoRepository.findByIdAndUserAndDeletedDateIsNull(
                         updateScrapRequest.getScrapId(), user)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
         video.update(updateScrapRequest.getTitle(), updateScrapRequest.getDescription(),
                 updateScrapRequest.getSiteName());
         video.updateVideo(updateScrapRequest.getChannelName());
-        return video;
     }
 
     @Transactional
@@ -142,9 +124,13 @@ public class VideoService {
     public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                sort);
+
         Slice<Video> scrapSlice = videoRepository
                 .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageable)
+                        user, keyword, keyword, pageRequest)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
         return scrapSlice.map(GetVideoResponse::of);

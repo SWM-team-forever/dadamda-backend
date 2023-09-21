@@ -6,8 +6,7 @@ import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapCountResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
-import com.forever.dadamda.entity.scrap.Scrap;
-import com.forever.dadamda.service.MemoService;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class ScrapController {
 
     private final ScrapService scrapService;
-    private final MemoService memoService;
 
     @Operation(summary = "스크랩 추가", description = "'크롬 익스텐션'과 '+ 버튼'을 통해서 스크랩을 추가할 수 있습니다.")
     @PostMapping("/v1/scraps")
@@ -67,8 +65,7 @@ public class ScrapController {
             Authentication authentication) {
 
         String email = authentication.getName();
-        Scrap scrap = scrapService.updateScraps(email, updateScrapRequest);
-        memoService.updateMemos(scrap, updateScrapRequest.getMemoList());
+        scrapService.updateScraps(email, updateScrapRequest);
         return ApiResponse.success();
     }
 
@@ -86,6 +83,9 @@ public class ScrapController {
             Pageable pageable,
             Authentication authentication) {
 
+        if(keyword.isBlank()) {
+            throw new InvalidException("검색어를 입력해주세요.");
+        }
         String email = authentication.getName();
 
         return ApiResponse.success(scrapService.searchScraps(email, keyword, pageable));
