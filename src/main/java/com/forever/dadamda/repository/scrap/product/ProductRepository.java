@@ -1,4 +1,4 @@
-package com.forever.dadamda.repository.scrap;
+package com.forever.dadamda.repository.scrap.product;
 
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;

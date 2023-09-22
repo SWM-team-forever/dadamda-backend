@@ -6,7 +6,7 @@ import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
 import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.PlaceRepository;
+import com.forever.dadamda.repository.scrap.place.PlaceRepository;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
