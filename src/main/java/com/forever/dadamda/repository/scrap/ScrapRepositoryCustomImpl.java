@@ -12,7 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 @RequiredArgsConstructor
-public class ScrapRepositoryImpl implements ScrapRepositoryCustom {
+public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
