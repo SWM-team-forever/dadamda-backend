@@ -1,10 +1,11 @@
-package com.forever.dadamda.repository;
+package com.forever.dadamda.repository.scrap;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
-import com.forever.dadamda.repository.scrap.ScrapRepository;
+import com.forever.dadamda.repository.TestConfig;
+import com.forever.dadamda.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -32,7 +33,7 @@ public class ScrapRepositoryTest {
     String email = "1234@naver.com";
 
     @Test
-    void should_has_next_is_returned_when_the_next_page_is_present() {
+    void should_has_next_is_returned_true_when_the_next_page_is_present() {
         // 다음 페이지가 있을 때, hasNext가 true로 반환된다.
         // given
         User user = userRepository.findByEmailAndDeletedDateIsNull(email).get();
