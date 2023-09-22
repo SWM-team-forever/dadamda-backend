@@ -78,14 +78,8 @@ public class ArticleService {
             Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Article> scrapSlice = articleRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        Slice<Article> scrapSlice = articleRepository.searchKeywordInArticleOrderByCreatedDateDesc(
+                user, keyword, pageable);
 
         return scrapSlice.map(GetArticleResponse::of);
     }
