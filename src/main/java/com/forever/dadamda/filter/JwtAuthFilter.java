@@ -2,7 +2,6 @@ package com.forever.dadamda.filter;
 
 import com.forever.dadamda.service.TokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +17,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-@Slf4j
 public class JwtAuthFilter extends GenericFilterBean {
 
     private final TokenService tokenService;
@@ -27,17 +25,21 @@ public class JwtAuthFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
-        String token = tokenService.resolveToken((HttpServletRequest) request);
-        log.info("JwtAuthFilter token: {}", token);
-        if (token != null && tokenService.validateToken(token)) {
-            String email = tokenService.getEmail(token);
-            log.info("JwtAuthFilter email: {}", email);
+        try {
+            String token = tokenService.resolveToken((HttpServletRequest) request);
 
-            Authentication auth = new UsernamePasswordAuthenticationToken(email, "",
-                    Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-            log.info("JwtAuthFilter auth: {}", auth);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            if (token != null && tokenService.validateToken(token)) {
+                String email = tokenService.getEmail(token);
+
+                Authentication auth = new UsernamePasswordAuthenticationToken(email, "",
+                        Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        } catch (Exception e) {
+            request.setAttribute("exception", e.getMessage());
         }
+
         chain.doFilter(request, response);
     }
 }
