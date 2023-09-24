@@ -8,6 +8,7 @@ import com.forever.dadamda.exception.InternalServerException;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import io.sentry.Sentry;
+import javax.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,14 @@ public class ControllerExceptionAdvice {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(joining("\n"));
+        Sentry.captureException(e);
+        return ApiResponse.error(ErrorCode.INVALID, errorMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    private ApiResponse<Object> handleValidationParameterError(ConstraintViolationException e) {
+        String errorMessage = e.getMessage();
         Sentry.captureException(e);
         return ApiResponse.error(ErrorCode.INVALID, errorMessage);
     }
