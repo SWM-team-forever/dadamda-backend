@@ -16,6 +16,7 @@ import lombok.Getter;
 public class CreateBoardRequest {
 
     @NotBlank(message = "보드명을 입력해주세요.")
+    @Size(max = 100, message = "최대 100자까지 입력할 수 있습니다.")
     private String name;
 
     @Size(max = 1000, message = "최대 1000자까지 입력할 수 있습니다.")
