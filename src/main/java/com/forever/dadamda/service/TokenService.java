@@ -45,16 +45,11 @@ public class TokenService {
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey)
-                    .build().parseClaimsJws(token);
+        Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey)
+                .build().parseClaimsJws(token);
 
-            return claims.getBody().getExpiration()
-                    .after(new Date(System.currentTimeMillis()));
-
-        } catch (Exception e) {
-            return false;
-        }
+        return claims.getBody().getExpiration()
+                .after(new Date(System.currentTimeMillis()));
     }
 
     public String getEmail(String token) {
