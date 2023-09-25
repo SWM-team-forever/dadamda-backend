@@ -18,7 +18,7 @@ public class CreateBoardRequest {
     @NotBlank(message = "보드명을 입력해주세요.")
     private String name;
 
-    @Size(max = 1000, message = "최대 2083자까지 입력할 수 있습니다.")
+    @Size(max = 1000, message = "최대 1000자까지 입력할 수 있습니다.")
     private String description;
 
     @NotBlank(message = "태그를 입력해주세요.")
