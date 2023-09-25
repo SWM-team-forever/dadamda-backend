@@ -1,5 +1,9 @@
 package com.forever.dadamda.entity.board;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.exception.NotFoundException;
+import java.util.Arrays;
 import lombok.Getter;
 
 @Getter
@@ -13,5 +17,13 @@ public enum TAG {
 
     TAG(String tagDescription){
         this.tagDescription = tagDescription;
+    }
+
+    @JsonCreator
+    public static TAG from(String inputTag){
+        return Arrays.stream(TAG.values())
+                .filter(tag -> tag.name().equals(inputTag.toUpperCase()))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD_TAG));
     }
 }
