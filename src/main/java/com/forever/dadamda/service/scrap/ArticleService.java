@@ -7,7 +7,7 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.ArticleRepository;
+import com.forever.dadamda.repository.scrap.article.ArticleRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -78,14 +78,8 @@ public class ArticleService {
             Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Article> scrapSlice = articleRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        Slice<Article> scrapSlice = articleRepository.searchKeywordInArticleOrderByCreatedDateDesc(
+                user, keyword, pageable);
 
         return scrapSlice.map(GetArticleResponse::of);
     }

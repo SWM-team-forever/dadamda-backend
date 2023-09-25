@@ -7,7 +7,7 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.VideoRepository;
+import com.forever.dadamda.repository.scrap.video.VideoRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -124,14 +124,8 @@ public class VideoService {
     public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Video> scrapSlice = videoRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        Slice<Video> scrapSlice = videoRepository.searchKeywordInVideoOrderByCreatedDateDesc(
+                user, keyword, pageable);
 
         return scrapSlice.map(GetVideoResponse::of);
     }

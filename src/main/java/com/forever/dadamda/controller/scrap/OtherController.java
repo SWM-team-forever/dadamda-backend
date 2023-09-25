@@ -5,14 +5,17 @@ import com.forever.dadamda.dto.scrap.other.GetOtherCountResponse;
 import com.forever.dadamda.dto.scrap.other.GetOtherResponse;
 import com.forever.dadamda.service.scrap.OtherService;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class OtherController {
@@ -38,8 +41,8 @@ public class OtherController {
 
     @Operation(summary = "기타 스크랩 검색", description = "타이틀과 설명의 키워드로 기타 스크랩을 검색할 수 있습니다.")
     @GetMapping("/v1/scraps/others/search")
-    public ApiResponse<Slice<GetOtherResponse>> searchArticles(
-            @RequestParam("keyword") String keyword,
+    public ApiResponse<Slice<GetOtherResponse>> searchOthers(
+            @RequestParam("keyword") @NotBlank String keyword,
             Pageable pageable,
             Authentication authentication) {
 

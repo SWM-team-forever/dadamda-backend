@@ -8,7 +8,7 @@ import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
-import com.forever.dadamda.repository.scrap.PlaceRepository;
+import com.forever.dadamda.repository.scrap.place.PlaceRepository;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

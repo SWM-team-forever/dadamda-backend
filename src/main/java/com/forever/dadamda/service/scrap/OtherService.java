@@ -7,7 +7,7 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.OtherRepository;
+import com.forever.dadamda.repository.scrap.other.OtherRepository;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -69,14 +69,8 @@ public class OtherService {
     public Slice<GetOtherResponse> searchOthers(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
-
-        Slice<Other> otherSlice = otherRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
+        Slice<Other> otherSlice = otherRepository.searchKeywordInOtherOrderByCreatedDateDesc(user,
+                keyword, pageable);
 
         return otherSlice.map(GetOtherResponse::of);
     }
