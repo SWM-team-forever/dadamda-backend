@@ -59,12 +59,18 @@ public class Board extends BaseTimeEntity {
     private Long shareCnt;
 
     @Builder
-    Board(User user, String name, TAG tag, UUID uuid, String description, boolean isPublic) {
+    Board(User user, String name, TAG tag, UUID uuid, String description, boolean isPublic,
+            LocalDateTime fixedDate) {
         this.user = user;
         this.name = name;
         this.tag = tag;
         this.uuid = uuid;
         this.description = description;
         this.isPublic = isPublic;
+        this.fixedDate = fixedDate;
+    }
+
+    public void updateFixedDate(LocalDateTime fixedDate) {
+        this.fixedDate = fixedDate;
     }
 }

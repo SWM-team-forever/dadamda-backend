@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,15 @@ public class BoardController {
             Authentication authentication) {
         String email = authentication.getName();
         boardService.deleteBoards(email, boardId);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "보드 고정", description = "1개의 보드를 보드 카테고리에서 상단에 고정합니다.")
+    @PatchMapping("/v1/boards/fixed/{boardId}")
+    public ApiResponse<String> fixedBoards(@PathVariable @Positive Long boardId,
+            Authentication authentication) {
+        String email = authentication.getName();
+        boardService.fixedBoards(email, boardId);
         return ApiResponse.success();
     }
 }

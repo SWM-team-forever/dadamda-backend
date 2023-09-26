@@ -38,4 +38,18 @@ public class BoardService {
 
         board.updateDeletedDate(LocalDateTime.now());
     }
+
+    @Transactional
+    public void fixedBoards(String email, Long boardId) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        if(board.getFixedDate() == null) {
+            board.updateFixedDate(LocalDateTime.now());
+        } else {
+            board.updateFixedDate(null);
+        }
+    }
 }
