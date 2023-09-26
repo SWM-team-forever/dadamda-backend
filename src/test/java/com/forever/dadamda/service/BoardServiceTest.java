@@ -8,6 +8,7 @@ import com.forever.dadamda.entity.board.TAG;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -79,5 +80,55 @@ public class BoardServiceTest {
 
         //then
         assertThat(boardRepository.findById(boardId).get().getDeletedDate()).isNotNull();
+    }
+
+    @Test
+    void should_the_fixed_date_is_before_or_equal_to_now_When_fixing_a_board() {
+        // 보드를 고정했을 때, 고정된 날짜가 null이 아닌지(보드가 정상적으로 고정되는지) 확인
+        //given
+        User user = userRepository.findByEmailAndDeletedDateIsNull(existentEmail).get();
+
+        Board board = Board.builder()
+                .user(user)
+                .uuid(UUID.fromString("3f06af63-a93c-11e4-9797-00505690773f"))
+                .isPublic(true)
+                .tag(TAG.from("ENTERTAINMENT_ART"))
+                .name("test")
+                .build();
+        boardRepository.save(board);
+
+        Long boardId = board.getId();
+
+        //when
+        boardService.fixedBoards(existentEmail, boardId);
+
+        //then
+        assertThat(boardRepository.findById(boardId).get().getFixedDate()).isBeforeOrEqualTo(
+                LocalDateTime.now());
+    }
+
+    @Test
+    void should_the_fixed_date_is_null_When_fixing_a_fixed_board() {
+        // 고정된 보드를 다시 고정할 때, 고정된 날짜가 null이 되는지(고정이 취소되는지) 확인
+        //given
+        User user = userRepository.findByEmailAndDeletedDateIsNull(existentEmail).get();
+
+        Board board = Board.builder()
+                .user(user)
+                .uuid(UUID.fromString("3f06af63-a93c-11e4-9797-00505690773f"))
+                .isPublic(true)
+                .tag(TAG.from("ENTERTAINMENT_ART"))
+                .name("test")
+                .fixedDate(LocalDateTime.of(2021, 1, 1, 0, 0, 0))
+                .build();
+        boardRepository.save(board);
+
+        Long boardId = board.getId();
+
+        //when
+        boardService.fixedBoards(existentEmail, boardId);
+
+        //then
+        assertThat(boardRepository.findById(boardId).get().getFixedDate()).isNull();
     }
 }
