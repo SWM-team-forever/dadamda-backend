@@ -1,10 +1,17 @@
 package com.forever.dadamda.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.entity.board.Board;
+import com.forever.dadamda.entity.board.TAG;
+import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.mock.WithCustomMockUser;
+import com.forever.dadamda.repository.BoardRepository;
+import com.forever.dadamda.repository.UserRepository;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +35,12 @@ public class BoardControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private BoardRepository boardRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     @WithCustomMockUser
@@ -73,5 +86,48 @@ public class BoardControllerTest {
                         .content(content)
                 )
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_4xx_error_When_deleting_a_board_that_does_not_exist()
+            throws Exception {
+        //존재하지 않는 보드를 삭제할 때 4xx에러를 반환하는지 확인
+        //given
+
+        //when
+        //then
+        mockMvc.perform(delete("/v1/boards/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_deleted_successfully_When_deleting_an_existing_board()
+            throws Exception {
+        //존재하는 보드를 삭제할 때 성공적으로 삭제되는지 확인
+        //given
+        User user = userRepository.findByEmailAndDeletedDateIsNull("1234@naver.com").get();
+        Board board = Board.builder()
+                .user(user)
+                .uuid(UUID.fromString("3f06af63-a93c-11e4-9797-00505690773f"))
+                .isPublic(true)
+                .tag(TAG.from("ENTERTAINMENT_ART"))
+                .name("test")
+                .build();
+        boardRepository.save(board);
+
+        Long boardId = board.getId();
+
+        //when
+        //then
+        mockMvc.perform(delete("/v1/boards/{boardId}", boardId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
