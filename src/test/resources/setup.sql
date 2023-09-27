@@ -26,3 +26,6 @@ VALUES (1, 1, 'Hello 1', '2023-01-01 11:11:01');
 
 INSERT INTO memo (scrap_id, memo_id, memo_text, created_date)
 VALUES (1, 2, 'Hello 2', '2023-01-03 12:11:01');
+
+INSERT INTO memo (scrap_id, memo_id, memo_text, created_date, deleted_date)
+VALUES (1, 3, 'Hello 3', '2023-01-04 12:11:01', '2023-01-05 12:11:01');
