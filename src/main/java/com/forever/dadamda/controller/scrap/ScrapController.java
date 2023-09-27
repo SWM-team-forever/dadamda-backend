@@ -63,7 +63,7 @@ public class ScrapController {
     @Operation(summary = "전체 스크랩 수정", description = "스크랩을 수정할 수 있습니다.")
     @PatchMapping("/v1/scraps")
     public ApiResponse<String> updateScraps(
-            @RequestBody UpdateScrapRequest updateScrapRequest,
+            @Valid @RequestBody UpdateScrapRequest updateScrapRequest,
             Authentication authentication) {
 
         String email = authentication.getName();
