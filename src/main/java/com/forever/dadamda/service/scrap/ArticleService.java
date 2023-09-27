@@ -7,6 +7,7 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
+import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.scrap.article.ArticleRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
@@ -24,6 +25,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public Article saveArticle(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
@@ -70,7 +72,8 @@ public class ArticleService {
         Slice<Article> articleSlice = articleRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        return articleSlice.map(GetArticleResponse::of);
+        return articleSlice.map(article -> GetArticleResponse.of(article,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(article)));
     }
 
     @Transactional
@@ -78,9 +81,10 @@ public class ArticleService {
             Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Slice<Article> scrapSlice = articleRepository.searchKeywordInArticleOrderByCreatedDateDesc(
+        Slice<Article> articleSlice = articleRepository.searchKeywordInArticleOrderByCreatedDateDesc(
                 user, keyword, pageable);
 
-        return scrapSlice.map(GetArticleResponse::of);
+        return articleSlice.map(article -> GetArticleResponse.of(article,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(article)));
     }
 }
