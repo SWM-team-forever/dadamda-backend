@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.forever.dadamda.dto.memo.GetMemoResponse;
+import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.scrap.Scrap;
@@ -47,7 +48,7 @@ public class GetScrapResponse {
     private String playTime;
     private String watchedCnt;
 
-    public static GetScrapResponse of(Scrap scrap) {
+    public static GetScrapResponse of(Scrap scrap, List<Memo> memoList) {
         GetScrapResponseBuilder getScrapResponse = new GetScrapResponseBuilder()
                 .dType("other")
                 .scrapId(scrap.getId())
@@ -56,7 +57,7 @@ public class GetScrapResponse {
                 .siteName(scrap.getSiteName())
                 .thumbnailUrl(scrap.getThumbnailUrl())
                 .title(scrap.getTitle())
-                .memoList(scrap.getMemoList().stream().map(GetMemoResponse::of)
+                .memoList(memoList.stream().map(GetMemoResponse::of)
                         .collect(Collectors.toList()));
 
         if (scrap instanceof Article) {
