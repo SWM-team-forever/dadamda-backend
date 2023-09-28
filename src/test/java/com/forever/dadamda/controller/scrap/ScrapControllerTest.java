@@ -173,6 +173,7 @@ public class ScrapControllerTest {
         mockMvc.perform(delete("/v1/scraps/{scrapId}", -1L)
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
 
     @Test
     @WithCustomMockUser
