@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -20,7 +21,7 @@ public class UpdateScrapRequest {
     @Positive(message = "scrapId는 1보다 커야 합니다.")
     private Long scrapId;
 
-    @NotNull(message = "dType을 입력해주세요.")
+    @NotBlank(message = "dType을 입력해주세요.")
     @JsonProperty("dtype")
     private String dType;
 
