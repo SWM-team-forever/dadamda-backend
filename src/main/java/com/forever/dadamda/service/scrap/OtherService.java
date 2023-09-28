@@ -7,6 +7,7 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Other;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
+import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.scrap.other.OtherRepository;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class OtherService {
 
     private final OtherRepository otherRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public Other saveOther(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
@@ -62,7 +64,8 @@ public class OtherService {
         Slice<Other> otherSlice = otherRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        return otherSlice.map(GetOtherResponse::of);
+        return otherSlice.map(other -> GetOtherResponse.of(other,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(other)));
     }
 
     @Transactional
@@ -72,6 +75,7 @@ public class OtherService {
         Slice<Other> otherSlice = otherRepository.searchKeywordInOtherOrderByCreatedDateDesc(user,
                 keyword, pageable);
 
-        return otherSlice.map(GetOtherResponse::of);
+        return otherSlice.map(other -> GetOtherResponse.of(other,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(other)));
     }
 }

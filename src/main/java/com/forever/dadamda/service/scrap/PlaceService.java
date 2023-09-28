@@ -6,6 +6,7 @@ import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
 import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
+import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.scrap.place.PlaceRepository;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PlaceService {
 
     private final PlaceRepository placeRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public Slice<GetPlaceResponse> getPlaces(String email, Pageable pageable) {
@@ -33,7 +35,8 @@ public class PlaceService {
 
         return placeRepository.findAllByUserAndDeletedDateIsNull(user, pageRequest)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP))
-                .map(GetPlaceResponse::of);
+                .map(place -> GetPlaceResponse.of(place,
+                        memoRepository.findMemosByScrapAndDeletedDateIsNull(place)));
     }
 
     @Transactional

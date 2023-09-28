@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap.video;
 
 import com.forever.dadamda.dto.memo.GetMemoResponse;
+import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.scrap.VideoService;
@@ -36,7 +37,7 @@ public class GetVideoResponse {
     private String watchedCnt;
     private Long publishedDate;
 
-    public static GetVideoResponse of(Video video) {
+    public static GetVideoResponse of(Video video, List<Memo> memoList) {
         return new GetVideoResponseBuilder()
                 .scrapId(video.getId())
                 .dType("video")
@@ -50,7 +51,7 @@ public class GetVideoResponse {
                 .embedUrl(video.getEmbedUrl())
                 .playTime(VideoService.formatPlayTime(video.getPlayTime()))
                 .watchedCnt(VideoService.formatViewCount(video.getWatchedCnt()))
-                .memoList(video.getMemoList().stream().map(GetMemoResponse::of).collect(
+                .memoList(memoList.stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
                 .publishedDate(TimeService.fromLocalDateTime(video.getPublishedDate()))
                 .build();

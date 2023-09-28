@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap.place;
 
 import com.forever.dadamda.dto.memo.GetMemoResponse;
+import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Place;
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,7 +37,7 @@ public class GetPlaceResponse {
     private String homepageUrl;
     private String category;
 
-    public static GetPlaceResponse of(Place place) {
+    public static GetPlaceResponse of(Place place, List<Memo> memoList) {
         return new GetPlaceResponseBuilder()
                 .scrapId(place.getId())
                 .dType("place")
@@ -45,7 +46,7 @@ public class GetPlaceResponse {
                 .siteName(place.getSiteName())
                 .thumbnailUrl(place.getThumbnailUrl())
                 .title(place.getTitle())
-                .memoList(place.getMemoList().stream().map(GetMemoResponse::of).collect(
+                .memoList(memoList.stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
                 .address(place.getAddress())
                 .latitude(place.getLatitude())

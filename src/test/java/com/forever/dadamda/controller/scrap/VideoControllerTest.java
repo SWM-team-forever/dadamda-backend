@@ -49,4 +49,17 @@ public class VideoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").doesNotExist());
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_memo_that_is_not_deleted_is_gotten_and_deleted_memo_is_not_gotten_When_getting_video_lists() throws Exception {
+        //영상 스크랩 리스트 조회할 때, 삭제되지 않은 메모는 조회되고, 삭제된 메모는 조회된다.
+        mockMvc.perform(get("/v1/scraps/videos")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].memoList[0]").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].memoList[1]").doesNotExist());
+    }
 }
