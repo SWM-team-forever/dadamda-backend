@@ -1,5 +1,6 @@
 package com.forever.dadamda.controller.scrap;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
@@ -143,6 +144,33 @@ public class ScrapControllerTest {
         mockMvc.perform(patch("/v1/scraps")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_scrap_is_deleted_successfully_When_deleting_scrap_with_positive_scrapId() throws Exception {
+        // siteName이 100자 초과일 때, 400 에러 발생
+        mockMvc.perform(delete("/v1/scraps/{scrapId}", 1L)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_4xx_error_When_deleting_scrap_with_scrapId_null() throws Exception {
+        // scrapId가 null인 스크랩 삭제할 때, 400 에러 발생
+        mockMvc.perform(delete("/v1/scraps")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_4xx_error_When_deleting_scrap_with_negative_scrapId() throws Exception {
+        // scrapId가 음수인 스크랩 삭제할 때, 400 에러 발생
+        mockMvc.perform(delete("/v1/scraps/{scrapId}", -1L)
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
