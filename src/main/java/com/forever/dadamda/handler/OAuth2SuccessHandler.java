@@ -1,6 +1,7 @@
 package com.forever.dadamda.handler;
 
 import com.forever.dadamda.service.TokenService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
+
+        if(email == null) {
+            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            email = (String) kakaoAccount.get("email");
+        }
 
         String token = tokenService.generateToken(email, "USER");
         response.sendRedirect(LOGIN_REDIRECT_URL+token);
