@@ -7,6 +7,7 @@ import com.forever.dadamda.dto.scrap.place.GetPlaceResponse;
 import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.entity.scrap.Place;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.repository.scrap.place.PlaceRepository;
 import java.math.BigDecimal;
@@ -33,6 +34,9 @@ public class PlaceServiceTest {
 
     @Autowired
     private PlaceRepository placeRepository;
+
+    @Autowired
+    private MemoRepository memoRepository;
 
     private final String email = "1234@naver.com";
     private final String existingPageUrl = "https://www.kakao.map.com/maps/place/kakao";
@@ -62,6 +66,7 @@ public class PlaceServiceTest {
     void should_it_is_saved_as_the_first_scrap_When_storing_place_in_a_blank_scrap_db() {
         // 아무 것도 없는 DB에 장소 스크랩 저장시, DB에 첫 번째 스크랩으로 저장되는지 확인
         //given
+        memoRepository.deleteAll();
         placeRepository.deleteAll();
 
         User user = userRepository.findById(1L).get();
@@ -82,6 +87,7 @@ public class PlaceServiceTest {
     void should_it_is_saved_as_pageUrl_received_through_WebClientBodyResponse_When_saving_a_place() {
         // WebClientBodyResponse를 통해 받은 pageUrl로 저장되는지 확인
         //given
+        memoRepository.deleteAll();
         placeRepository.deleteAll();
 
         User user = userRepository.findById(1L).get();
