@@ -20,6 +20,7 @@ public class UpdateScrapRequest {
     @Positive(message = "scrapId는 1보다 커야 합니다.")
     private Long scrapId;
 
+    @NotNull(message = "dType을 입력해주세요.")
     @JsonProperty("dtype")
     private String dType;
 
