@@ -1,6 +1,7 @@
 package com.forever.dadamda.dto.scrap.other;
 
 import com.forever.dadamda.dto.memo.GetMemoResponse;
+import com.forever.dadamda.entity.Memo;
 import com.forever.dadamda.entity.scrap.Other;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class GetOtherResponse {
     private String title;
     private List<GetMemoResponse> memoList;
 
-    public static GetOtherResponse of(Other other) {
+    public static GetOtherResponse of(Other other, List<Memo> memoList) {
         return new GetOtherResponseBuilder()
                 .scrapId(other.getId())
                 .dType("other")
@@ -35,7 +36,7 @@ public class GetOtherResponse {
                 .siteName(other.getSiteName())
                 .thumbnailUrl(other.getThumbnailUrl())
                 .title(other.getTitle())
-                .memoList(other.getMemoList().stream().map(GetMemoResponse::of).collect(
+                .memoList(memoList.stream().map(GetMemoResponse::of).collect(
                         Collectors.toList()))
                 .build();
     }

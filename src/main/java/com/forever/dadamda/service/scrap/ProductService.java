@@ -7,7 +7,8 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.ProductRepository;
+import com.forever.dadamda.repository.MemoRepository;
+import com.forever.dadamda.repository.scrap.product.ProductRepository;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     @Transactional
     public Product saveProduct(WebClientBodyResponse crawlingResponse, User user, String pageUrl) {
@@ -60,25 +62,22 @@ public class ProductService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 sort);
 
-        Slice<Product> scrapSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
+        Slice<Product> prdouctSlice = productRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        return scrapSlice.map(GetProductResponse::of);
+        return prdouctSlice.map(product -> GetProductResponse.of(product,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(product)));
     }
 
     @Transactional
-    public Slice<GetProductResponse> searchProducts(String email, String keyword, Pageable pageable) {
+    public Slice<GetProductResponse> searchProducts(String email, String keyword,
+            Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
+        Slice<Product> prdouctSlice = productRepository.searchKeywordInProductOrderByCreatedDateDesc(
+                user, keyword, pageable);
 
-        Slice<Product> scrapSlice = productRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        return scrapSlice.map(GetProductResponse::of);
+        return prdouctSlice.map(product -> GetProductResponse.of(product,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(product)));
     }
 }

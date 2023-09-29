@@ -19,6 +19,8 @@ public enum ErrorCode {
     NOT_EXISTS_SCRAP("NF001", "존재하지 않는 스크랩입니다."),
     NOT_EXISTS_MEMBER("NF002", "존재하지 않는 회원입니다."),
     NOT_EXISTS_MEMO("NF003", "존재하지 않는 메모입니다."),
+    NOT_EXISTS_BOARD_TAG("NF004", "존재하지 않는 보드 태그입니다."),
+    NOT_EXISTS_BOARD("NF005", "존재하지 않는 보드입니다."),
 
     /**
      * 500 Internal Server Exception (서버 내부 에러)

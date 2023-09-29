@@ -9,6 +9,7 @@ import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
+import com.forever.dadamda.repository.MemoRepository;
 import com.forever.dadamda.repository.scrap.ScrapRepository;
 import com.forever.dadamda.service.WebClientService;
 import com.forever.dadamda.service.user.UserService;
@@ -36,6 +37,7 @@ public class ScrapService {
     private final WebClientService webClientService;
     private final UserService userService;
     private final PlaceService placeService;
+    private final MemoRepository memoRepository;
 
     @Value("${crawling.server.post.api.endPoint}")
     private String crawlingApiEndPoint;
@@ -99,7 +101,9 @@ public class ScrapService {
         Slice<Scrap> scrapSlice = scrapRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        return scrapSlice.map(GetScrapResponse::of);
+        return scrapSlice.map(scrap -> GetScrapResponse.of(scrap,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(scrap))
+        );
     }
 
     @Transactional
@@ -134,6 +138,7 @@ public class ScrapService {
         Slice<Scrap> scrapSlice = scrapRepository.searchKeywordInScrapOrderByCreatedDateDesc(user,
                 keyword, pageable);
 
-        return scrapSlice.map(GetScrapResponse::of);
+        return scrapSlice.map(scrap -> GetScrapResponse.of(scrap,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(scrap)));
     }
 }

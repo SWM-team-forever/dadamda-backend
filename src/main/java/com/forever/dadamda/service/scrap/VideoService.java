@@ -7,7 +7,8 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.entity.scrap.Video;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.scrap.VideoRepository;
+import com.forever.dadamda.repository.MemoRepository;
+import com.forever.dadamda.repository.scrap.video.VideoRepository;
 import com.forever.dadamda.service.TimeService;
 import com.forever.dadamda.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class VideoService {
 
     private final VideoRepository videoRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     public static String formatViewCount(long count) {
         if (count >= 100000000) {
@@ -117,22 +119,18 @@ public class VideoService {
         Slice<Video> videoSlice = videoRepository.findAllByUserAndDeletedDateIsNull(user,
                 pageRequest).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
 
-        return videoSlice.map(GetVideoResponse::of);
+        return videoSlice.map(video -> GetVideoResponse.of(video,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(video)));
     }
 
     @Transactional
     public Slice<GetVideoResponse> searchVideos(String email, String keyword, Pageable pageable) {
         User user = userService.validateUser(email);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-                sort);
+        Slice<Video> videoSlice = videoRepository.searchKeywordInVideoOrderByCreatedDateDesc(
+                user, keyword, pageable);
 
-        Slice<Video> scrapSlice = videoRepository
-                .findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        user, keyword, keyword, pageRequest)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_SCRAP));
-
-        return scrapSlice.map(GetVideoResponse::of);
+        return videoSlice.map(video -> GetVideoResponse.of(video,
+                memoRepository.findMemosByScrapAndDeletedDateIsNull(video)));
     }
 }

@@ -1,8 +1,8 @@
 package com.forever.dadamda.handler;
 
 import com.forever.dadamda.service.TokenService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -28,12 +27,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             , Authentication authentication) throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        log.info("onAuthenticationSuccess oAuth2User: {}", oAuth2User.getAttributes());
         String email = oAuth2User.getAttribute("email");
 
+        if(email == null) {
+            Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
+            email = (String) kakaoAccount.get("email");
+        }
+
         String token = tokenService.generateToken(email, "USER");
-        log.info("onAuthenticationSuccess token: {}", token);
-        log.info("onAuthenticationSuccess redirect url: {}", LOGIN_REDIRECT_URL+token);
         response.sendRedirect(LOGIN_REDIRECT_URL+token);
     }
 }

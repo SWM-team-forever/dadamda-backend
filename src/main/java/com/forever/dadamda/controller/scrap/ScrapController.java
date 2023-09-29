@@ -6,17 +6,19 @@ import com.forever.dadamda.dto.scrap.CreateScrapResponse;
 import com.forever.dadamda.dto.scrap.GetScrapCountResponse;
 import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
-import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.constraints.NotBlank;
 import org.springframework.data.domain.Pageable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.parser.ParseException;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class ScrapController {
@@ -79,13 +81,10 @@ public class ScrapController {
     @Operation(summary = "스크랩 검색", description = "스크랩을 검색할 수 있습니다.")
     @GetMapping("/v1/scraps/search")
     public ApiResponse<Slice<GetScrapResponse>> searchScraps(
-            @RequestParam("keyword") String keyword,
+            @RequestParam("keyword") @NotBlank String keyword,
             Pageable pageable,
             Authentication authentication) {
 
-        if(keyword.isBlank()) {
-            throw new InvalidException("검색어를 입력해주세요.");
-        }
         String email = authentication.getName();
 
         return ApiResponse.success(scrapService.searchScraps(email, keyword, pageable));

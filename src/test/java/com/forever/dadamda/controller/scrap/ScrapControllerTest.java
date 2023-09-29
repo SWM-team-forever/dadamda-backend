@@ -95,4 +95,16 @@ public class ScrapControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].createdDate").value("2023-01-01T11:11:01"));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_deleted_memo_does_not_exist_When_getting_scrap_list() throws Exception {
+        // 스크랩 목록 조회할 때, 삭제된 메모는 존재하지 않는다
+        mockMvc.perform(get("/v1/scraps")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[2]").doesNotExist());
+    }
 }

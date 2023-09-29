@@ -1,4 +1,4 @@
-package com.forever.dadamda.repository.scrap;
+package com.forever.dadamda.repository.scrap.product;
 
 import com.forever.dadamda.entity.scrap.Product;
 import com.forever.dadamda.entity.user.User;
@@ -7,13 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
     Optional<Slice<Product>> findAllByUserAndDeletedDateIsNull(User user, Pageable pageable);
 
     Optional<Product> findByIdAndUserAndDeletedDateIsNull(Long scrapId, User user);
 
     Long countByUserAndDeletedDateIsNull(User user);
-
-    Optional<Slice<Product>> findAllByUserAndDeletedDateIsNullAndTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(User user, String title, String description, Pageable pageable);
 }
