@@ -7,7 +7,7 @@ import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.BoardRepository;
+import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;

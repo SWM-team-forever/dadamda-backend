@@ -10,7 +10,7 @@ import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.board.TAG;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.mock.WithCustomMockUser;
-import com.forever.dadamda.repository.BoardRepository;
+import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
