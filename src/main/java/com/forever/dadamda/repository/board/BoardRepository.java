@@ -1,4 +1,4 @@
-package com.forever.dadamda.repository;
+package com.forever.dadamda.repository.board;
 
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
