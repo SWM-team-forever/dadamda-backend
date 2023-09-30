@@ -60,8 +60,9 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**", "/actuator/**",
-                        "/", "/api-docs/**", "/swagger-ui/**").permitAll()
-                .antMatchers("/v1/**", "/login/**").hasRole(Role.USER.name())
+                        "/", "/api-docs/**", "/swagger-ui/**", "/oauth-login").permitAll()
+                .antMatchers("/oauth2/**").authenticated()
+                .antMatchers("/v1/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated()
                 .and()
                 .logout()
