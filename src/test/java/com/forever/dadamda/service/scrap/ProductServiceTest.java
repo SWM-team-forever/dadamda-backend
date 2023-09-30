@@ -3,6 +3,7 @@ package com.forever.dadamda.service.scrap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.forever.dadamda.dto.scrap.product.GetProductResponse;
+import com.forever.dadamda.service.TimeService;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +44,9 @@ public class ProductServiceTest {
         //given
         //when
         Slice<GetProductResponse> getProductResponse = productService.getProducts(email, PageRequest.of(0, 10));
-        LocalDateTime memoCreatedDate = getProductResponse.getContent().get(0).getMemoList().get(0).getCreatedDate();
+        Long memoCreatedDate = getProductResponse.getContent().get(0).getMemoList().get(0).getCreatedDate();
 
         //then
-        assertEquals( memoCreatedDate, LocalDateTime.of(2023, 1, 1, 11, 11, 1));
+        assertEquals( memoCreatedDate, TimeService.fromLocalDateTime(LocalDateTime.of(2023, 1, 1, 11, 11, 1)));
     }
 }
