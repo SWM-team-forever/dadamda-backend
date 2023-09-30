@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("")
+    @GetMapping("/oauth-login")
     public ApiResponse<String> login(@RequestParam String token) {
         return ApiResponse.success();
     }
