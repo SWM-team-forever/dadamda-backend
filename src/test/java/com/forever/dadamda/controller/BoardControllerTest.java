@@ -3,6 +3,7 @@ package com.forever.dadamda.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
@@ -117,5 +118,37 @@ public class BoardControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_the_fixed_date_depending_on_whether_the_board_is_fixed_or_not_When_getting_a_list_of_boards()
+            throws Exception {
+        //보드 목록을 조회할 떄, 고정된 날짜가 있는 경우 날짜를 반환하는지 확인
+        mockMvc.perform(get("/v1/boards")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-04T11:11:01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].isFixed").doesNotExist());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_board_tag_is_returned_to_english_When_getting_a_list_of_boards()
+            throws Exception {
+        //보드 목록을 조회할 떄, tag가 영어로 반환되는지 확인
+        mockMvc.perform(get("/v1/boards")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("ENTERTAINMENT_ART"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].tag").value("LIFE_SHOPPING"));
     }
 }

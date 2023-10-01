@@ -3,6 +3,7 @@ package com.forever.dadamda.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.board.BoardRepository;
@@ -12,6 +13,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
@@ -89,5 +92,21 @@ public class BoardServiceTest {
 
         //then
         assertThat(boardRepository.findById(2L).get().getFixedDate()).isNull();
+    }
+
+    @Test
+    void should_boards_are_sorted_by_fixed_date_and_modified_date_order_When_getting_a_list_of_boards() {
+        // 보드 목록을 조회할 때, 고정된 날짜, 수정된 날짜 순으로 정렬되는지 확인
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        //when
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoards(existentEmail, pageRequest);
+
+        //then
+        assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);
+        assertThat(getBoardResponseSlice.getContent().get(1).getBoardId()).isEqualTo(2L);
+        assertThat(getBoardResponseSlice.getContent().get(2).getBoardId()).isEqualTo(3L);
+        assertThat(getBoardResponseSlice.getContent().get(3).getBoardId()).isEqualTo(1L);
     }
 }
