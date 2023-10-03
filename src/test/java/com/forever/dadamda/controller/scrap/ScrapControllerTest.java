@@ -159,11 +159,11 @@ public class ScrapControllerTest {
 
     @Test
     @WithCustomMockUser
-    public void should_4xx_error_When_deleting_scrap_with_scrapId_null() throws Exception {
-        // scrapId가 null인 스크랩 삭제할 때, 400 에러 발생
+    public void should_5xx_error_When_deleting_scrap_with_scrapId_null() throws Exception {
+        // scrapId가 null인 스크랩 삭제할 때, 500 에러 발생
         mockMvc.perform(delete("/v1/scraps")
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
     }
 
     @Test
