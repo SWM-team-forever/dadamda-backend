@@ -8,6 +8,7 @@ import com.forever.dadamda.dto.scrap.GetScrapResponse;
 import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.entity.scrap.Article;
 import com.forever.dadamda.entity.scrap.Other;
+import com.forever.dadamda.entity.scrap.Scrap;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.MemoRepository;
@@ -97,7 +98,8 @@ public class ScrapServiceTest {
     }
 
     @Test
-    void should_other_type_of_scrap_is_saved_When_webClientService_crawlingItem_returns_null() throws ParseException {
+    void should_other_type_of_scrap_is_saved_When_webClientService_crawlingItem_returns_null()
+            throws ParseException {
         // webClientService.crawlingItem()이 null을 반환할 때, Other 타입의 Scrap이 저장되는지 확인
         //given
         memoRepository.deleteAll();
@@ -116,7 +118,8 @@ public class ScrapServiceTest {
     }
 
     @Test
-    void should_one_article_scrap_is_saved_When_webClientService_crawlingItem_returns_article() throws ParseException {
+    void should_one_article_scrap_is_saved_When_webClientService_crawlingItem_returns_article()
+            throws ParseException {
         //given
         memoRepository.deleteAll();
         scrapRepository.deleteAll();
@@ -135,5 +138,35 @@ public class ScrapServiceTest {
         //then
         assertThat(scrapService.saveScraps(user, pageUrl)).isInstanceOf(Article.class);
         assertThat(scrapRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    void should_only_characters_are_saved_successfully_When_description_exceeds_1000_characters()
+            throws ParseException {
+        // description이 1000글자를 초과할 때, 1000글자까지만 성공적으로 저장되는지 확인
+        //given
+        memoRepository.deleteAll();
+        scrapRepository.deleteAll();
+
+        String description = "1".repeat(1001);
+
+        WebClientBodyResponse webClientBodyResponse = new WebClientBodyResponse().builder()
+                .title("title")
+                .description(description)
+                .type("article")
+                .build();
+
+        BDDMockito.when(webClientService.crawlingItem("test", pageUrl))
+                .thenReturn(webClientBodyResponse);
+
+        User user = userRepository.findById(1L).get();
+
+        //when
+        scrapService.saveScraps(user, pageUrl);
+
+        //then
+        Scrap scrap = scrapRepository.findByPageUrlAndUserAndDeletedDateIsNull(pageUrl, user).get();
+        assertThat(scrap.getDescription().length()).isEqualTo(1000);
+        assertThat(description.length()).isEqualTo(1001);
     }
 }
