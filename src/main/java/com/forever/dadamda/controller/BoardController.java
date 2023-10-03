@@ -5,6 +5,7 @@ import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,7 @@ public class BoardController {
 
     @Operation(summary = "보드 삭제", description = "1개의 보드를 삭제합니다.")
     @DeleteMapping("/v1/boards/{boardId}")
-    public ApiResponse<String> createBoards(@PathVariable @Positive Long boardId,
+    public ApiResponse<String> createBoards(@PathVariable @Positive @NotNull Long boardId,
             Authentication authentication) {
         String email = authentication.getName();
         boardService.deleteBoards(email, boardId);
@@ -44,7 +45,7 @@ public class BoardController {
 
     @Operation(summary = "보드 고정", description = "1개의 보드를 보드 카테고리에서 상단에 고정합니다.")
     @PatchMapping("/v1/boards/fixed/{boardId}")
-    public ApiResponse<String> fixedBoards(@PathVariable @Positive Long boardId,
+    public ApiResponse<String> fixedBoards(@PathVariable @Positive @NotNull Long boardId,
             Authentication authentication) {
         String email = authentication.getName();
         boardService.fixedBoards(email, boardId);
