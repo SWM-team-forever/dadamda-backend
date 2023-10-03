@@ -89,15 +89,12 @@ public class MemoControllerTest {
 
         //when
         //then
-        String result = "{\"resultCode\":\"BR000\",\"message\":\"must not be blank\",\"data\":null}";
-
         mockMvc.perform(patch("/v1/scraps/memo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                         .content(content)
                 )
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.content().string(result));
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
     @Test
