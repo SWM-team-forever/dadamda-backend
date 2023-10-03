@@ -50,7 +50,7 @@ public class Scrap extends BaseTimeEntity {
     @Column(length = 2083)
     private String thumbnailUrl;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 1000)
     private String description;
 
     @Column(length = 100)

@@ -64,6 +64,11 @@ public class ScrapService {
         return Optional.ofNullable(crawlingResponse)
                 .map(response -> {
                     String type = response.getType();
+                    if(response.getDescription() != null) {
+                        if(response.getDescription().length() > 1000) {
+                            response.setDescription(response.getDescription().substring(0, 1000));
+                        }
+                    }
                     switch (type) {
                         case "video":
                             return videoService.saveVideo(response, user, pageUrl);

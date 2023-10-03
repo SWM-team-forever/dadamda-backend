@@ -56,7 +56,7 @@ public class WebClientBodyResponse {
 
     @Builder
     public WebClientBodyResponse(String type, String pageUrl, String title, String address, BigDecimal latitude,
-            BigDecimal longitude, String phoneNumber, Long publishedDate) {
+            BigDecimal longitude, String phoneNumber, Long publishedDate, String description) {
         this.type = type;
         this.pageUrl = pageUrl;
         this.address = address;
@@ -65,5 +65,10 @@ public class WebClientBodyResponse {
         this.longitude = longitude;
         this.phoneNumber = phoneNumber;
         this.publishedDate = publishedDate;
+        this.description = description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
