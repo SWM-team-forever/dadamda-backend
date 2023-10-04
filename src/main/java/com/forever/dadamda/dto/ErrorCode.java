@@ -9,7 +9,7 @@ public enum ErrorCode {
      */
     INVALID("BR000", "잘못된 요청입니다."),
 
-    INVALID_AUTH_TOKEN("BR001", "만료된 엑세스 토큰입니다."),
+    INVALID_AUTH_TOKEN("BR001", "만료되거나 잘못된 엑세스 토큰입니다."),
     INVALID_DUPLICATED_SCRAP("BR002","이미 저장된 URL입니다."),
 
     /**

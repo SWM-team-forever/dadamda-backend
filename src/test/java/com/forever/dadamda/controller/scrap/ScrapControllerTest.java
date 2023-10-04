@@ -1,12 +1,17 @@
 package com.forever.dadamda.controller.scrap;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.mock.WithCustomMockUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
@@ -22,6 +27,9 @@ public class ScrapControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     @WithCustomMockUser
@@ -93,7 +101,78 @@ public class ScrapControllerTest {
                         .param("size", "10")
                         .header("X-AUTH-TOKEN", "aaaaaaa"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].createdDate").value("2023-01-01T11:11:01"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].memoList[0].createdDate").value(1672571461));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_scrap_is_modified_successfully_When_modifying_the_scrap_by_the_scrap_id_is_positive_and_dtype_is_not_null() throws Exception {
+        // 스크랩 id가 양수이고 dtype이 null이 아닌 스크랩 수정할 때, 성공적으로 스크랩이 수정된다.
+        //given
+        UpdateScrapRequest updateScrapRequest = UpdateScrapRequest
+                .builder()
+                .scrapId(1L)
+                .dType("product")
+                .description("설명")
+                .build();
+        String content = objectMapper.writeValueAsString(updateScrapRequest);
+
+        // when
+        // then
+        mockMvc.perform(patch("/v1/scraps")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_4xx_error_When_modifying_the_scrap_by_being_more_than_siteName_100_characters() throws Exception {
+        // siteName이 100자 초과일 때, 400 에러 발생
+        //given
+        UpdateScrapRequest updateScrapRequest = UpdateScrapRequest
+                .builder()
+                .scrapId(1L)
+                .dType("product")
+                .siteName("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+                .build();
+        String content = objectMapper.writeValueAsString(updateScrapRequest);
+
+        // when
+        // then
+        mockMvc.perform(patch("/v1/scraps")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_scrap_is_deleted_successfully_When_deleting_scrap_with_positive_scrapId() throws Exception {
+        // siteName이 100자 초과일 때, 400 에러 발생
+        mockMvc.perform(delete("/v1/scraps/{scrapId}", 1L)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_5xx_error_When_deleting_scrap_with_scrapId_null() throws Exception {
+        // scrapId가 null인 스크랩 삭제할 때, 500 에러 발생
+        mockMvc.perform(delete("/v1/scraps")
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_4xx_error_When_deleting_scrap_with_negative_scrapId() throws Exception {
+        // scrapId가 음수인 스크랩 삭제할 때, 400 에러 발생
+        mockMvc.perform(delete("/v1/scraps/{scrapId}", -1L)
+                        .header("X-AUTH-TOKEN", "aaaaaaa"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
     @Test

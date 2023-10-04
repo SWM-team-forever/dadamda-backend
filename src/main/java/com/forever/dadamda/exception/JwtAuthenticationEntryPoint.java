@@ -3,6 +3,7 @@ package com.forever.dadamda.exception;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.JwtErrorResponse;
+import io.sentry.Sentry;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 ErrorCode.INVALID_AUTH_TOKEN.getCode(), ErrorCode.INVALID_AUTH_TOKEN.getMessage());
         ObjectMapper objectMapper = new ObjectMapper();
         String result = objectMapper.writeValueAsString(jwtErrorResponse);
+
+        Sentry.captureException(authException);
 
         response.getWriter().write(result);
     }

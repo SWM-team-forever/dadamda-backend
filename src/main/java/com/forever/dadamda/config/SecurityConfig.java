@@ -1,18 +1,21 @@
 package com.forever.dadamda.config;
 
+import com.forever.dadamda.config.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.exception.JwtAuthenticationEntryPoint;
 import com.forever.dadamda.filter.JwtAuthFilter;
-import com.forever.dadamda.handler.OAuth2FailureHandler;
-import com.forever.dadamda.handler.OAuth2SuccessHandler;
+import com.forever.dadamda.config.oauth.handler.OAuth2FailureHandler;
+import com.forever.dadamda.config.oauth.handler.OAuth2SuccessHandler;
 import com.forever.dadamda.service.TokenService;
-import com.forever.dadamda.service.user.CustomOAuth2UserService;
+import com.forever.dadamda.config.oauth.CustomOAuth2UserService;
+
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,11 +32,21 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://dadamda.me",
+        config.setAllowedOrigins(Arrays.asList("https://dadamda.me",
                 "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj",
                 "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf",
                 "https://dev.dadamda.me"));
@@ -60,8 +73,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**", "/actuator/**",
-                        "/", "/api-docs/**", "/swagger-ui/**").permitAll()
-                .antMatchers("/v1/**", "/login/**").hasRole(Role.USER.name())
+                        "/", "/api-docs/**", "/swagger-ui/**", "/login/**", "/oauth2/**", "/oauth-login").permitAll()
+                .antMatchers("/v1/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated()
                 .and()
                 .logout()
@@ -73,10 +86,16 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthFilter(tokenService),
                         UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login()
+                .authorizationEndpoint().baseUri("/oauth2/authorization/**")
+                .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository())
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/**")
+                .and()
+                .userInfoEndpoint().userService(customOAuth2UserService)
+                .and()
                 .successHandler(oAuth2SuccessHandler)
-                .failureHandler(oAuth2FailureHandler)
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                .failureHandler(oAuth2FailureHandler);
 
         return http.build();
     }

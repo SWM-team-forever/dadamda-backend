@@ -4,13 +4,16 @@ import static com.forever.dadamda.service.UUIDService.generateUUID;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
-import com.forever.dadamda.repository.BoardRepository;
+import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +54,15 @@ public class BoardService {
         } else {
             board.updateFixedDate(null);
         }
+    }
+
+
+    @Transactional(readOnly = true)
+    public Slice<GetBoardResponse> getBoards(String email, Pageable pageable) {
+        User user = userService.validateUser(email);
+
+        Slice<Board> boardSlice = boardRepository.getBoardsList(user, pageable);
+
+        return boardSlice.map(GetBoardResponse::of);
     }
 }

@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.joining;
 
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.ErrorCode;
-import com.forever.dadamda.exception.InternalServerException;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import io.sentry.Sentry;
@@ -30,7 +29,6 @@ public class ControllerExceptionAdvice {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(joining("\n"));
-        Sentry.captureException(e);
         return ApiResponse.error(ErrorCode.INVALID, errorMessage);
     }
 
@@ -38,7 +36,6 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     private ApiResponse<Object> handleValidationParameterError(ConstraintViolationException e) {
         String errorMessage = e.getMessage();
-        Sentry.captureException(e);
         return ApiResponse.error(ErrorCode.INVALID, errorMessage);
     }
 
@@ -48,7 +45,6 @@ public class ControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidException.class)
     private ApiResponse<Object> handleBadRequest(InvalidException e) {
-        Sentry.captureException(e);
         return ApiResponse.error(e.getErrorCode());
     }
 
@@ -58,7 +54,6 @@ public class ControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     private ApiResponse<Object> handleNotFound(NotFoundException e) {
-        Sentry.captureException(e);
         return ApiResponse.error(e.getErrorCode());
     }
 
@@ -66,9 +61,9 @@ public class ControllerExceptionAdvice {
      * 500 Internal Server Exception (서버 내부 에러)
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(InternalServerException.class)
-    private ApiResponse<Object> handleInternalServerException(InternalServerException e) {
+    @ExceptionHandler(Exception.class)
+    private ApiResponse<Object> handleInternalServerException(Exception e) {
         Sentry.captureException(e);
-        return ApiResponse.error(e.getErrorCode());
+        return ApiResponse.error(ErrorCode.INTERNAL_SERVER, e.getMessage());
     }
 }

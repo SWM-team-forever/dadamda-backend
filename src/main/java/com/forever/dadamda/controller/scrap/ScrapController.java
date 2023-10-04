@@ -9,6 +9,8 @@ import com.forever.dadamda.dto.scrap.UpdateScrapRequest;
 import com.forever.dadamda.service.scrap.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import org.springframework.data.domain.Pageable;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +42,7 @@ public class ScrapController {
 
     @Operation(summary = "스크랩 삭제", description = "한개의 스크랩을 삭제할 수 있습니다.")
     @DeleteMapping("/v1/scraps/{scrapId}")
-    public ApiResponse<String> deleteScraps(@Valid @PathVariable("scrapId") Long scrapId,
+    public ApiResponse<String> deleteScraps(@PathVariable("scrapId") @NotNull @Positive Long scrapId,
             Authentication authentication) {
 
         String email = authentication.getName();
@@ -63,7 +65,7 @@ public class ScrapController {
     @Operation(summary = "전체 스크랩 수정", description = "스크랩을 수정할 수 있습니다.")
     @PatchMapping("/v1/scraps")
     public ApiResponse<String> updateScraps(
-            @RequestBody UpdateScrapRequest updateScrapRequest,
+            @Valid @RequestBody UpdateScrapRequest updateScrapRequest,
             Authentication authentication) {
 
         String email = authentication.getName();
