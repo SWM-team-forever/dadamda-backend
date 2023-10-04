@@ -29,7 +29,6 @@ public class ControllerExceptionAdvice {
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(joining("\n"));
-        Sentry.captureException(e);
         return ApiResponse.error(ErrorCode.INVALID, errorMessage);
     }
 
@@ -37,7 +36,6 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     private ApiResponse<Object> handleValidationParameterError(ConstraintViolationException e) {
         String errorMessage = e.getMessage();
-        Sentry.captureException(e);
         return ApiResponse.error(ErrorCode.INVALID, errorMessage);
     }
 
@@ -47,7 +45,6 @@ public class ControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidException.class)
     private ApiResponse<Object> handleBadRequest(InvalidException e) {
-        Sentry.captureException(e);
         return ApiResponse.error(e.getErrorCode());
     }
 
@@ -57,7 +54,6 @@ public class ControllerExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     private ApiResponse<Object> handleNotFound(NotFoundException e) {
-        Sentry.captureException(e);
         return ApiResponse.error(e.getErrorCode());
     }
 
