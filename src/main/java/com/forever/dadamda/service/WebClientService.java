@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.webClient.WebClientBodyResponse;
 import com.forever.dadamda.dto.webClient.WebClientResponse;
+import io.sentry.Sentry;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,15 @@ public class WebClientService {
                     .bodyValue(bodyMap)
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                        Sentry.captureMessage(
+                                "Crawling Error PageUrl : " + pageUrl + " \n Error 4xx Status Code : "
+                                        + clientResponse.statusCode());
                         throw new RuntimeException("4xx");
                     })
-                    .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                    .onStatus(HttpStatus::is5xxServerError, clientResponse -> {
+                        Sentry.captureMessage(
+                                "Crawling Error PageUrl : " + pageUrl + " \n Error 5xx Status Code : "
+                                        + clientResponse.statusCode());
                         throw new RuntimeException("5xx");
                     })
                     .bodyToMono(WebClientResponse.class)

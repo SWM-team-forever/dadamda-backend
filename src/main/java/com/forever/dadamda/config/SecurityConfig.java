@@ -46,7 +46,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://dadamda.me",
+        config.setAllowedOrigins(Arrays.asList("https://dadamda.me",
                 "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj",
                 "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf",
                 "https://dev.dadamda.me"));
