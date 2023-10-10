@@ -151,4 +151,17 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("ENTERTAINMENT_ART"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].tag").value("LIFE_SHOPPING"));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_count_is_returned_successfully_When_getting_the_number_of_boards()
+            throws Exception {
+        // 보드 개수 조회할 때, count가 성공적으로 반환되는지 확인
+        mockMvc.perform(get("/v1/boards/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count").exists());
+    }
 }
