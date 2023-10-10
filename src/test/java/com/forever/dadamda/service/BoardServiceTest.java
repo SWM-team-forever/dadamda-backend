@@ -109,4 +109,15 @@ public class BoardServiceTest {
         assertThat(getBoardResponseSlice.getContent().get(2).getBoardId()).isEqualTo(3L);
         assertThat(getBoardResponseSlice.getContent().get(3).getBoardId()).isEqualTo(1L);
     }
+
+    @Test
+    void should_the_number_of_boards_is_returned_successfully_except_for_deleted_ones_When_getting_the_number_of_boards() {
+        // 보드 개수 조회할 때, 삭제된 보드는 제외하고 개수가 정상적으로 나오는지 확인
+        //given
+        //when
+        Long boardsCount = boardService.getBoardCount(existentEmail);
+
+        //then
+        assertThat(boardsCount).isEqualTo(4L);
+    }
 }
