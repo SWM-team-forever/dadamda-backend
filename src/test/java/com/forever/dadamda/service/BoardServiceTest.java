@@ -1,11 +1,13 @@
 package com.forever.dadamda.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardListResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -119,5 +121,17 @@ public class BoardServiceTest {
 
         //then
         assertThat(boardsCount).isEqualTo(4L);
+    }
+
+    @Test
+    void should_it_occurs_not_found_exception_When_getting_deleted_board() {
+        // 삭제된 보드 조회할 때, NotFoundException(NOT_EXISTS_BOARD) 예외가 발생하는지 확인
+        //given
+        Long deletedBoardId = 5L;
+
+        //when
+        //then
+        assertThatThrownBy(() -> boardService.getBoard(existentEmail, deletedBoardId))
+                .isInstanceOf(NotFoundException.class);
     }
 }
