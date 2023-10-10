@@ -31,6 +31,22 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
 
+    @Override
+    public Slice<Board> searchKeywordInBoardList(User user, String keyword, Pageable pageable) {
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.user.eq(user)
+                                .and(board.deletedDate.isNull())
+                                .and(board.name.containsIgnoreCase(keyword))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.fixedDate.desc().nullsLast(), board.modifiedDate.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
+    }
+
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {
             contents.remove(pageSize);

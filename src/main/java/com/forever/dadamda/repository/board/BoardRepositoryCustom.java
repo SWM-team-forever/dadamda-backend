@@ -8,4 +8,6 @@ import org.springframework.data.domain.Slice;
 public interface BoardRepositoryCustom {
 
     Slice<Board> getBoardsList(User user, Pageable pageable);
+
+    Slice<Board> searchKeywordInBoardList(User user, String keyword, Pageable pageable);
 }

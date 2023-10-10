@@ -9,6 +9,7 @@ import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Validated
@@ -74,7 +76,7 @@ public class BoardController {
         return ApiResponse.success(GetBoardCountResponse.of(boardService.getBoardCount(email)));
     }
 
-    @Operation(summary = "보드 내용 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
+    @Operation(summary = "보드 내용 조회", description = "보드 정보를 조회할 수 있습니다.")
     @GetMapping("/v1/boards/{boardId}")
     public ApiResponse<GetBoardDetailResponse> getBoards(
             @PathVariable @Positive @NotNull Long boardId, Authentication authentication) {
@@ -90,5 +92,17 @@ public class BoardController {
         String email = authentication.getName();
         boardService.updateBoards(email, boardId, updateBoardRequest);
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "보드 검색", description = "보드를 보드명으로 검색할 수 있습니다.")
+    @GetMapping("/v1/boards/search")
+    public ApiResponse<Slice<GetBoardResponse>> searchBoards(
+            @RequestParam("keyword") @NotBlank String keyword,
+            Pageable pageable,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(boardService.searchBoards(email, keyword, pageable));
     }
 }
