@@ -101,7 +101,7 @@ public class BoardServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        Slice<GetBoardListResponse> getBoardResponseSlice = boardService.getBoards(existentEmail, pageRequest);
+        Slice<GetBoardListResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail, pageRequest);
 
         //then
         assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);
