@@ -58,7 +58,7 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public Slice<GetBoardListResponse> getBoards(String email, Pageable pageable) {
+    public Slice<GetBoardListResponse> getBoardList(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
         Slice<Board> boardSlice = boardRepository.getBoardsList(user, pageable);

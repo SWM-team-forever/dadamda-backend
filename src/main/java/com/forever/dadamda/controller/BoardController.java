@@ -62,7 +62,7 @@ public class BoardController {
     public ApiResponse<Slice<GetBoardListResponse>> getBoards(Pageable pageable,
             Authentication authentication) {
         String email = authentication.getName();
-        return ApiResponse.success(boardService.getBoards(email, pageable));
+        return ApiResponse.success(boardService.getBoardList(email, pageable));
     }
 
     @Operation(summary = "전체 보드 개수 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
