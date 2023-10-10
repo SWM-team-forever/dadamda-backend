@@ -5,7 +5,7 @@ import static com.forever.dadamda.service.UUIDService.generateUUID;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardListResponse;
-import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
@@ -75,11 +75,11 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public GetBoardResponse getBoard(String email, Long boardId) {
+    public GetBoardDetailResponse getBoard(String email, Long boardId) {
         User user = userService.validateUser(email);
 
         return boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
-                .map(GetBoardResponse::of)
+                .map(GetBoardDetailResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
 }

@@ -4,7 +4,7 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
 import com.forever.dadamda.dto.board.GetBoardListResponse;
-import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
@@ -75,7 +75,7 @@ public class BoardController {
 
     @Operation(summary = "보드 내용 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
     @GetMapping("/v1/boards/{boardId}")
-    public ApiResponse<GetBoardResponse> getBoards(
+    public ApiResponse<GetBoardDetailResponse> getBoards(
             @PathVariable @Positive @NotNull Long boardId, Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(boardService.getBoard(email, boardId));
