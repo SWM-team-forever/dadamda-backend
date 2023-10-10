@@ -3,6 +3,7 @@ package com.forever.dadamda.controller;
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
@@ -62,5 +63,15 @@ public class BoardController {
             Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(boardService.getBoards(email, pageable));
+    }
+
+    @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
+    @PatchMapping("/v1/boards/{boardId}")
+    public ApiResponse<String> updateBoards(@PathVariable @Positive @NotNull Long boardId,
+            @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+        boardService.updateBoards(email, boardId, updateBoardRequest);
+        return ApiResponse.success();
     }
 }
