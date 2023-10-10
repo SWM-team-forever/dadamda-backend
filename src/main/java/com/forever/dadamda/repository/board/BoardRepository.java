@@ -9,4 +9,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     Optional<Board> findByUserAndName(User user, String name);
 
     Optional<Board> findByUserAndIdAndDeletedDateIsNull(User user, Long boardId);
+
+    Long countByUserAndDeletedDateIsNull(User user);
 }

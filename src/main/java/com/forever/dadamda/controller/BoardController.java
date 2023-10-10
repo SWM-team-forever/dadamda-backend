@@ -2,8 +2,10 @@ package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardCountResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
@@ -59,10 +61,25 @@ public class BoardController {
 
     @Operation(summary = "보드 목록 조회", description = "여러 개의 보드를 조회합니다")
     @GetMapping("/v1/boards")
-    public ApiResponse<Slice<GetBoardResponse>> getBoards(Pageable pageable,
+    public ApiResponse<Slice<GetBoardResponse>> getBoardList(Pageable pageable,
             Authentication authentication) {
         String email = authentication.getName();
-        return ApiResponse.success(boardService.getBoards(email, pageable));
+        return ApiResponse.success(boardService.getBoardList(email, pageable));
+    }
+
+    @Operation(summary = "전체 보드 개수 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
+    @GetMapping("/v1/boards/count")
+    public ApiResponse<GetBoardCountResponse> getBoardCount(Authentication authentication) {
+        String email = authentication.getName();
+        return ApiResponse.success(GetBoardCountResponse.of(boardService.getBoardCount(email)));
+    }
+
+    @Operation(summary = "보드 내용 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
+    @GetMapping("/v1/boards/{boardId}")
+    public ApiResponse<GetBoardDetailResponse> getBoards(
+            @PathVariable @Positive @NotNull Long boardId, Authentication authentication) {
+        String email = authentication.getName();
+        return ApiResponse.success(boardService.getBoard(email, boardId));
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")

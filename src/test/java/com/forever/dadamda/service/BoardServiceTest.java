@@ -2,12 +2,14 @@ package com.forever.dadamda.service;
 
 import static com.forever.dadamda.entity.board.TAG.LIFE_SHOPPING;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -103,7 +105,7 @@ public class BoardServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoards(existentEmail, pageRequest);
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail, pageRequest);
 
         //then
         assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);
@@ -155,5 +157,29 @@ public class BoardServiceTest {
 
         assertThat(board.getModifiedDate()).isEqualTo(
                 LocalDateTime.of(2023, 1, 1, 11, 11, 1));
+
+    }
+  
+    @Test
+    void should_the_number_of_boards_is_returned_successfully_except_for_deleted_ones_When_getting_the_number_of_boards() {
+        // 보드 개수 조회할 때, 삭제된 보드는 제외하고 개수가 정상적으로 나오는지 확인
+        //given
+        //when
+        Long boardsCount = boardService.getBoardCount(existentEmail);
+
+        //then
+        assertThat(boardsCount).isEqualTo(4L);
+    }
+
+    @Test
+    void should_it_occurs_not_found_exception_When_getting_deleted_board() {
+        // 삭제된 보드 조회할 때, NotFoundException(NOT_EXISTS_BOARD) 예외가 발생하는지 확인
+        //given
+        Long deletedBoardId = 5L;
+
+        //when
+        //then
+        assertThatThrownBy(() -> boardService.getBoard(existentEmail, deletedBoardId))
+                .isInstanceOf(NotFoundException.class);
     }
 }

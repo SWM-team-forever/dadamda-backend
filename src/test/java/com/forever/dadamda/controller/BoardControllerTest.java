@@ -175,4 +175,33 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+  
+    @Test
+    @WithCustomMockUser
+    public void should_count_is_returned_successfully_When_getting_the_number_of_boards()
+            throws Exception {
+        // 보드 개수 조회할 때, count가 성공적으로 반환되는지 확인
+        mockMvc.perform(get("/v1/boards/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.count").exists());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_board_name_description_and_tag_are_successfully_returned_When_getting_board_individually()
+            throws Exception {
+        // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그가 반환된다.
+        mockMvc.perform(get("/v1/boards/{boardId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("test"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"));
+    }
 }
