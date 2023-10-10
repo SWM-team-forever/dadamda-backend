@@ -5,6 +5,7 @@ import static com.forever.dadamda.service.UUIDService.generateUUID;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardListResponse;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BoardService {
+
     private final UserService userService;
     private final BoardRepository boardRepository;
 
@@ -70,5 +72,14 @@ public class BoardService {
     public Long getBoardCount(String email) {
         User user = userService.validateUser(email);
         return boardRepository.countByUserAndDeletedDateIsNull(user);
+    }
+
+    @Transactional(readOnly = true)
+    public GetBoardResponse getBoard(String email, Long boardId) {
+        User user = userService.validateUser(email);
+
+        return boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+                .map(GetBoardResponse::of)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
 }
