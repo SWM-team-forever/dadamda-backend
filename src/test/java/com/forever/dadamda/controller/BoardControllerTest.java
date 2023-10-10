@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.mock.WithCustomMockUser;
 import com.forever.dadamda.repository.board.BoardRepository;
 import org.junit.jupiter.api.Test;
@@ -152,6 +153,29 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].tag").value("LIFE_SHOPPING"));
     }
 
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_modified_successfully_When_modifying_the_board()
+            throws Exception {
+        //보드 수정할 때, 성공적으로 수정되는지 확인
+        //given
+        UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
+                .tag("LIFE_SHOPPING")
+                .name("test")
+                .description("test123")
+                .build();
+        String content = objectMapper.writeValueAsString(updateBoardRequest);
+
+        //when
+        //then
+        mockMvc.perform(patch("/v1/boards/{boardId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+  
     @Test
     @WithCustomMockUser
     public void should_count_is_returned_successfully_When_getting_the_number_of_boards()

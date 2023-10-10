@@ -1,5 +1,6 @@
 package com.forever.dadamda.entity.board;
 
+import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.BaseTimeEntity;
 import com.forever.dadamda.entity.user.User;
 import java.time.LocalDateTime;
@@ -72,5 +73,11 @@ public class Board extends BaseTimeEntity {
 
     public void updateFixedDate(LocalDateTime fixedDate) {
         this.fixedDate = fixedDate;
+    }
+
+    public void updateBoard(UpdateBoardRequest request) {
+        this.name = request.getName();
+        this.tag = TAG.from(request.getTag());
+        this.description = request.getDescription();
     }
 }
