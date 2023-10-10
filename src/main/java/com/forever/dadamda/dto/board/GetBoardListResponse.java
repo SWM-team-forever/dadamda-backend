@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GetBoardResponse {
+public class GetBoardListResponse {
 
     private Long boardId;
     private String boardName;
@@ -23,8 +23,8 @@ public class GetBoardResponse {
     private TAG tag;
     private Long modifiedDate;
 
-    public static GetBoardResponse of(Board board) {
-        return GetBoardResponse.builder()
+    public static GetBoardListResponse of(Board board) {
+        return GetBoardListResponse.builder()
                 .boardId(board.getId())
                 .boardName(board.getName())
                 .description(board.getDescription())
