@@ -2,6 +2,7 @@ package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardCountResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,5 +63,12 @@ public class BoardController {
             Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(boardService.getBoards(email, pageable));
+    }
+
+    @Operation(summary = "전체 보드 개수 조회", description = "전체 보드 개수 정보를 조회할 수 있습니다.")
+    @GetMapping("/v1/boards/count")
+    public ApiResponse<GetBoardCountResponse> getBoardCount(Authentication authentication) {
+        String email = authentication.getName();
+        return ApiResponse.success(GetBoardCountResponse.of(boardService.getBoardCount(email)));
     }
 }
