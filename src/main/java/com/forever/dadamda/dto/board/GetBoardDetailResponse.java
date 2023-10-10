@@ -7,15 +7,15 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetBoardResponse {
+public class GetBoardDetailResponse {
 
     private Long boardId;
     private String name;
     private String description;
     private TAG tag;
 
-    public static GetBoardResponse of(Board board) {
-        return GetBoardResponse.builder()
+    public static GetBoardDetailResponse of(Board board) {
+        return GetBoardDetailResponse.builder()
                 .boardId(board.getId())
                 .name(board.getName())
                 .description(board.getDescription())
