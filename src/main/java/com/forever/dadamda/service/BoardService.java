@@ -65,4 +65,10 @@ public class BoardService {
 
         return boardSlice.map(GetBoardResponse::of);
     }
+
+    @Transactional(readOnly = true)
+    public Long getBoardCount(String email) {
+        User user = userService.validateUser(email);
+        return boardRepository.countByUserAndDeletedDateIsNull(user);
+    }
 }
