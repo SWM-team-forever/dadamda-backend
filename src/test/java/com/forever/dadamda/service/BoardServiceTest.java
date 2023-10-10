@@ -4,7 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
-import com.forever.dadamda.dto.board.GetBoardListResponse;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
@@ -103,7 +103,7 @@ public class BoardServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        Slice<GetBoardListResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail, pageRequest);
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail, pageRequest);
 
         //then
         assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);

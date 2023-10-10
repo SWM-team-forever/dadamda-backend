@@ -4,7 +4,7 @@ import static com.forever.dadamda.service.UUIDService.generateUUID;
 
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
-import com.forever.dadamda.dto.board.GetBoardListResponse;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
@@ -60,12 +60,12 @@ public class BoardService {
 
 
     @Transactional(readOnly = true)
-    public Slice<GetBoardListResponse> getBoardList(String email, Pageable pageable) {
+    public Slice<GetBoardResponse> getBoardList(String email, Pageable pageable) {
         User user = userService.validateUser(email);
 
         Slice<Board> boardSlice = boardRepository.getBoardsList(user, pageable);
 
-        return boardSlice.map(GetBoardListResponse::of);
+        return boardSlice.map(GetBoardResponse::of);
     }
 
     @Transactional(readOnly = true)
