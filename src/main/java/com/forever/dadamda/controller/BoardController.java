@@ -3,7 +3,7 @@ package com.forever.dadamda.controller;
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
-import com.forever.dadamda.dto.board.GetBoardListResponse;
+import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,7 +60,7 @@ public class BoardController {
 
     @Operation(summary = "보드 목록 조회", description = "여러 개의 보드를 조회합니다")
     @GetMapping("/v1/boards")
-    public ApiResponse<Slice<GetBoardListResponse>> getBoards(Pageable pageable,
+    public ApiResponse<Slice<GetBoardResponse>> getBoardList(Pageable pageable,
             Authentication authentication) {
         String email = authentication.getName();
         return ApiResponse.success(boardService.getBoardList(email, pageable));
