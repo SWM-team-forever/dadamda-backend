@@ -10,14 +10,14 @@ import lombok.Getter;
 public class GetBoardDetailResponse {
 
     private Long boardId;
-    private String name;
+    private String title;
     private String description;
     private TAG tag;
 
     public static GetBoardDetailResponse of(Board board) {
         return GetBoardDetailResponse.builder()
                 .boardId(board.getId())
-                .name(board.getName())
+                .title(board.getTitle())
                 .description(board.getDescription())
                 .tag(board.getTag())
                 .build();

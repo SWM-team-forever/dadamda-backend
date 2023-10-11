@@ -48,7 +48,7 @@ public class BoardServiceTest {
 
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board normally test1")
+                .title("board normally test1")
                 .description("board test2")
                 .build();
 
@@ -58,7 +58,7 @@ public class BoardServiceTest {
         boardService.createBoards(existentEmail, createBoardRequest);
 
         //then
-        Optional<Board> board = boardRepository.findByUserAndName(user, "board normally test1");
+        Optional<Board> board = boardRepository.findByUserAndTitle(user, "board normally test1");
         assertThat(board).isNotNull();
         assertThat(board.get().getDescription()).isEqualTo("board test2");
         assertThat(board.get().getHeartCnt()).isEqualTo(0L);
@@ -122,7 +122,7 @@ public class BoardServiceTest {
         Long boardId = 1L;
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("LIFE_SHOPPING")
-                .name("test")
+                .title("test")
                 .description("test123")
                 .build();
 
@@ -135,7 +135,7 @@ public class BoardServiceTest {
         assertThat(board.getModifiedDate()).isAfter(
                 LocalDateTime.of(2023, 1, 2, 11, 11, 1));
         assertThat(board.getTag()).isEqualTo(LIFE_SHOPPING);
-        assertThat(board.getName()).isEqualTo("test");
+        assertThat(board.getTitle()).isEqualTo("test");
         assertThat(board.getDescription()).isEqualTo("test123");
     }
 
@@ -146,7 +146,7 @@ public class BoardServiceTest {
         Long boardId = 1L;
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board1")
+                .title("board1")
                 .description("test")
                 .build();
 

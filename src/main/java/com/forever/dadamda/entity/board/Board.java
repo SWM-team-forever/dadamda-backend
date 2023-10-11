@@ -37,7 +37,7 @@ public class Board extends BaseTimeEntity {
     private User user;
 
     @Column(length = 100, nullable = false)
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "boolean", nullable = false)
     private boolean isPublic;
@@ -60,10 +60,10 @@ public class Board extends BaseTimeEntity {
     private Long shareCnt;
 
     @Builder
-    Board(User user, String name, TAG tag, UUID uuid, String description, boolean isPublic,
+    Board(User user, String title, TAG tag, UUID uuid, String description, boolean isPublic,
             LocalDateTime fixedDate) {
         this.user = user;
-        this.name = name;
+        this.title = title;
         this.tag = tag;
         this.uuid = uuid;
         this.description = description;
@@ -76,7 +76,7 @@ public class Board extends BaseTimeEntity {
     }
 
     public void updateBoard(UpdateBoardRequest request) {
-        this.name = request.getName();
+        this.title = request.getTitle();
         this.tag = TAG.from(request.getTag());
         this.description = request.getDescription();
     }

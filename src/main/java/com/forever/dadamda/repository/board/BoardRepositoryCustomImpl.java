@@ -37,7 +37,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .where(
                         board.user.eq(user)
                                 .and(board.deletedDate.isNull())
-                                .and(board.name.containsIgnoreCase(keyword))
+                                .and(board.title.containsIgnoreCase(keyword))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
