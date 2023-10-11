@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
@@ -46,6 +47,8 @@ public class BoardControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    String board2UUID = "30373832-6566-3438-2d61-3433392d3132";
 
     @Test
     @WithCustomMockUser
@@ -251,5 +254,74 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-30T11:11:01"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(boardUUID.toString()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("LIFE_SHOPPING"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_modified_successfully_When_modifying_board_contents()
+            throws Exception {
+        // 보드 컨텐츠 수정할 때, 성공적으로 수정되는지 확인
+        // given
+        UpdateBoardContentsRequest request = UpdateBoardContentsRequest.builder()
+                .contents("test123")
+                .build();
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/v1/boards/{boardUUID}/contents", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_4xx_errors_if_uuid_exceeds_the_number_of_characters_When_modifying_board_contents()
+            throws Exception {
+        // 보드 컨텐츠 수정할 때, UUID가 글자 수를 초과하면 4xx 에러를 반환하는지 확인
+        // given
+        String wrongUUID = "30373832-6566-3438-2d61-3433392d3131111111111111111";
+        UpdateBoardContentsRequest request = UpdateBoardContentsRequest.builder()
+                .contents("test123")
+                .build();
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/v1/boards/{boardUUID}/contents", wrongUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("BR000"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("updateBoardContents.boardUUID: UUID가 올바르지 않습니다."));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_4xx_errors_if_board_uuid_does_not_follow_the_format_of_uuid_When_modifying_board_contents()
+            throws Exception {
+        // 보드 컨텐츠 수정할 때, UUID가 uuid의 형식을 지키지 않으면 4xx 에러를 반환하는지 확인
+        // given
+        String wrongUUID = "30373832-6566-3438";
+        UpdateBoardContentsRequest request = UpdateBoardContentsRequest.builder()
+                .contents("test123")
+                .build();
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/v1/boards/{boardUUID}/contents", wrongUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("BR000"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("updateBoardContents.boardUUID: UUID가 올바르지 않습니다."));
     }
 }
