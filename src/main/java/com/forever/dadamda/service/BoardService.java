@@ -6,6 +6,7 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
@@ -13,6 +14,7 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -52,7 +54,7 @@ public class BoardService {
         Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
-        if(board.getFixedDate() == null) {
+        if (board.getFixedDate() == null) {
             board.updateFixedDate(LocalDateTime.now());
         } else {
             board.updateFixedDate(null);
@@ -100,5 +102,16 @@ public class BoardService {
         Slice<Board> boardSlice = boardRepository.searchKeywordInBoardList(user, keyword, pageable);
 
         return boardSlice.map(GetBoardResponse::of);
+    }
+
+    @Transactional
+    public void updateBoardContents(String email, String boardUUID,
+            UpdateBoardContentsRequest updateBoardContentsRequest) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuid(user, UUID.fromString(boardUUID))
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateContents(updateBoardContentsRequest);
     }
 }

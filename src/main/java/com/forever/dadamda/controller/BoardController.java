@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
@@ -104,5 +105,15 @@ public class BoardController {
         String email = authentication.getName();
 
         return ApiResponse.success(boardService.searchBoards(email, keyword, pageable));
+    }
+
+    @Operation(summary = "보드 컨텐츠 수정", description = "보드의 컨텐츠를 수정합니다.")
+    @PatchMapping("/v1/boards/{boardUUID}/contents")
+    public ApiResponse<String> updateBoardContents(@PathVariable @NotNull String boardUUID,
+            @Valid @RequestBody UpdateBoardContentsRequest updateBoardContentsRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+        boardService.updateBoardContents(email, boardUUID, updateBoardContentsRequest);
+        return ApiResponse.success();
     }
 }
