@@ -4,6 +4,7 @@ import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.board.TAG;
 import com.forever.dadamda.service.TimeService;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,18 +18,18 @@ import lombok.NoArgsConstructor;
 public class GetBoardResponse {
 
     private Long boardId;
-    private String boardName;
-    private String description;
+    private String title;
     private LocalDateTime isFixed;
+    private UUID uuid;
     private TAG tag;
     private Long modifiedDate;
 
     public static GetBoardResponse of(Board board) {
         return GetBoardResponse.builder()
                 .boardId(board.getId())
-                .boardName(board.getName())
-                .description(board.getDescription())
+                .title(board.getTitle())
                 .isFixed(board.getFixedDate())
+                .uuid(board.getUuid())
                 .tag(board.getTag())
                 .modifiedDate(TimeService.fromLocalDateTime(board.getModifiedDate()))
                 .build();

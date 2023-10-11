@@ -48,7 +48,7 @@ public class BoardServiceTest {
 
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board normally test1")
+                .title("board normally test1")
                 .description("board test2")
                 .build();
 
@@ -58,7 +58,7 @@ public class BoardServiceTest {
         boardService.createBoards(existentEmail, createBoardRequest);
 
         //then
-        Optional<Board> board = boardRepository.findByUserAndName(user, "board normally test1");
+        Optional<Board> board = boardRepository.findByUserAndTitle(user, "board normally test1");
         assertThat(board).isNotNull();
         assertThat(board.get().getDescription()).isEqualTo("board test2");
         assertThat(board.get().getHeartCnt()).isEqualTo(0L);
@@ -105,7 +105,8 @@ public class BoardServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail, pageRequest);
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.getBoardList(existentEmail,
+                pageRequest);
 
         //then
         assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);
@@ -121,7 +122,7 @@ public class BoardServiceTest {
         Long boardId = 1L;
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("LIFE_SHOPPING")
-                .name("test")
+                .title("test")
                 .description("test123")
                 .build();
 
@@ -134,7 +135,7 @@ public class BoardServiceTest {
         assertThat(board.getModifiedDate()).isAfter(
                 LocalDateTime.of(2023, 1, 2, 11, 11, 1));
         assertThat(board.getTag()).isEqualTo(LIFE_SHOPPING);
-        assertThat(board.getName()).isEqualTo("test");
+        assertThat(board.getTitle()).isEqualTo("test");
         assertThat(board.getDescription()).isEqualTo("test123");
     }
 
@@ -145,7 +146,7 @@ public class BoardServiceTest {
         Long boardId = 1L;
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board1")
+                .title("board1")
                 .description("test")
                 .build();
 
@@ -159,7 +160,7 @@ public class BoardServiceTest {
                 LocalDateTime.of(2023, 1, 1, 11, 11, 1));
 
     }
-  
+
     @Test
     void should_the_number_of_boards_is_returned_successfully_except_for_deleted_ones_When_getting_the_number_of_boards() {
         // 보드 개수 조회할 때, 삭제된 보드는 제외하고 개수가 정상적으로 나오는지 확인
@@ -181,5 +182,36 @@ public class BoardServiceTest {
         //then
         assertThatThrownBy(() -> boardService.getBoard(existentEmail, deletedBoardId))
                 .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void should_deleted_boards_are_not_searched_When_searching_for_a_board() {
+        // 보드를 검색할 때, 삭제된 보드는 검색 안 된다.
+        //given
+        String keyword = "board5";
+
+        //when
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.searchBoards(existentEmail,
+                keyword, PageRequest.of(0, 10));
+
+        //then
+        assertThat(getBoardResponseSlice.getNumberOfElements()).isEqualTo(0);
+    }
+
+    @Test
+    void should_boards_are_sorted_by_fixed_date_and_modified_date_order_When_searching_for_a_board() {
+        // 보드를 검색할 때, 고정된 날짜, 수정된 날짜 순으로 정렬되는지 확인
+        //given
+        String keyword = "board";
+
+        //when
+        Slice<GetBoardResponse> getBoardResponseSlice = boardService.searchBoards(existentEmail,
+                keyword, PageRequest.of(0, 10));
+
+        //then
+        assertThat(getBoardResponseSlice.getContent().get(0).getBoardId()).isEqualTo(4L);
+        assertThat(getBoardResponseSlice.getContent().get(1).getBoardId()).isEqualTo(2L);
+        assertThat(getBoardResponseSlice.getContent().get(2).getBoardId()).isEqualTo(3L);
+        assertThat(getBoardResponseSlice.getContent().get(3).getBoardId()).isEqualTo(1L);
     }
 }

@@ -1,5 +1,7 @@
 package com.forever.dadamda.controller;
 
+import static com.forever.dadamda.entity.board.TAG.LIFE_SHOPPING;
+import static com.forever.dadamda.service.UUIDService.generateUUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,8 +10,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
+import com.forever.dadamda.entity.board.Board;
+import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.mock.WithCustomMockUser;
+import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.repository.board.BoardRepository;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,6 +44,9 @@ public class BoardControllerTest {
     @Autowired
     private BoardRepository boardRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @WithCustomMockUser
     public void should_it_created_normally_When_creating_board_with_the_title_name_and_tag_entered()
@@ -47,7 +57,7 @@ public class BoardControllerTest {
 
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board test1")
+                .title("board test1")
                 .description("board test2")
                 .build();
         String content = objectMapper.writeValueAsString(createBoardRequest);
@@ -70,7 +80,7 @@ public class BoardControllerTest {
         //given
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ARTIST")
-                .name("test")
+                .title("test")
                 .description("test")
                 .build();
         String content = objectMapper.writeValueAsString(createBoardRequest);
@@ -161,7 +171,7 @@ public class BoardControllerTest {
         //given
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("LIFE_SHOPPING")
-                .name("test")
+                .title("test")
                 .description("test123")
                 .build();
         String content = objectMapper.writeValueAsString(updateBoardRequest);
@@ -200,8 +210,46 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("test"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_name_fixed_date_uuid_and_tag_are_returned_successfully_When_searching_for_a_board()
+            throws Exception {
+        // 보드를 검색할 때, 이름, 고정된 날짜, uuid, 태그가 성공적으로 출력된다.
+        // given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board board = Board.builder()
+                .isPublic(true)
+                .title("board10")
+                .description("test")
+                .tag(LIFE_SHOPPING)
+                .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
+                .uuid(boardUUID)
+                .user(user)
+                .build();
+        boardRepository.save(board);
+
+        //when
+        //then
+        mockMvc.perform(get("/v1/boards/search")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                        .param("keyword", "board10")
+                        .param("page", "0")
+                        .param("size", "10")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].description").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-30T11:11:01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(boardUUID.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("LIFE_SHOPPING"));
     }
 }
