@@ -9,9 +9,11 @@ import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -109,11 +111,14 @@ public class BoardController {
 
     @Operation(summary = "보드 컨텐츠 수정", description = "보드의 컨텐츠를 수정합니다.")
     @PatchMapping("/v1/boards/{boardUUID}/contents")
-    public ApiResponse<String> updateBoardContents(@PathVariable @NotNull String boardUUID,
+    public ApiResponse<String> updateBoardContents(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", message = "UUID가 올바르지 않습니다.") String boardUUID,
             @Valid @RequestBody UpdateBoardContentsRequest updateBoardContentsRequest,
             Authentication authentication) {
+
         String email = authentication.getName();
-        boardService.updateBoardContents(email, boardUUID, updateBoardContentsRequest);
+        boardService.updateBoardContents(email, UUID.fromString(boardUUID), updateBoardContentsRequest);
+
         return ApiResponse.success();
     }
 }
