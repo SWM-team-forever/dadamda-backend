@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
@@ -14,6 +15,7 @@ import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +41,8 @@ public class BoardServiceTest {
     private UserRepository userRepository;
 
     String existentEmail = "1234@naver.com";
+
+    UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
@@ -213,5 +217,41 @@ public class BoardServiceTest {
         assertThat(getBoardResponseSlice.getContent().get(1).getBoardId()).isEqualTo(2L);
         assertThat(getBoardResponseSlice.getContent().get(2).getBoardId()).isEqualTo(3L);
         assertThat(getBoardResponseSlice.getContent().get(3).getBoardId()).isEqualTo(1L);
+    }
+
+    @Test
+    void should_the_board_contents_are_actually_modified_When_modifying_board_contents() {
+        // 보드 컨텐츠 수정할 때, 보드의 컨텐츠가 실제로 수정되었는지 확인
+        //given
+        UpdateBoardContentsRequest updateBoardContentsRequest = UpdateBoardContentsRequest.builder()
+                .contents("update test")
+                .build();
+
+        //when
+        boardService.updateBoardContents(existentEmail, board2UUID, updateBoardContentsRequest);
+
+        //then
+        User user = userRepository.findById(1L).get();
+        Board board = boardRepository.findByUserAndUuid(user, board2UUID).get();
+
+        assertThat(board.getContents()).isEqualTo("update test");
+    }
+
+    @Test
+    void should_it_is_not_modified_if_it_is_the_same_as_the_previous_content_When_modifying_board_contents() {
+        // 보드 컨텐츠 수정할 때, 이전 컨텐츠와 동일하면 수정되지 않는다.
+        //given
+        UpdateBoardContentsRequest updateBoardContentsRequest = UpdateBoardContentsRequest.builder()
+                .contents("test contents")
+                .build();
+
+        //when
+        boardService.updateBoardContents(existentEmail, board2UUID, updateBoardContentsRequest);
+
+        //then
+        User user = userRepository.findById(1L).get();
+        Board board = boardRepository.findByUserAndUuid(user, board2UUID).get();
+
+        assertThat(board.getModifiedDate()).isEqualTo(LocalDateTime.of(2023, 1, 2, 11, 11, 1));
     }
 }
