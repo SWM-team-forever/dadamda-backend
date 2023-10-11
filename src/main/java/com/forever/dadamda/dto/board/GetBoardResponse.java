@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class GetBoardResponse {
 
     private Long boardId;
-    private String name;
+    private String title;
     private LocalDateTime isFixed;
     private UUID uuid;
     private TAG tag;
@@ -27,7 +27,7 @@ public class GetBoardResponse {
     public static GetBoardResponse of(Board board) {
         return GetBoardResponse.builder()
                 .boardId(board.getId())
-                .name(board.getName())
+                .title(board.getTitle())
                 .isFixed(board.getFixedDate())
                 .uuid(board.getUuid())
                 .tag(board.getTag())

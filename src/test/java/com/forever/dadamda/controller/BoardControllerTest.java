@@ -57,7 +57,7 @@ public class BoardControllerTest {
 
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ART")
-                .name("board test1")
+                .title("board test1")
                 .description("board test2")
                 .build();
         String content = objectMapper.writeValueAsString(createBoardRequest);
@@ -80,7 +80,7 @@ public class BoardControllerTest {
         //given
         CreateBoardRequest createBoardRequest = CreateBoardRequest.builder()
                 .tag("ENTERTAINMENT_ARTIST")
-                .name("test")
+                .title("test")
                 .description("test")
                 .build();
         String content = objectMapper.writeValueAsString(createBoardRequest);
@@ -171,7 +171,7 @@ public class BoardControllerTest {
         //given
         UpdateBoardRequest updateBoardRequest = UpdateBoardRequest.builder()
                 .tag("LIFE_SHOPPING")
-                .name("test")
+                .title("test")
                 .description("test123")
                 .build();
         String content = objectMapper.writeValueAsString(updateBoardRequest);
@@ -210,7 +210,7 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("test"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"));
     }
@@ -227,7 +227,7 @@ public class BoardControllerTest {
         User user = userRepository.findById(1L).get();
         Board board = Board.builder()
                 .isPublic(true)
-                .name("board10")
+                .title("board10")
                 .description("test")
                 .tag(LIFE_SHOPPING)
                 .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
@@ -246,7 +246,7 @@ public class BoardControllerTest {
                         .param("size", "10")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].name").value("board10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board10"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].description").doesNotExist())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-30T11:11:01"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(boardUUID.toString()))

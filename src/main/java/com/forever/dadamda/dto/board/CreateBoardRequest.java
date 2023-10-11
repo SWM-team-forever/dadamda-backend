@@ -17,7 +17,7 @@ public class CreateBoardRequest {
 
     @NotBlank(message = "보드명을 입력해주세요.")
     @Size(max = 100, message = "최대 100자까지 입력할 수 있습니다.")
-    private String name;
+    private String title;
 
     @Size(max = 1000, message = "최대 1000자까지 입력할 수 있습니다.")
     private String description;
@@ -28,7 +28,7 @@ public class CreateBoardRequest {
     public Board toEntity(User user, UUID uuid, boolean isPublic) {
         return Board.builder()
                 .user(user)
-                .name(name)
+                .title(title)
                 .description(description)
                 .tag(TAG.from(tag))
                 .uuid(uuid)
