@@ -105,11 +105,11 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoardContents(String email, String boardUUID,
+    public void updateBoardContents(String email, UUID boardUUID,
             UpdateBoardContentsRequest updateBoardContentsRequest) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndUuid(user, UUID.fromString(boardUUID))
+        Board board = boardRepository.findByUserAndUuid(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateContents(updateBoardContentsRequest);
