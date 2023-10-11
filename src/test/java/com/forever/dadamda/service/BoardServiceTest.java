@@ -14,6 +14,7 @@ import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +40,8 @@ public class BoardServiceTest {
     private UserRepository userRepository;
 
     String existentEmail = "1234@naver.com";
+
+    UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
@@ -69,10 +72,10 @@ public class BoardServiceTest {
         // 보드를 삭제했을 때, 삭제된 날짜가 null이 아닌지 확인
         //given
         //when
-        boardService.deleteBoards(existentEmail, 1L);
+        boardService.deleteBoards(existentEmail, board2UUID);
 
         //then
-        assertThat(boardRepository.findById(1L).get().getDeletedDate()).isNotNull();
+        assertThat(boardRepository.findById(2L).get().getDeletedDate()).isNotNull();
     }
 
     @Test

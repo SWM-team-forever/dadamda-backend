@@ -8,9 +8,11 @@ import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,11 +46,13 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 삭제", description = "1개의 보드를 삭제합니다.")
-    @DeleteMapping("/v1/boards/{boardId}")
-    public ApiResponse<String> createBoards(@PathVariable @Positive @NotNull Long boardId,
+    @DeleteMapping("/v1/boards/{boardUUID}")
+    public ApiResponse<String> deleteBoards(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.deleteBoards(email, boardId);
+        boardService.deleteBoards(email, UUID.fromString(boardUUID));
         return ApiResponse.success();
     }
 

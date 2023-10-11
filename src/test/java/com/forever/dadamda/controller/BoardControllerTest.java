@@ -47,6 +47,10 @@ public class BoardControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
+
+    UUID notExistentboardUUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3001");
+
     @Test
     @WithCustomMockUser
     public void should_it_created_normally_When_creating_board_with_the_title_name_and_tag_entered()
@@ -100,11 +104,12 @@ public class BoardControllerTest {
     public void should_it_returns_4xx_error_When_deleting_a_board_that_does_not_exist()
             throws Exception {
         //존재하지 않는 보드를 삭제할 때 4xx에러를 반환하는지 확인
-        mockMvc.perform(delete("/v1/boards/100")
+        mockMvc.perform(delete("/v1/boards/{boardUUID}", notExistentboardUUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"));
     }
 
     @Test
@@ -112,7 +117,7 @@ public class BoardControllerTest {
     public void should_it_is_deleted_successfully_When_deleting_an_existing_board()
             throws Exception {
         //존재하는 보드를 삭제할 때 성공적으로 삭제되는지 확인
-        mockMvc.perform(delete("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(delete("/v1/boards/{boardUUID}", board2UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )

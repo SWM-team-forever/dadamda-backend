@@ -13,6 +13,7 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -36,10 +37,10 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoards(String email, Long boardId) {
+    public void deleteBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateDeletedDate(LocalDateTime.now());
