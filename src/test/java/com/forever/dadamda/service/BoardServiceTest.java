@@ -43,6 +43,8 @@ public class BoardServiceTest {
 
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
+    UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
+
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
         // 새로운 보드가 정상적으로 이름, 설명, 하트수가 생성되는지 확인
@@ -83,7 +85,7 @@ public class BoardServiceTest {
         // 보드를 고정했을 때, 고정된 날짜가 null이 아닌지(보드가 정상적으로 고정되는지) 확인
         //given
         //when
-        boardService.fixedBoards(existentEmail, 1L);
+        boardService.fixBoards(existentEmail, board1UUID);
 
         //then
         assertThat(boardRepository.findById(1L).get().getFixedDate()).isBeforeOrEqualTo(
@@ -95,7 +97,7 @@ public class BoardServiceTest {
         // 고정된 보드를 다시 고정할 때, 고정된 날짜가 null이 되는지(고정이 취소되는지) 확인
         //given
         //when
-        boardService.fixedBoards(existentEmail, 2L);
+        boardService.fixBoards(existentEmail, board2UUID);
 
         //then
         assertThat(boardRepository.findById(2L).get().getFixedDate()).isNull();

@@ -47,10 +47,10 @@ public class BoardService {
     }
 
     @Transactional
-    public void fixedBoards(String email, Long boardId) {
+    public void fixBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         if(board.getFixedDate() == null) {

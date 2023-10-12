@@ -57,11 +57,12 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 고정", description = "1개의 보드를 보드 카테고리에서 상단에 고정합니다.")
-    @PatchMapping("/v1/boards/fixed/{boardId}")
-    public ApiResponse<String> fixedBoards(@PathVariable @Positive @NotNull Long boardId,
+    @PatchMapping("/v1/boards/{boardUUID}/fix")
+    public ApiResponse<String> fixBoards(@PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.fixedBoards(email, boardId);
+        boardService.fixBoards(email, UUID.fromString(boardUUID));
         return ApiResponse.success();
     }
 
