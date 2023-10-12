@@ -185,7 +185,7 @@ public class BoardControllerTest {
 
         //when
         //then
-        mockMvc.perform(patch("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(patch("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
