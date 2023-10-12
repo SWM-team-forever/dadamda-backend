@@ -58,8 +58,9 @@ public class BoardController {
 
     @Operation(summary = "보드 고정", description = "1개의 보드를 보드 카테고리에서 상단에 고정합니다.")
     @PatchMapping("/v1/boards/{boardUUID}/fix")
-    public ApiResponse<String> fixBoards(@PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            message = "UUID가 올바르지 않습니다.") String boardUUID,
+    public ApiResponse<String> fixBoards(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
         String email = authentication.getName();
         boardService.fixBoards(email, UUID.fromString(boardUUID));
@@ -91,12 +92,14 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
-    @PatchMapping("/v1/boards/{boardId}")
-    public ApiResponse<String> updateBoards(@PathVariable @Positive @NotNull Long boardId,
+    @PatchMapping("/v1/boards/{boardUUID}")
+    public ApiResponse<String> updateBoards(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.updateBoards(email, boardId, updateBoardRequest);
+        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest);
         return ApiResponse.success();
     }
 

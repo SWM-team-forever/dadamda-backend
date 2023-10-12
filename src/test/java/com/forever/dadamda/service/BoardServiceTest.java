@@ -134,7 +134,7 @@ public class BoardServiceTest {
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, boardId, updateBoardRequest);
+        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
 
         //then
         Board board = boardRepository.findById(boardId).get();
@@ -158,7 +158,7 @@ public class BoardServiceTest {
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, boardId, updateBoardRequest);
+        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
 
         //then
         Board board = boardRepository.findById(boardId).get();
