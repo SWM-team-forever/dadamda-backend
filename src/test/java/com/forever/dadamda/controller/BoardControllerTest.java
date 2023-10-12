@@ -129,7 +129,7 @@ public class BoardControllerTest {
     public void should_it_is_fixed_successfully_When_fixing_an_existing_board()
             throws Exception {
         //존재하는 보드를 고정할 때, 성공적으로 고정되는지 확인
-        mockMvc.perform(patch("/v1/boards/fixed/{boardId}", 1L)
+        mockMvc.perform(patch("/v1/boards/{boardUUID}/fix", board2UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
