@@ -82,11 +82,12 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 내용 조회", description = "보드 정보를 조회할 수 있습니다.")
-    @GetMapping("/v1/boards/{boardId}")
+    @GetMapping("/v1/boards/{boardUUID}")
     public ApiResponse<GetBoardDetailResponse> getBoards(
-            @PathVariable @Positive @NotNull Long boardId, Authentication authentication) {
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID, Authentication authentication) {
         String email = authentication.getName();
-        return ApiResponse.success(boardService.getBoard(email, boardId));
+        return ApiResponse.success(boardService.getBoard(email, UUID.fromString(boardUUID)));
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")

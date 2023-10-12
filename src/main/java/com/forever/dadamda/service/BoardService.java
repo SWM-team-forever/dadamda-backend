@@ -86,10 +86,10 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public GetBoardDetailResponse getBoard(String email, Long boardId) {
+    public GetBoardDetailResponse getBoard(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        return boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        return boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .map(GetBoardDetailResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }

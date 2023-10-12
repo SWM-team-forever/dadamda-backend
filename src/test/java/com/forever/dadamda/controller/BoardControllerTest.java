@@ -49,6 +49,8 @@ public class BoardControllerTest {
 
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
+    UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
+
     UUID notExistentboardUUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3001");
 
     @Test
@@ -209,7 +211,7 @@ public class BoardControllerTest {
     public void should_the_board_name_description_and_tag_are_successfully_returned_When_getting_board_individually()
             throws Exception {
         // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그가 반환된다.
-        mockMvc.perform(get("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(get("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )

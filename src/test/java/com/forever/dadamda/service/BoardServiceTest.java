@@ -45,6 +45,8 @@ public class BoardServiceTest {
 
     UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
 
+    UUID board5UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3135");
+
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
         // 새로운 보드가 정상적으로 이름, 설명, 하트수가 생성되는지 확인
@@ -181,11 +183,10 @@ public class BoardServiceTest {
     void should_it_occurs_not_found_exception_When_getting_deleted_board() {
         // 삭제된 보드 조회할 때, NotFoundException(NOT_EXISTS_BOARD) 예외가 발생하는지 확인
         //given
-        Long deletedBoardId = 5L;
 
         //when
         //then
-        assertThatThrownBy(() -> boardService.getBoard(existentEmail, deletedBoardId))
+        assertThatThrownBy(() -> boardService.getBoard(existentEmail, board5UUID))
                 .isInstanceOf(NotFoundException.class);
     }
 
