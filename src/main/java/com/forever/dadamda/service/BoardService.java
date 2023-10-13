@@ -109,7 +109,7 @@ public class BoardService {
             UpdateBoardContentsRequest updateBoardContentsRequest) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndUuid(user, boardUUID)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateContents(updateBoardContentsRequest);
