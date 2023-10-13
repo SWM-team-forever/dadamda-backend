@@ -232,7 +232,7 @@ public class BoardServiceTest {
 
         //then
         User user = userRepository.findById(1L).get();
-        Board board = boardRepository.findByUserAndUuid(user, board2UUID).get();
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, board2UUID).get();
 
         assertThat(board.getContents()).isEqualTo("update test");
     }
@@ -250,7 +250,7 @@ public class BoardServiceTest {
 
         //then
         User user = userRepository.findById(1L).get();
-        Board board = boardRepository.findByUserAndUuid(user, board2UUID).get();
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, board2UUID).get();
 
         assertThat(board.getModifiedDate()).isEqualTo(LocalDateTime.of(2023, 1, 2, 11, 11, 1));
     }
