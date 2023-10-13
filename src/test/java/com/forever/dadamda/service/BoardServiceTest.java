@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
@@ -43,6 +44,8 @@ public class BoardServiceTest {
     String existentEmail = "1234@naver.com";
 
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
+
+    UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
 
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
@@ -253,5 +256,16 @@ public class BoardServiceTest {
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, board2UUID).get();
 
         assertThat(board.getModifiedDate()).isEqualTo(LocalDateTime.of(2023, 1, 2, 11, 11, 1));
+    }
+
+    @Test
+    void should_it_is_returned_to_null_if_it_is_not_present_When_getting_board_contents() {
+        // 보드 컨텐츠 조회할 때, 컨텐츠가 없으면 null로 반환되는지 확인
+        //given
+        //when
+        GetBoardContentsResponse getBoardContentsResponse = boardService.getBoardContents(existentEmail, board1UUID);
+
+        //then
+        assertThat(getBoardContentsResponse.getContents()).isEqualTo(null);
     }
 }
