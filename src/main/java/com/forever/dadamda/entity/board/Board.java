@@ -1,5 +1,6 @@
 package com.forever.dadamda.entity.board;
 
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.BaseTimeEntity;
 import com.forever.dadamda.entity.user.User;
@@ -50,6 +51,9 @@ public class Board extends BaseTimeEntity {
     @Column(length = 1000)
     private String description;
 
+    @Column(columnDefinition = "TEXT")
+    private String contents;
+
     @ColumnDefault("0")
     private Long heartCnt;
 
@@ -79,5 +83,9 @@ public class Board extends BaseTimeEntity {
         this.title = request.getTitle();
         this.tag = TAG.from(request.getTag());
         this.description = request.getDescription();
+    }
+
+    public void updateContents(UpdateBoardContentsRequest request) {
+        this.contents = request.getContents();
     }
 }

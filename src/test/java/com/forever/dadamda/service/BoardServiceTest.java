@@ -5,7 +5,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
@@ -219,5 +221,52 @@ public class BoardServiceTest {
         assertThat(getBoardResponseSlice.getContent().get(1).getBoardId()).isEqualTo(2L);
         assertThat(getBoardResponseSlice.getContent().get(2).getBoardId()).isEqualTo(3L);
         assertThat(getBoardResponseSlice.getContent().get(3).getBoardId()).isEqualTo(1L);
+    }
+
+    @Test
+    void should_the_board_contents_are_actually_modified_When_modifying_board_contents() {
+        // 보드 컨텐츠 수정할 때, 보드의 컨텐츠가 실제로 수정되었는지 확인
+        //given
+        UpdateBoardContentsRequest updateBoardContentsRequest = UpdateBoardContentsRequest.builder()
+                .contents("update test")
+                .build();
+
+        //when
+        boardService.updateBoardContents(existentEmail, board2UUID, updateBoardContentsRequest);
+
+        //then
+        User user = userRepository.findById(1L).get();
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, board2UUID).get();
+
+        assertThat(board.getContents()).isEqualTo("update test");
+    }
+
+    @Test
+    void should_it_is_not_modified_if_it_is_the_same_as_the_previous_content_When_modifying_board_contents() {
+        // 보드 컨텐츠 수정할 때, 이전 컨텐츠와 동일하면 수정되지 않는다.
+        //given
+        UpdateBoardContentsRequest updateBoardContentsRequest = UpdateBoardContentsRequest.builder()
+                .contents("test contents")
+                .build();
+
+        //when
+        boardService.updateBoardContents(existentEmail, board2UUID, updateBoardContentsRequest);
+
+        //then
+        User user = userRepository.findById(1L).get();
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, board2UUID).get();
+
+        assertThat(board.getModifiedDate()).isEqualTo(LocalDateTime.of(2023, 1, 2, 11, 11, 1));
+    }
+
+    @Test
+    void should_it_is_returned_to_null_if_it_is_not_present_When_getting_board_contents() {
+        // 보드 컨텐츠 조회할 때, 컨텐츠가 없으면 null로 반환되는지 확인
+        //given
+        //when
+        GetBoardContentsResponse getBoardContentsResponse = boardService.getBoardContents(existentEmail, board1UUID);
+
+        //then
+        assertThat(getBoardContentsResponse.getContents()).isEqualTo(null);
     }
 }
