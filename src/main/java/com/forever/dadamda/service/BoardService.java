@@ -39,20 +39,20 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoards(String email, Long boardId) {
+    public void deleteBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateDeletedDate(LocalDateTime.now());
     }
 
     @Transactional
-    public void fixedBoards(String email, Long boardId) {
+    public void fixBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         if (board.getFixedDate() == null) {
@@ -72,10 +72,10 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoards(String email, Long boardId, UpdateBoardRequest updateBoardRequest) {
+    public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateBoard(updateBoardRequest);
@@ -88,10 +88,10 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public GetBoardDetailResponse getBoard(String email, Long boardId) {
+    public GetBoardDetailResponse getBoard(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        return boardRepository.findByUserAndIdAndDeletedDateIsNull(user, boardId)
+        return boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .map(GetBoardDetailResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
