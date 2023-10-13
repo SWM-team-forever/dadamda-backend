@@ -8,9 +8,11 @@ import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,20 +46,24 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 삭제", description = "1개의 보드를 삭제합니다.")
-    @DeleteMapping("/v1/boards/{boardId}")
-    public ApiResponse<String> createBoards(@PathVariable @Positive @NotNull Long boardId,
+    @DeleteMapping("/v1/boards/{boardUUID}")
+    public ApiResponse<String> deleteBoards(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.deleteBoards(email, boardId);
+        boardService.deleteBoards(email, UUID.fromString(boardUUID));
         return ApiResponse.success();
     }
 
     @Operation(summary = "보드 고정", description = "1개의 보드를 보드 카테고리에서 상단에 고정합니다.")
-    @PatchMapping("/v1/boards/fixed/{boardId}")
-    public ApiResponse<String> fixedBoards(@PathVariable @Positive @NotNull Long boardId,
+    @PatchMapping("/v1/boards/{boardUUID}/fix")
+    public ApiResponse<String> fixBoards(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.fixedBoards(email, boardId);
+        boardService.fixBoards(email, UUID.fromString(boardUUID));
         return ApiResponse.success();
     }
 
@@ -77,20 +83,23 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 내용 조회", description = "보드 정보를 조회할 수 있습니다.")
-    @GetMapping("/v1/boards/{boardId}")
+    @GetMapping("/v1/boards/{boardUUID}")
     public ApiResponse<GetBoardDetailResponse> getBoards(
-            @PathVariable @Positive @NotNull Long boardId, Authentication authentication) {
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID, Authentication authentication) {
         String email = authentication.getName();
-        return ApiResponse.success(boardService.getBoard(email, boardId));
+        return ApiResponse.success(boardService.getBoard(email, UUID.fromString(boardUUID)));
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
-    @PatchMapping("/v1/boards/{boardId}")
-    public ApiResponse<String> updateBoards(@PathVariable @Positive @NotNull Long boardId,
+    @PatchMapping("/v1/boards/{boardUUID}")
+    public ApiResponse<String> updateBoards(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
             @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.updateBoards(email, boardId, updateBoardRequest);
+        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest);
         return ApiResponse.success();
     }
 

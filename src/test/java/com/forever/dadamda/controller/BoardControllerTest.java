@@ -47,6 +47,12 @@ public class BoardControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
+
+    UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
+
+    UUID notExistentboardUUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3001");
+
     @Test
     @WithCustomMockUser
     public void should_it_created_normally_When_creating_board_with_the_title_name_and_tag_entered()
@@ -100,11 +106,12 @@ public class BoardControllerTest {
     public void should_it_returns_4xx_error_When_deleting_a_board_that_does_not_exist()
             throws Exception {
         //존재하지 않는 보드를 삭제할 때 4xx에러를 반환하는지 확인
-        mockMvc.perform(delete("/v1/boards/100")
+        mockMvc.perform(delete("/v1/boards/{boardUUID}", notExistentboardUUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"));
     }
 
     @Test
@@ -112,7 +119,7 @@ public class BoardControllerTest {
     public void should_it_is_deleted_successfully_When_deleting_an_existing_board()
             throws Exception {
         //존재하는 보드를 삭제할 때 성공적으로 삭제되는지 확인
-        mockMvc.perform(delete("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(delete("/v1/boards/{boardUUID}", board2UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
@@ -124,7 +131,7 @@ public class BoardControllerTest {
     public void should_it_is_fixed_successfully_When_fixing_an_existing_board()
             throws Exception {
         //존재하는 보드를 고정할 때, 성공적으로 고정되는지 확인
-        mockMvc.perform(patch("/v1/boards/fixed/{boardId}", 1L)
+        mockMvc.perform(patch("/v1/boards/{boardUUID}/fix", board2UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
@@ -178,7 +185,7 @@ public class BoardControllerTest {
 
         //when
         //then
-        mockMvc.perform(patch("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(patch("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
@@ -204,7 +211,7 @@ public class BoardControllerTest {
     public void should_the_board_name_description_and_tag_are_successfully_returned_When_getting_board_individually()
             throws Exception {
         // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그가 반환된다.
-        mockMvc.perform(get("/v1/boards/{boardId}", 1L)
+        mockMvc.perform(get("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
