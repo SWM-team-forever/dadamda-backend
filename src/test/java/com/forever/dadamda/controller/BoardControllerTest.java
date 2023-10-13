@@ -324,4 +324,17 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("BR000"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("updateBoardContents.boardUUID: UUID가 올바르지 않습니다."));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_returned_successfully_if_it_is_present_When_getting_board_contents()
+            throws Exception {
+        // 보드 컨텐츠 조회할 때, 컨텐츠가 있으면 성공적으로 조회되는지 확인
+        mockMvc.perform(get("/v1/boards/{boardUUID}/contents", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents"));
+    }
 }
