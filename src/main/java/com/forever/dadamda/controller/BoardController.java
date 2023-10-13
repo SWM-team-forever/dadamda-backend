@@ -2,6 +2,7 @@ package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
+import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
@@ -120,5 +121,17 @@ public class BoardController {
         boardService.updateBoardContents(email, UUID.fromString(boardUUID), updateBoardContentsRequest);
 
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "보드 컨텐츠 조회", description = "보드의 컨텐츠를 조회합니다.")
+    @GetMapping("/v1/boards/{boardUUID}/contents")
+    public ApiResponse<GetBoardContentsResponse> getBoardContents(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(boardService.getBoardContents(email, UUID.fromString(boardUUID)));
     }
 }
