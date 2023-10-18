@@ -63,6 +63,9 @@ public class Board extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long shareCnt;
 
+    @Column(length = 2084)
+    private String thumbnailUrl;
+
     @Builder
     Board(User user, String title, TAG tag, UUID uuid, String description, boolean isPublic,
             LocalDateTime fixedDate) {
@@ -87,5 +90,9 @@ public class Board extends BaseTimeEntity {
 
     public void updateContents(UpdateBoardContentsRequest request) {
         this.contents = request.getContents();
+    }
+
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 }
