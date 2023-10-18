@@ -23,6 +23,7 @@ public class GetBoardResponse {
     private UUID uuid;
     private TAG tag;
     private Long modifiedDate;
+    private String thumbnailUrl;
 
     public static GetBoardResponse of(Board board) {
         return GetBoardResponse.builder()
@@ -32,6 +33,7 @@ public class GetBoardResponse {
                 .uuid(board.getUuid())
                 .tag(board.getTag())
                 .modifiedDate(TimeService.fromLocalDateTime(board.getModifiedDate()))
+                .thumbnailUrl(board.getThumbnailUrl())
                 .build();
     }
 }
