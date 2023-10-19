@@ -279,4 +279,26 @@ public class BoardServiceTest {
         assertThatThrownBy(() -> boardService.getBoardIsShared(existentEmail, board5UUID))
                 .isInstanceOf(NotFoundException.class);
     }
+
+    @Test
+    void should_it_is_modified_true_successfully_When_modifying_isShared_of_board_initially() {
+        // 보드의 공유 여부 변경할 때, 처음 변경시 true로 잘 변경되는지 확인
+        //given
+        //when
+        boardService.updateBoardIsShared(existentEmail, board2UUID);
+
+        //then
+        assertThat(boardRepository.findById(2L).get().isShared()).isEqualTo(true);
+    }
+
+    @Test
+    void should_true_is_modified_false_successfully_When_modifying_isShared_of_board_initially() {
+        // 보드의 공유 여부 변경할 때, true가 false로 잘 변경되는지 확인
+        //given
+        //when
+        boardService.updateBoardIsShared(existentEmail, board1UUID);
+
+        //then
+        assertThat(boardRepository.findById(1L).get().isShared()).isEqualTo(false);
+    }
 }
