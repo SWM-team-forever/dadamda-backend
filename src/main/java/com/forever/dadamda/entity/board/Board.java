@@ -91,4 +91,8 @@ public class Board extends BaseTimeEntity {
     public void updateContents(UpdateBoardContentsRequest request) {
         this.contents = request.getContents();
     }
+
+    public void updateIsShared(Boolean request) {
+        this.isShared = request;
+    }
 }
