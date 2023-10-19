@@ -269,4 +269,14 @@ public class BoardServiceTest {
         //then
         assertThat(getBoardContentsResponse.getContents()).isEqualTo(null);
     }
+
+    @Test
+    void should_it_returns_NotFoundException_errors_if_the_board_is_deleted_When_getting_board_of_isShared() {
+        // 삭제된 보드의 공유 여부 조회할 때, NotFoundException(NOT_EXISTS_BOARD) 예외가 발생하는지 확인
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> boardService.getBoardIsShared(existentEmail, board5UUID))
+                .isInstanceOf(NotFoundException.class);
+    }
 }
