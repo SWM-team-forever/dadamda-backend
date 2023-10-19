@@ -369,4 +369,17 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("존재하지 않는 보드입니다."));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_not_returned_data_and_modified_successfully_When_modifying_isShared_of_board()
+            throws Exception {
+        // 보드의 공유 여부 변경할 때, data의 값이 없고 성공적으로 변경되는지 확인
+        mockMvc.perform(patch("/v1/boards/isShared/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
 }
