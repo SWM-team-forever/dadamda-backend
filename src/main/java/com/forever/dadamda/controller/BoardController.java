@@ -154,4 +154,17 @@ public class BoardController {
         return ApiResponse.success(GetBoardIsSharedResponse.of(
                 boardService.getBoardIsShared(email, UUID.fromString(boardUUID))));
     }
+
+    @Operation(summary = "보드 공유 여부 변경", description = "보드의 공유 여부를 변경합니다.")
+    @PatchMapping("/v1/boards/isShared/{boardUUID}")
+    public ApiResponse<String> updateBoardIsShared(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        boardService.updateBoardIsShared(email, UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
+    }
 }
