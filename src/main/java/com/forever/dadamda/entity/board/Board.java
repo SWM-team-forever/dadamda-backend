@@ -43,6 +43,9 @@ public class Board extends BaseTimeEntity {
     @Column(columnDefinition = "boolean", nullable = false)
     private boolean isPublic;
 
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isShared;
+
     private LocalDateTime fixedDate;
 
     @Column(nullable = false)
