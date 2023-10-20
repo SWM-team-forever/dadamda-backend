@@ -142,4 +142,11 @@ public class BoardService {
 
         board.updateIsShared(!board.isShared());
     }
+
+    @Transactional(readOnly = true)
+    public GetBoardContentsResponse getSharedBoardContents(UUID boardUUID) {
+        return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .map(GetBoardContentsResponse::of)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
 }
