@@ -54,6 +54,8 @@ public class BoardControllerTest {
 
     UUID notExistentboardUUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3001");
 
+    UUID board3UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3133");
+
     @Test
     @WithCustomMockUser
     public void should_it_created_normally_When_creating_board_with_the_title_name_and_tag_entered()
@@ -381,5 +383,32 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    public void should_it_returns_NF005_error_if_isShared_is_false_When_getting_shared_board()
+            throws Exception {
+        // 공유된 보드의 컨텐츠를 조회할때, isShared가 false이면 NF005 에러를 반환하는지 확인
+        mockMvc.perform(get("/ov1/share/boards/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("존재하지 않는 보드입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    public void should_it_returns_contents_successfully_if_isShared_is_true_When_getting_shared_board()
+            throws Exception {
+        // 공유된 보드의 컨텐츠를 조회할때, isShared가 true이면 컨텐츠를 성공적으로 조회한다.
+        mockMvc.perform(get("/ov1/share/boards/{boardUUID}", board3UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board3"));
     }
 }

@@ -73,7 +73,9 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**", "/actuator/**",
-                        "/", "/api-docs/**", "/swagger-ui/**", "/login/**", "/oauth2/**", "/oauth-login").permitAll()
+                        "/", "/api-docs/**", "/swagger-ui/**",
+                        "/login/**", "/oauth2/**", "/oauth-login",
+                        "/ov1/**").permitAll()
                 .antMatchers("/v1/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated()
                 .and()
