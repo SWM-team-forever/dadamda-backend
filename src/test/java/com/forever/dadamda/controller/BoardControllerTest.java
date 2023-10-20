@@ -342,4 +342,44 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents"));
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_returned_isShared_successfully_When_getting_board_of_isShared()
+            throws Exception {
+        // 보드의 공유 여부 조회할 때, isShared가 있으면 성공적으로 조회되는지 확인
+        mockMvc.perform(get("/v1/boards/isShared/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.isShared").value("false"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_4xx_errors_if_the_board_is_not_exist_When_getting_board_of_isShared()
+            throws Exception {
+        // 존재하지 않는 보드의 공유 여부 조회할 때, NotFoundException 예외가 발생하는지 확인
+        mockMvc.perform(get("/v1/boards/isShared/{boardUUID}", notExistentboardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("존재하지 않는 보드입니다."));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_not_returned_data_and_modified_successfully_When_modifying_isShared_of_board()
+            throws Exception {
+        // 보드의 공유 여부 변경할 때, data의 값이 없고 성공적으로 변경되는지 확인
+        mockMvc.perform(patch("/v1/boards/isShared/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
 }

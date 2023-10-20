@@ -43,6 +43,9 @@ public class Board extends BaseTimeEntity {
     @Column(columnDefinition = "boolean", nullable = false)
     private boolean isPublic;
 
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isShared;
+
     private LocalDateTime fixedDate;
 
     @Column(nullable = false)
@@ -87,5 +90,9 @@ public class Board extends BaseTimeEntity {
 
     public void updateContents(UpdateBoardContentsRequest request) {
         this.contents = request.getContents();
+    }
+
+    public void updateIsShared(Boolean request) {
+        this.isShared = request;
     }
 }

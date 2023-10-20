@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
+import com.forever.dadamda.dto.board.GetBoardIsSharedResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
@@ -15,7 +16,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -140,5 +140,31 @@ public class BoardController {
         String email = authentication.getName();
 
         return ApiResponse.success(boardService.getBoardContents(email, UUID.fromString(boardUUID)));
+    }
+
+    @Operation(summary = "보드 공유 여부 조회", description = "보드의 공유 여부를 조회합니다.")
+    @GetMapping("/v1/boards/isShared/{boardUUID}")
+    public ApiResponse<GetBoardIsSharedResponse> getBoardIsShared(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(GetBoardIsSharedResponse.of(
+                boardService.getBoardIsShared(email, UUID.fromString(boardUUID))));
+    }
+
+    @Operation(summary = "보드 공유 여부 변경", description = "보드의 공유 여부를 변경합니다.")
+    @PatchMapping("/v1/boards/isShared/{boardUUID}")
+    public ApiResponse<String> updateBoardIsShared(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        boardService.updateBoardIsShared(email, UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
     }
 }

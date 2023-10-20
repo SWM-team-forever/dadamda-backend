@@ -124,4 +124,22 @@ public class BoardService {
                 .map(GetBoardContentsResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
+
+    @Transactional(readOnly = true)
+    public Boolean getBoardIsShared(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        return boardRepository.findIsSharedByBoardUUID(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional
+    public void updateBoardIsShared(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateIsShared(!board.isShared());
+    }
 }

@@ -6,6 +6,8 @@ import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -46,6 +48,21 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
         return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
+
+    @Override
+    public Optional<Boolean> findIsSharedByBoardUUID(User user, UUID boardUUID) {
+
+        Boolean isShared = queryFactory.select(board.isShared)
+                .from(board)
+                .where(
+                        board.user.eq(user)
+                                .and(board.uuid.eq(boardUUID))
+                                .and(board.deletedDate.isNull())
+                )
+                .fetchOne();
+        return Optional.ofNullable(isShared);
+    }
+
 
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {
