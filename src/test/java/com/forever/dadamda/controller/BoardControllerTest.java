@@ -408,6 +408,7 @@ public class BoardControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents3"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board3"));
     }
 }
