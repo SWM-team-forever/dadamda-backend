@@ -9,12 +9,10 @@ import lombok.Getter;
 public class GetSharedBoardContentsResponse {
 
     private String contents;
-    private String title;
 
     public static GetSharedBoardContentsResponse of(Board board) {
         return GetSharedBoardContentsResponse.builder()
                 .contents(board.getContents())
-                .title(board.getTitle())
                 .build();
     }
 }
