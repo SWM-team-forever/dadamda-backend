@@ -170,7 +170,7 @@ public class BoardController {
     }
 
     @Operation(summary = "공유된 보드 컨텐츠 조회", description = "공유된 보드 컨텐츠를 조회합니다.")
-    @GetMapping("/ov1/share/boards/{boardUUID}")
+    @GetMapping("/ov1/share/boards/contents/{boardUUID}")
     public ApiResponse<GetSharedBoardContentsResponse> getSharedBoardContents(
             @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID) {
