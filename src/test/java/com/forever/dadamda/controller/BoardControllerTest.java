@@ -411,4 +411,17 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents3"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").doesNotExist());
     }
+
+    @Test
+    public void should_it_returns_title_successfully_if_isShared_is_true_When_getting_shared_board_title()
+            throws Exception {
+        // 공유된 보드의 타이틀을 조회할때, isShared가 true이면 타이틀을 성공적으로 조회한다.
+        mockMvc.perform(get("/ov1/share/boards/title/{boardUUID}", board3UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board3"));
+    }
 }
