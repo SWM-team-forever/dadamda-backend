@@ -8,6 +8,7 @@ import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.GetSharedBoardContentsResponse;
+import com.forever.dadamda.dto.board.GetSharedBoardTitleResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
@@ -148,6 +149,13 @@ public class BoardService {
     public GetSharedBoardContentsResponse getSharedBoardContents(UUID boardUUID) {
         return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
                 .map(GetSharedBoardContentsResponse::of)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional(readOnly = true)
+    public GetSharedBoardTitleResponse getSharedBoardTitle(UUID boardUUID) {
+        return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .map(GetSharedBoardTitleResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
 }
