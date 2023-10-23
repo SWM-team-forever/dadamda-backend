@@ -8,14 +8,17 @@ import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
+import com.forever.dadamda.dto.board.UploadBoardThumbnailRequest;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.Authentication;
@@ -33,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
@@ -149,5 +153,11 @@ public class BoardController {
         String email = authentication.getName();
 
         return ApiResponse.success(boardService.uploadFile(email, boardUUID, file));
+    }
+
+    @PostMapping("/thumbnail/test")
+    public ApiResponse<String> uploadFileTest(@RequestParam("file") MultipartFile file) throws IOException {
+        log.info("file: {}", file.getBytes());
+        return ApiResponse.success(boardService.uploadFileTest(file));
     }
 }

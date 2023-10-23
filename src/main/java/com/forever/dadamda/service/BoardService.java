@@ -3,6 +3,7 @@ package com.forever.dadamda.service;
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -14,11 +15,13 @@ import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
+import com.forever.dadamda.dto.board.UploadBoardThumbnailRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -168,5 +171,14 @@ public class BoardService {
             throw new IllegalArgumentException("파일 변환에 실패했습니다.");
         }
         return convertedFile;
+    }
+
+    @Transactional
+    public String uploadFileTest(MultipartFile file) throws IOException {
+        String fileName = "test.png";
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.getSize());
+        s3Client.putObject(bucketName, fileName, file.getInputStream(), objectMetadata);
+        return fileName;
     }
 }
