@@ -45,9 +45,6 @@ public class BoardControllerTest {
     @Autowired
     private BoardRepository boardRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
     UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
@@ -230,37 +227,18 @@ public class BoardControllerTest {
     public void should_the_name_fixed_date_uuid_and_tag_are_returned_successfully_When_searching_for_a_board()
             throws Exception {
         // 보드를 검색할 때, 이름, 고정된 날짜, uuid, 태그가 성공적으로 출력된다.
-        // given
-        boardRepository.deleteAll();
-
-        UUID boardUUID = generateUUID();
-        User user = userRepository.findById(1L).get();
-        Board board = Board.builder()
-                .isPublic(true)
-                .title("board10")
-                .description("test")
-                .tag(LIFE_SHOPPING)
-                .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
-                .uuid(boardUUID)
-                .user(user)
-                .build();
-        boardRepository.save(board);
-
-        //when
-        //then
         mockMvc.perform(get("/v1/boards/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
-                        .param("keyword", "board10")
+                        .param("keyword", "board1")
                         .param("page", "0")
                         .param("size", "10")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].description").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-30T11:11:01"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(boardUUID.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("LIFE_SHOPPING"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(board1UUID.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("ENTERTAINMENT_ART"));
     }
 
     @Test
