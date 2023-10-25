@@ -2,6 +2,9 @@
 INSERT INTO users (user_id, name, provider, role, email, profile_url)
 VALUES (1, 'koko', 0, 'USER', '1234@naver.com', 'https://www.naver.com');
 
+INSERT INTO users (user_id, name, provider, role, email, profile_url)
+VALUES (2, 'coco', 0, 'USER', '12345@naver.com', 'https://www.naver.com');
+
 -- Board 데이터 삽입
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, is_shared, modified_date, authorship_id)
 VALUES (1, 1, 'board1', 'test', '0782ef48-a439-11', 0 ,'2023-01-01 11:11:01', 1, 1, '2023-01-01 11:11:01', 1);
