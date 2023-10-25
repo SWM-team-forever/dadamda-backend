@@ -158,4 +158,25 @@ public class BoardService {
                 .map(GetSharedBoardTitleResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
     }
+
+
+    @Transactional
+    public void ownSharedBoard(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        Board newBoard = Board.builder()
+                .user(user)
+                .title(board.getTitle())
+                .tag(board.getTag())
+                .uuid(generateUUID())
+                .description(board.getDescription())
+                .authorshipUser(board.getAuthorshipUser())
+                .contents(board.getContents())
+                .build();
+
+        boardRepository.save(newBoard);
+    }
 }
