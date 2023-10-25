@@ -35,7 +35,7 @@ public class BoardService {
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
         User user = userService.validateUser(email);
 
-        Board board = createBoardRequest.toEntity(user, generateUUID(), true);
+        Board board = createBoardRequest.toEntity(user, generateUUID());
 
         boardRepository.save(board);
     }
