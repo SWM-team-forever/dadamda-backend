@@ -40,7 +40,7 @@ public class Board extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(columnDefinition = "boolean", nullable = false)
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPublic;
 
     @Column(columnDefinition = "boolean default false", nullable = false)
@@ -71,14 +71,13 @@ public class Board extends BaseTimeEntity {
     private User authorshipUser;
 
     @Builder
-    Board(User user, String title, TAG tag, UUID uuid, String description, boolean isPublic,
+    Board(User user, String title, TAG tag, UUID uuid, String description,
             LocalDateTime fixedDate, User authorshipUser) {
         this.user = user;
         this.title = title;
         this.tag = tag;
         this.uuid = uuid;
         this.description = description;
-        this.isPublic = isPublic;
         this.fixedDate = fixedDate;
         this.authorshipUser = authorshipUser;
     }
