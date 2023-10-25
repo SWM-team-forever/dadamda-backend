@@ -72,7 +72,7 @@ public class Board extends BaseTimeEntity {
 
     @Builder
     Board(User user, String title, TAG tag, UUID uuid, String description,
-            LocalDateTime fixedDate, User authorshipUser) {
+            LocalDateTime fixedDate, User authorshipUser, String contents) {
         this.user = user;
         this.title = title;
         this.tag = tag;
@@ -80,6 +80,7 @@ public class Board extends BaseTimeEntity {
         this.description = description;
         this.fixedDate = fixedDate;
         this.authorshipUser = authorshipUser;
+        this.contents = contents;
     }
 
     public void updateFixedDate(LocalDateTime fixedDate) {
