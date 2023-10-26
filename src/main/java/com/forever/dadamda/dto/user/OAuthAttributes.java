@@ -68,13 +68,14 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public User toEntity() {
+    public User toEntity(String nickname) {
         return User.builder()
                 .name(name)
                 .email(email)
                 .profileUrl(profileUrl)
                 .provider(provider)
                 .role(Role.USER)
+                .nickname(nickname)
                 .build();
     }
 }

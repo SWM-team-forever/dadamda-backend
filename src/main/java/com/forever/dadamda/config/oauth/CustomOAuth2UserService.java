@@ -1,8 +1,15 @@
 package com.forever.dadamda.config.oauth;
 
+import static com.forever.dadamda.service.RandomService.adjectivesLength;
+import static com.forever.dadamda.service.RandomService.animalsLength;
+import static com.forever.dadamda.service.RandomService.generateRandomNickname;
+import static com.forever.dadamda.service.RandomService.numberLength;
+
 import com.forever.dadamda.dto.user.OAuthAttributes;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +22,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +32,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
@@ -42,12 +51,29 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 attributes.getAttributes(), attributes.getNameAttributeKey());
     }
 
-    private User saveOrUpdate(OAuthAttributes attributes) {
+    @Transactional
+    public User saveOrUpdate(OAuthAttributes attributes) {
 
         User user = userRepository.findByEmailAndDeletedDateIsNull(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getProfileUrl()))
-                .orElse(attributes.toEntity());
+                .orElseGet(() -> attributes.toEntity(getNewNickname()));
 
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public String getNewNickname() {
+        int limit = adjectivesLength * animalsLength * numberLength;
+        Set<String> usedNicknames = new HashSet<>();
+
+        while (usedNicknames.size() < limit) {
+            String nickname = generateRandomNickname();
+
+            if (!usedNicknames.contains(nickname) && !userRepository.existsByNickname(nickname)) {
+                return nickname;
+            }
+            usedNicknames.add(nickname);
+        }
+        throw new RuntimeException("닉네임 생성 실패");
     }
 }
