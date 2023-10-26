@@ -328,12 +328,12 @@ public class BoardServiceTest {
         boardRepository.save(SharedBoard);
 
         //when
-        boardService.copyBoards(existentEmail2, boardUUID);
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID);
 
         //then
         User user2 = userRepository.findById(2L).get();
         Board SharedBoard2 = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID).get();
-        Board OwnSharedBoard = boardRepository.findByUserAndTitle(user2, "board10").get();
+        Board OwnSharedBoard = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user2, copyBoardUUID).get();
 
         assertThat(OwnSharedBoard.getAuthorshipUser()).isEqualTo(SharedBoard2.getUser());
         assertThat(OwnSharedBoard.isShared()).isEqualTo(false);
