@@ -161,22 +161,24 @@ public class BoardService {
 
 
     @Transactional
-    public void copyBoards(String email, UUID boardUUID) {
+    public UUID copyBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         Board newBoard = Board.builder()
                 .user(user)
-                .title(board.getTitle())
-                .tag(board.getTag())
+                .title(sharedBoard.getTitle())
+                .tag(sharedBoard.getTag())
                 .uuid(generateUUID())
-                .description(board.getDescription())
-                .authorshipUser(board.getAuthorshipUser())
-                .contents(board.getContents())
+                .description(sharedBoard.getDescription())
+                .authorshipUser(sharedBoard.getAuthorshipUser())
+                .contents(sharedBoard.getContents())
                 .build();
 
-        boardRepository.save(newBoard);
+        Board copyBoard = boardRepository.save(newBoard);
+
+        return copyBoard.getUuid();
     }
 }
