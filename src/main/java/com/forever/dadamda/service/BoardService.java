@@ -161,7 +161,7 @@ public class BoardService {
 
 
     @Transactional
-    public void ownSharedBoard(String email, UUID boardUUID) {
+    public void copyBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
         Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)

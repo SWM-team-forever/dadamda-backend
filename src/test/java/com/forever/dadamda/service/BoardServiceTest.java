@@ -328,7 +328,7 @@ public class BoardServiceTest {
         boardRepository.save(SharedBoard);
 
         //when
-        boardService.ownSharedBoard(existentEmail2, boardUUID);
+        boardService.copyBoards(existentEmail2, boardUUID);
 
         //then
         User user2 = userRepository.findById(2L).get();

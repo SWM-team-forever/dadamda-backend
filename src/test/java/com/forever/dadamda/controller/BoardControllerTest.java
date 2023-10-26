@@ -431,7 +431,7 @@ public class BoardControllerTest {
 
         //when
         //then
-        mockMvc.perform(post("/v1/own/sharedBoards/{boardUUID}", boardUUID)
+        mockMvc.perform(post("/v1/copy/boards/{boardUUID}", boardUUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )

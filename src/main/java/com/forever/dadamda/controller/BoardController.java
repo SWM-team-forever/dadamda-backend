@@ -170,15 +170,15 @@ public class BoardController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "공유 보드 담기", description = "공유된 보드를 내 보드로 가져옵니다.")
-    @PostMapping("/v1/own/sharedBoards/{boardUUID}")
-    public ApiResponse<String> ownSharedBoard(
+    @Operation(summary = "공유 보드 복제", description = "공유 보드를 내 보드로 복제합니다")
+    @PostMapping("/v1/copy/boards/{boardUUID}")
+    public ApiResponse<String> copyBoards(
             @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
 
         String email = authentication.getName();
-        boardService.ownSharedBoard(email, UUID.fromString(boardUUID));
+        boardService.copyBoards(email, UUID.fromString(boardUUID));
 
         return ApiResponse.success();
     }
