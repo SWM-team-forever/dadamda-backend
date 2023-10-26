@@ -436,6 +436,6 @@ public class BoardControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
     }
 }
