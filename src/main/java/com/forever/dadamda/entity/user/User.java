@@ -42,17 +42,21 @@ public class User extends BaseTimeEntity implements Serializable {
     //@Column(length = 36, nullable = false)
     private String uuid;
 
+    @Column(length = 10, nullable = false, unique = true)
+    private String nickname;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @Builder
-    public User(String name, String email, String profileUrl, Provider provider, Role role) {
+    public User(String name, String email, String profileUrl, Provider provider, Role role, String nickname) {
         this.name = name;
         this.email = email;
         this.profileUrl = profileUrl;
         this.provider = provider;
         this.role = role;
+        this.nickname = nickname;
     }
 
     public User update(String name, String profileUrl) {
