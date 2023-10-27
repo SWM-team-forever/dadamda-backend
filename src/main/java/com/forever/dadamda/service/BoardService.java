@@ -35,7 +35,7 @@ public class BoardService {
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
         User user = userService.validateUser(email);
 
-        Board board = createBoardRequest.toEntity(user, generateUUID(), true);
+        Board board = createBoardRequest.toEntity(user, generateUUID());
 
         boardRepository.save(board);
     }
@@ -157,5 +157,28 @@ public class BoardService {
         return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
                 .map(GetSharedBoardTitleResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+
+    @Transactional
+    public UUID copyBoards(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        Board newBoard = Board.builder()
+                .user(user)
+                .title(sharedBoard.getTitle())
+                .tag(sharedBoard.getTag())
+                .uuid(generateUUID())
+                .description(sharedBoard.getDescription())
+                .authorshipUser(sharedBoard.getAuthorshipUser())
+                .contents(sharedBoard.getContents())
+                .build();
+
+        Board copyBoard = boardRepository.save(newBoard);
+
+        return copyBoard.getUuid();
     }
 }

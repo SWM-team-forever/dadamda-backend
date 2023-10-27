@@ -1,6 +1,7 @@
 package com.forever.dadamda.service;
 
 import static com.forever.dadamda.entity.board.TAG.LIFE_SHOPPING;
+import static com.forever.dadamda.service.UUIDService.generateUUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -42,6 +44,8 @@ public class BoardServiceTest {
     private UserRepository userRepository;
 
     String existentEmail = "1234@naver.com";
+
+    String existentEmail2 = "12345@naver.com";
 
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
@@ -300,5 +304,45 @@ public class BoardServiceTest {
 
         //then
         assertThat(boardRepository.findById(1L).get().isShared()).isEqualTo(false);
+    }
+
+    @Test
+    @Transactional
+    void should_the_title_description_tag_and_content_is_the_same_uuid_is_the_different_and_owner_of_shared_board_is_same_as_authorship_of_owned_board_When_owning_a_shared_board() {
+        // 공유된 보드를 내 보드에 담을 때, 공유된 보드와 담은 보드의 타이틀, 설명, 컨텐츠, 태그는 같고, uuid와 고정된 날짜는 다르다. 그리고 공유된 보드의 소유자와 담은 보드의 원작자가 같다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board SharedBoard = Board.builder()
+                .title("board10")
+                .description("test")
+                .tag(LIFE_SHOPPING)
+                .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
+                .uuid(boardUUID)
+                .user(user)
+                .authorshipUser(user)
+                .build();
+        SharedBoard.updateIsShared(true);
+        boardRepository.save(SharedBoard);
+
+        //when
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID);
+
+        //then
+        User user2 = userRepository.findById(2L).get();
+        Board SharedBoard2 = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID).get();
+        Board OwnSharedBoard = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user2, copyBoardUUID).get();
+
+        assertThat(OwnSharedBoard.getAuthorshipUser()).isEqualTo(SharedBoard2.getUser());
+        assertThat(OwnSharedBoard.isShared()).isEqualTo(false);
+        assertThat(OwnSharedBoard.getUser().getEmail()).isEqualTo(existentEmail2);
+        assertThat(OwnSharedBoard.getUuid()).isNotSameAs(SharedBoard2.getUuid());
+        assertThat(OwnSharedBoard.getContents()).isEqualTo(SharedBoard2.getContents());
+        assertThat(OwnSharedBoard.getDescription()).isEqualTo(SharedBoard2.getDescription());
+        assertThat(OwnSharedBoard.getTitle()).isEqualTo(SharedBoard2.getTitle());
+        assertThat(OwnSharedBoard.getTag()).isEqualTo(SharedBoard2.getTag());
+        assertThat(OwnSharedBoard.getFixedDate()).isNull();
     }
 }
