@@ -40,12 +40,6 @@ public class BoardService {
     private final UserService userService;
     private final BoardRepository boardRepository;
 
-    @Value("${application.bucket.name}")
-    private String bucketName;
-
-    @Autowired
-    private AmazonS3 s3Client;
-
     @Transactional
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
         User user = userService.validateUser(email);
@@ -140,33 +134,5 @@ public class BoardService {
         return boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .map(GetBoardContentsResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
-    }
-
-    @Transactional
-    public String uploadFile(String email, String boardUUID, MultipartFile file) {
-        User user = userService.validateUser(email);
-
-        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, UUID.fromString(boardUUID))
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
-
-        File fileObj = convertMultiPartFileToFile(file);
-        String fileName = boardUUID + file.getOriginalFilename();
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        fileObj.delete();
-
-        String url = s3Client.getUrl(bucketName, fileName).toString();
-        board.updateThumbnailUrl(url);
-
-        return boardUUID;
-    }
-
-    private File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            fos.write(file.getBytes());
-        } catch (IOException e) {
-            throw new IllegalArgumentException("파일 변환에 실패했습니다.");
-        }
-        return convertedFile;
     }
 }

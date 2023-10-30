@@ -141,13 +141,4 @@ public class BoardController {
 
         return ApiResponse.success(boardService.getBoardContents(email, UUID.fromString(boardUUID)));
     }
-
-    @Operation(summary = "보드 썸네일 업로드", description = "보드의 썸네일을 업로드합니다.")
-    @PostMapping("/v1/boards/{boardUUID}/thumbnail")
-    public ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file, Authentication authentication, @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", message = "UUID가 올바르지 않습니다.") String boardUUID) {
-
-        String email = authentication.getName();
-
-        return ApiResponse.success(boardService.uploadFile(email, boardUUID, file));
-    }
 }
