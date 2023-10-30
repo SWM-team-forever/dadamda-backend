@@ -4,6 +4,7 @@ import static com.forever.dadamda.service.RandomService.adjectivesLength;
 import static com.forever.dadamda.service.RandomService.animalsLength;
 import static com.forever.dadamda.service.RandomService.generateRandomNickname;
 import static com.forever.dadamda.service.RandomService.numberLength;
+import static com.forever.dadamda.service.UUIDService.generateUUID;
 
 import com.forever.dadamda.dto.user.OAuthAttributes;
 import com.forever.dadamda.entity.user.User;
@@ -56,7 +57,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         User user = userRepository.findByEmailAndDeletedDateIsNull(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getName(), attributes.getProfileUrl()))
-                .orElseGet(() -> attributes.toEntity(getNewNickname()));
+                .orElseGet(() -> attributes.toEntity(getNewNickname(), generateUUID()));
 
         return userRepository.save(user);
     }
