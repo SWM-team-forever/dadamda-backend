@@ -27,14 +27,14 @@ public class CreateBoardRequest {
     @NotBlank(message = "태그를 입력해주세요.")
     private String tag;
 
-    public Board toEntity(User user, UUID uuid, boolean isPublic) {
+    public Board toEntity(User user, UUID uuid) {
         return Board.builder()
                 .user(user)
                 .title(title)
                 .description(description)
                 .tag(TAG.from(tag))
                 .uuid(uuid)
-                .isPublic(isPublic)
+                .authorshipUser(user)
                 .build();
     }
 }

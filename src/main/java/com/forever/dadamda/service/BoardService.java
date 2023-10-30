@@ -12,6 +12,8 @@ import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
+import com.forever.dadamda.dto.board.GetSharedBoardContentsResponse;
+import com.forever.dadamda.dto.board.GetSharedBoardTitleResponse;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
@@ -44,7 +46,7 @@ public class BoardService {
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
         User user = userService.validateUser(email);
 
-        Board board = createBoardRequest.toEntity(user, generateUUID(), true);
+        Board board = createBoardRequest.toEntity(user, generateUUID());
 
         boardRepository.save(board);
     }
@@ -134,5 +136,60 @@ public class BoardService {
         return boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .map(GetBoardContentsResponse::of)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean getBoardIsShared(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        return boardRepository.findIsSharedByBoardUUID(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional
+    public void updateBoardIsShared(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateIsShared(!board.isShared());
+    }
+
+    @Transactional(readOnly = true)
+    public GetSharedBoardContentsResponse getSharedBoardContents(UUID boardUUID) {
+        return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .map(GetSharedBoardContentsResponse::of)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional(readOnly = true)
+    public GetSharedBoardTitleResponse getSharedBoardTitle(UUID boardUUID) {
+        return boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .map(GetSharedBoardTitleResponse::of)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+
+    @Transactional
+    public UUID copyBoards(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        Board newBoard = Board.builder()
+                .user(user)
+                .title(sharedBoard.getTitle())
+                .tag(sharedBoard.getTag())
+                .uuid(generateUUID())
+                .description(sharedBoard.getDescription())
+                .authorshipUser(sharedBoard.getAuthorshipUser())
+                .contents(sharedBoard.getContents())
+                .build();
+
+        Board copyBoard = boardRepository.save(newBoard);
+
+        return copyBoard.getUuid();
     }
 }
