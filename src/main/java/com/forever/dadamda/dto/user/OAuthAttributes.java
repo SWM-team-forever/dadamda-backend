@@ -3,6 +3,7 @@ package com.forever.dadamda.dto.user;
 import com.forever.dadamda.entity.user.Provider;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.entity.user.User;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -68,13 +69,15 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public User toEntity() {
+    public User toEntity(String nickname, UUID uuid) {
         return User.builder()
                 .name(name)
                 .email(email)
                 .profileUrl(profileUrl)
                 .provider(provider)
                 .role(Role.USER)
+                .uuid(uuid)
+                .nickname(nickname)
                 .build();
     }
 }

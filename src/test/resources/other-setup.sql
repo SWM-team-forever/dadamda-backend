@@ -1,6 +1,6 @@
 -- User 데이터 삽입
-INSERT INTO users (user_id, name, provider, role, email, profile_url)
-VALUES (1, 'koko', 0, 'USER', '1234@naver.com', 'https://www.naver.com');
+INSERT INTO users (user_id, name, provider, role, email, profile_url, nickname, uuid)
+VALUES (1, 'koko', 0, 'USER', '1234@naver.com', 'https://www.naver.com', '귀여운해달1', '0782ef48-a439-01');
 
 -- Other 데이터 삽입
 INSERT INTO scrap (user_id, scrap_id, page_url, title, description, d_type, created_date)
