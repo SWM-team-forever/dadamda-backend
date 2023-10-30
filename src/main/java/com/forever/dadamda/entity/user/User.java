@@ -30,7 +30,7 @@ public class User extends BaseTimeEntity implements Serializable {
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 320, nullable = false)
+    @Column(length = 320, nullable = false, unique = true)
     private String email;
 
     @Column(length = 2083)
