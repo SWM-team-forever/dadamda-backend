@@ -8,6 +8,7 @@ import com.forever.dadamda.entity.user.Provider;
 import com.forever.dadamda.entity.user.Role;
 import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.repository.UserRepository;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,11 +47,12 @@ public class CustomOAuth2UserServiceTest {
     }
 
     @Test
-    void should_the_existing_nickname_is_not_changed_but_only_the_name_is_changed_When_logging_in_by_changing_the_user_name() {
+    void should_the_existing_nickname_and_uuid_is_not_changed_but_only_the_name_is_changed_When_logging_in_by_changing_the_user_name() {
         //  유저의 이름을 변경하여 로그인할때, 기존의 닉네임은 변경되지 않고, 이름만 변경된다.
         //given
+        UUID uuid = UUIDService.generateUUID();
         User savedUser = User.builder().name("test").email(email).nickname("test")
-                .provider(Provider.GOOGLE).role(Role.USER).build();
+                .provider(Provider.GOOGLE).role(Role.USER).uuid(uuid).build();
         userRepository.save(savedUser);
 
         OAuthAttributes attributes = OAuthAttributes.builder().name("changedName")
@@ -64,5 +66,6 @@ public class CustomOAuth2UserServiceTest {
         assertThat(user.getNickname()).isEqualTo("test");
         assertThat(user.getName()).isEqualTo("changedName");
         assertThat(user.getModifiedDate()).isAfter(user.getCreatedDate());
+        assertThat(user.getUuid()).isEqualTo(uuid);
     }
 }
