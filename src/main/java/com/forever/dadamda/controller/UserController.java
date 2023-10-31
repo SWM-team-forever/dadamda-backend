@@ -1,14 +1,19 @@
 package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
+import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.user.GetProfileUrlResponse;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
+import com.forever.dadamda.dto.user.UpdateNicknameRequest;
 import com.forever.dadamda.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,5 +52,17 @@ public class UserController {
         GetProfileUrlResponse getProfileUrlResponse = new GetProfileUrlResponse(
                 userService.getProfileUrl(email));
         return ApiResponse.success(getProfileUrlResponse);
+    }
+
+    @Operation(summary = "회원 닉네임 수정", description = "해당 회원 닉네임를 수정할 수 있습니다.")
+    @PatchMapping("/v1/user/profile/nickname")
+    public ApiResponse<String> updateNickname(
+            @Valid @RequestBody UpdateNicknameRequest updateNicknameRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+
+        userService.updateNickname(updateNicknameRequest.getNickname(), email);
+
+        return ApiResponse.success();
     }
 }

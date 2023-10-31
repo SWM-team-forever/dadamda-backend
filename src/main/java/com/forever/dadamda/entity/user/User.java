@@ -71,4 +71,8 @@ public class User extends BaseTimeEntity implements Serializable {
     public String getRoleKey() {
         return this.role.getKey();
     }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
