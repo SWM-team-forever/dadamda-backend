@@ -66,6 +66,9 @@ public class Board extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long shareCnt;
 
+    @Column(length = 2084)
+    private String thumbnailUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authorship_id", nullable = false)
     private User authorshipUser;
@@ -96,6 +99,9 @@ public class Board extends BaseTimeEntity {
     public void updateContents(UpdateBoardContentsRequest request) {
         this.contents = request.getContents();
     }
+
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
 
     public void updateIsShared(Boolean request) {
         this.isShared = request;

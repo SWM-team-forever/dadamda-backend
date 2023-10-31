@@ -64,4 +64,8 @@ public class User extends BaseTimeEntity implements Serializable {
     public String getRoleKey() {
         return this.role.getKey();
     }
+
+    public void updateProfileImage(String url) {
+        this.profileUrl = url;
+    }
 }
