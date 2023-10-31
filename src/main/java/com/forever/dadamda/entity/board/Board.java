@@ -102,6 +102,7 @@ public class Board extends BaseTimeEntity {
 
     public void updateThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
 
     public void updateIsShared(Boolean request) {
         this.isShared = request;
