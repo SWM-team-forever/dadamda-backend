@@ -54,6 +54,8 @@ public class BoardControllerTest {
 
     UUID notExistentboardUUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3001");
 
+    UUID board3UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3133");
+
     @Test
     @WithCustomMockUser
     public void should_it_created_normally_When_creating_board_with_the_title_name_and_tag_entered()
@@ -228,37 +230,18 @@ public class BoardControllerTest {
     public void should_the_name_fixed_date_uuid_and_tag_are_returned_successfully_When_searching_for_a_board()
             throws Exception {
         // 보드를 검색할 때, 이름, 고정된 날짜, uuid, 태그가 성공적으로 출력된다.
-        // given
-        boardRepository.deleteAll();
-
-        UUID boardUUID = generateUUID();
-        User user = userRepository.findById(1L).get();
-        Board board = Board.builder()
-                .isPublic(true)
-                .title("board10")
-                .description("test")
-                .tag(LIFE_SHOPPING)
-                .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
-                .uuid(boardUUID)
-                .user(user)
-                .build();
-        boardRepository.save(board);
-
-        //when
-        //then
         mockMvc.perform(get("/v1/boards/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
-                        .param("keyword", "board10")
+                        .param("keyword", "board1")
                         .param("page", "0")
                         .param("size", "10")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board10"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].description").doesNotExist())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].isFixed").value("2023-01-30T11:11:01"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(boardUUID.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("LIFE_SHOPPING"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].uuid").value(board1UUID.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("ENTERTAINMENT_ART"));
     }
 
     @Test
@@ -341,5 +324,118 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_returned_isShared_successfully_When_getting_board_of_isShared()
+            throws Exception {
+        // 보드의 공유 여부 조회할 때, isShared가 있으면 성공적으로 조회되는지 확인
+        mockMvc.perform(get("/v1/boards/isShared/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.isShared").value("false"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_4xx_errors_if_the_board_is_not_exist_When_getting_board_of_isShared()
+            throws Exception {
+        // 존재하지 않는 보드의 공유 여부 조회할 때, NotFoundException 예외가 발생하는지 확인
+        mockMvc.perform(get("/v1/boards/isShared/{boardUUID}", notExistentboardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("존재하지 않는 보드입니다."));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_is_not_returned_data_and_modified_successfully_When_modifying_isShared_of_board()
+            throws Exception {
+        // 보드의 공유 여부 변경할 때, data의 값이 없고 성공적으로 변경되는지 확인
+        mockMvc.perform(patch("/v1/boards/isShared/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    public void should_it_returns_NF005_error_if_isShared_is_false_When_getting_shared_board()
+            throws Exception {
+        // 공유된 보드의 컨텐츠를 조회할때, isShared가 false이면 NF005 에러를 반환하는지 확인
+        mockMvc.perform(get("/ov1/share/boards/contents/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.resultCode").value("NF005"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("존재하지 않는 보드입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    public void should_it_returns_contents_successfully_if_isShared_is_true_When_getting_shared_board()
+            throws Exception {
+        // 공유된 보드의 컨텐츠를 조회할때, isShared가 true이면 컨텐츠를 성공적으로 조회한다.
+        mockMvc.perform(get("/ov1/share/boards/contents/{boardUUID}", board3UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").value("test contents3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").doesNotExist());
+    }
+
+    @Test
+    public void should_it_returns_title_successfully_if_isShared_is_true_When_getting_shared_board_title()
+            throws Exception {
+        // 공유된 보드의 타이틀을 조회할때, isShared가 true이면 타이틀을 성공적으로 조회한다.
+        mockMvc.perform(get("/ov1/share/boards/title/{boardUUID}", board3UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.contents").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board3"));
+    }
+
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_OK_if_isShared_is_true_if_owning_a_shared_board()
+            throws Exception {
+        // 공유된 보드를 내 보드에 담을 때, isShared가 true이면 타이틀을 성공 응답이 온다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board board = Board.builder()
+                .title("board10")
+                .description("test")
+                .tag(LIFE_SHOPPING)
+                .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
+                .uuid(boardUUID)
+                .user(user)
+                .authorshipUser(user)
+                .build();
+        board.updateIsShared(true);
+        boardRepository.save(board);
+
+        //when
+        //then
+        mockMvc.perform(post("/v1/copy/boards/{boardUUID}", boardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
     }
 }

@@ -40,8 +40,11 @@ public class Board extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(columnDefinition = "boolean", nullable = false)
+    @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean isPublic;
+
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean isShared;
 
     private LocalDateTime fixedDate;
 
@@ -63,16 +66,21 @@ public class Board extends BaseTimeEntity {
     @ColumnDefault("0")
     private Long shareCnt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "authorship_id", nullable = false)
+    private User authorshipUser;
+
     @Builder
-    Board(User user, String title, TAG tag, UUID uuid, String description, boolean isPublic,
-            LocalDateTime fixedDate) {
+    Board(User user, String title, TAG tag, UUID uuid, String description,
+            LocalDateTime fixedDate, User authorshipUser, String contents) {
         this.user = user;
         this.title = title;
         this.tag = tag;
         this.uuid = uuid;
         this.description = description;
-        this.isPublic = isPublic;
         this.fixedDate = fixedDate;
+        this.authorshipUser = authorshipUser;
+        this.contents = contents;
     }
 
     public void updateFixedDate(LocalDateTime fixedDate) {
@@ -87,5 +95,9 @@ public class Board extends BaseTimeEntity {
 
     public void updateContents(UpdateBoardContentsRequest request) {
         this.contents = request.getContents();
+    }
+
+    public void updateIsShared(Boolean request) {
+        this.isShared = request;
     }
 }
