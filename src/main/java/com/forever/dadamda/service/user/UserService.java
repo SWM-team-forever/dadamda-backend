@@ -8,6 +8,7 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
+import com.forever.dadamda.service.TimeService;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,15 +41,14 @@ public class UserService {
         return validateUser(email).getProfileUrl();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public GetUserInfoResponse getUserInfo(String email) {
         User user = validateUser(email);
-        return GetUserInfoResponse.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .profileUrl(user.getProfileUrl())
-                .provider(user.getProvider())
-                .build();
+
+        return GetUserInfoResponse.builder().name(user.getName()).email(user.getEmail())
+                .profileUrl(user.getProfileUrl()).provider(user.getProvider())
+                .nickname(user.getNickname())
+                .createdAt(TimeService.fromLocalDateTime(user.getCreatedDate())).build();
     }
 
     @Transactional
