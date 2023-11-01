@@ -11,6 +11,7 @@ public enum ErrorCode {
 
     INVALID_AUTH_TOKEN("BR001", "만료되거나 잘못된 엑세스 토큰입니다."),
     INVALID_DUPLICATED_SCRAP("BR002","이미 저장된 URL입니다."),
+    INVALID_DUPLICATED_NICKNAME("BR003", "이미 사용중인 닉네임입니다."),
 
     /**
      * 404 Not Found (존재하지 않는 리소스)

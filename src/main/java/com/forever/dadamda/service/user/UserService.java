@@ -3,6 +3,7 @@ package com.forever.dadamda.service.user;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -43,5 +44,16 @@ public class UserService {
     public void deleteUser(String email) {
         User user = validateUser(email);
         user.updateDeletedDate(LocalDateTime.now());
+    }
+
+    @Transactional
+    public void updateNickname(String nickname, String email) {
+        User user = validateUser(email);
+
+        if(userRepository.existsByNickname(nickname)) {
+            throw new InvalidException(ErrorCode.INVALID_DUPLICATED_NICKNAME);
+        }
+
+        user.updateNickname(nickname);
     }
 }
