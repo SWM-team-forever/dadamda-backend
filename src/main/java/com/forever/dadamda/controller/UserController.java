@@ -62,6 +62,8 @@ public class UserController {
     public ApiResponse uploadProfileImage(Authentication authentication, @RequestParam("file") MultipartFile file) {
         String email = authentication.getName();
         userService.uploadProfileImage(email, file);
+
+        return ApiResponse.success();
     }
 
     @Operation(summary = "회원 닉네임 수정", description = "해당 회원 닉네임를 수정할 수 있습니다.")
