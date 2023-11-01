@@ -6,6 +6,7 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
 import java.io.File;
@@ -81,5 +82,15 @@ public class UserService {
             throw new IllegalArgumentException("파일 변환에 실패했습니다.");
         }
         return convertedFile;
+    }
+
+    public void updateNickname(String nickname, String email) {
+        User user = validateUser(email);
+
+        if(userRepository.existsByNickname(nickname)) {
+            throw new InvalidException(ErrorCode.INVALID_DUPLICATED_NICKNAME);
+        }
+
+        user.updateNickname(nickname);
     }
 }

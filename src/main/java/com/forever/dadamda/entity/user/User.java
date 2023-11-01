@@ -5,6 +5,7 @@ import com.forever.dadamda.entity.scrap.Scrap;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,26 +34,32 @@ public class User extends BaseTimeEntity implements Serializable {
     @Column(length = 320, nullable = false)
     private String email;
 
-    @Column(length = 2083, nullable = false)
+    @Column(length = 2083)
     private String profileUrl;
 
     @Column(nullable = false)
     private Provider provider;
 
-    //@Column(length = 36, nullable = false)
-    private String uuid;
+    @Column(columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    private UUID uuid;
+
+    @Column(length = 10, nullable = false, unique = true)
+    private String nickname;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @Builder
-    public User(String name, String email, String profileUrl, Provider provider, Role role) {
+    public User(String name, String email, String profileUrl, Provider provider, Role role,
+            String nickname, UUID uuid) {
         this.name = name;
         this.email = email;
         this.profileUrl = profileUrl;
         this.provider = provider;
         this.role = role;
+        this.nickname = nickname;
+        this.uuid = uuid;
     }
 
     public User update(String name, String profileUrl) {
@@ -67,5 +74,9 @@ public class User extends BaseTimeEntity implements Serializable {
 
     public void updateProfileImage(String url) {
         this.profileUrl = url;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

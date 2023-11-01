@@ -1,9 +1,9 @@
 -- User 데이터 삽입
-INSERT INTO users (user_id, name, provider, role, email, profile_url)
-VALUES (1, 'koko', 0, 'USER', '1234@naver.com', 'https://www.naver.com');
+INSERT INTO users (user_id, name, provider, role, email, profile_url, nickname, uuid)
+VALUES (1, 'koko', 0, 'USER', '1234@naver.com', 'https://www.naver.com', '귀여운해달1', '0782ef48-a439-01');
 
-INSERT INTO users (user_id, name, provider, role, email, profile_url)
-VALUES (2, 'coco', 0, 'USER', '12345@naver.com', 'https://www.naver.com');
+INSERT INTO users (user_id, name, provider, role, email, profile_url, nickname, uuid)
+VALUES (2, 'coco', 0, 'USER', '12345@naver.com', 'https://www.naver.com', '귀여운해달2', '0782ef48-a439-02');
 
 -- Board 데이터 삽입
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, is_shared, modified_date, authorship_id)
