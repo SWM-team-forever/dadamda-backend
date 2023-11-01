@@ -62,7 +62,7 @@ public class User extends BaseTimeEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public User update(String name) {
+    public User updateName(String name) {
         this.name = name;
         return this;
     }
