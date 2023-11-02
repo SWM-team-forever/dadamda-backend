@@ -308,7 +308,7 @@ public class BoardServiceTest {
 
     @Test
     @Transactional
-    void should_the_title_description_tag_and_content_is_the_same_uuid_is_the_different_and_owner_of_shared_board_is_same_as_authorship_of_owned_board_When_owning_a_shared_board() {
+    void should_the_title_description_tag_and_content_thumbnail_is_the_same_uuid_is_the_different_and_owner_of_shared_board_is_same_as_authorship_of_owned_board_When_owning_a_shared_board() {
         // 공유된 보드를 내 보드에 담을 때, 공유된 보드와 담은 보드의 타이틀, 설명, 컨텐츠, 태그는 같고, uuid와 고정된 날짜는 다르다. 그리고 공유된 보드의 소유자와 담은 보드의 원작자가 같다.
         //given
         boardRepository.deleteAll();
@@ -323,6 +323,7 @@ public class BoardServiceTest {
                 .uuid(boardUUID)
                 .user(user)
                 .authorshipUser(user)
+                .thumbnailUrl("test thumbnail url")
                 .build();
         SharedBoard.updateIsShared(true);
         boardRepository.save(SharedBoard);
@@ -344,5 +345,6 @@ public class BoardServiceTest {
         assertThat(OwnSharedBoard.getTitle()).isEqualTo(SharedBoard2.getTitle());
         assertThat(OwnSharedBoard.getTag()).isEqualTo(SharedBoard2.getTag());
         assertThat(OwnSharedBoard.getFixedDate()).isNull();
+        assertThat(OwnSharedBoard.getThumbnailUrl()).isEqualTo(SharedBoard2.getThumbnailUrl());
     }
 }
