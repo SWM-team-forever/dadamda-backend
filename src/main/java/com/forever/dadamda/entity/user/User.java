@@ -75,6 +75,10 @@ public class User extends BaseTimeEntity implements Serializable {
         this.profileUrl = url;
     }
 
+    public void deleteProfileImage() {
+        this.profileUrl = null;
+    }
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
