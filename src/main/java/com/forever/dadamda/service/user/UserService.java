@@ -82,6 +82,12 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteProfileImage(String email) {
+        User user = validateUser(email);
+        user.deleteProfileImage();
+    }
+
+    @Transactional
     public void updateNickname(String nickname, String email) {
         User user = validateUser(email);
 
