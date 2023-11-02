@@ -13,6 +13,7 @@ public class GetBoardDetailResponse {
     private String title;
     private String description;
     private TAG tag;
+    private String thumbnailUrl;
 
     public static GetBoardDetailResponse of(Board board) {
         return GetBoardDetailResponse.builder()
@@ -20,6 +21,7 @@ public class GetBoardDetailResponse {
                 .title(board.getTitle())
                 .description(board.getDescription())
                 .tag(board.getTag())
+                .thumbnailUrl(board.getThumbnailUrl())
                 .build();
     }
 }
