@@ -218,7 +218,7 @@ public class BoardControllerTest {
     @WithCustomMockUser
     public void should_the_board_name_description_and_tag_are_successfully_returned_When_getting_board_individually()
             throws Exception {
-        // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그가 반환된다.
+        // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그, 썸네일이 반환된다.
         mockMvc.perform(get("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
@@ -227,7 +227,22 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("test"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.thumbnailUrl").value("board1 thumbnail url"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_thumbnailUrl_is_not_returned_When_getting_individually_board_that_does_not_have_thumbnail()
+            throws Exception {
+        // 썸네일이 없는 보드를 개별 조회할 때, thumbnailUrl이 반환되지 않는다.
+        mockMvc.perform(get("/v1/boards/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(2L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.thumbnailUrl").doesNotExist());
     }
 
     @Test

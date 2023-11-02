@@ -18,19 +18,14 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -212,6 +207,7 @@ public class BoardService {
                 .description(sharedBoard.getDescription())
                 .authorshipUser(sharedBoard.getAuthorshipUser())
                 .contents(sharedBoard.getContents())
+                .thumbnailUrl(sharedBoard.getThumbnailUrl())
                 .build();
 
         Board copyBoard = boardRepository.save(newBoard);
