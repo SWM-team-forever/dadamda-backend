@@ -15,6 +15,10 @@ public class TimeService{
     }
 
     public static Long fromLocalDateTime(LocalDateTime localDateTime) {
+        if(localDateTime == null) {
+            return null;
+        }
+
         return localDateTime.toEpochSecond(ZoneOffset.UTC);
     }
 }

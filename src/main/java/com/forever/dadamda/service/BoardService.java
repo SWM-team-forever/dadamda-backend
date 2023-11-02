@@ -2,6 +2,8 @@ package com.forever.dadamda.service;
 
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
@@ -29,8 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BoardService {
 
+    @Value("${application.bucket.name}")
+    private String bucketName;
+
     private final UserService userService;
     private final BoardRepository boardRepository;
+    private final AmazonS3 s3Client;
 
     @Transactional
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
@@ -75,13 +81,38 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
+    public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest, MultipartFile file) {
         User user = userService.validateUser(email);
 
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateBoard(updateBoardRequest);
+
+        if(file != null) {
+            uploadThumbnailImage(board, file);
+        }
+    }
+
+    @Transactional
+    public void uploadThumbnailImage(Board board, MultipartFile file) {
+         File fileObj = convertMultiPartFileToFile(file);
+         String fileName = "thumbnail/" + board.getUuid();
+         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+         fileObj.delete();
+
+         String url = s3Client.getUrl(bucketName, fileName).toString();
+         board.updateThumbnailUrl(url);
+    }
+
+    private File convertMultiPartFileToFile(MultipartFile file) {
+        File convertedFile = new File(file.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
+            fos.write(file.getBytes());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("파일 변환에 실패했습니다.");
+        }
+        return convertedFile;
     }
 
     @Transactional(readOnly = true)
