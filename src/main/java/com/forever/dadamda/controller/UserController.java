@@ -66,6 +66,15 @@ public class UserController {
         return ApiResponse.success();
     }
 
+    @Operation(summary = "회원 프로필 이미지 삭제", description = "해당 회원 프로필 이미지를 삭제할 수 있습니다.")
+    @DeleteMapping("/v1/user/profile/image")
+    public ApiResponse deleteProfileImage(Authentication authentication) {
+        String email = authentication.getName();
+        userService.deleteProfileImage(email);
+
+        return ApiResponse.success();
+    }
+
     @Operation(summary = "회원 닉네임 수정", description = "해당 회원 닉네임를 수정할 수 있습니다.")
     @PatchMapping("/v1/user/profile/nickname")
     public ApiResponse<String> updateNickname(
