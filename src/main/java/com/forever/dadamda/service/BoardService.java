@@ -186,6 +186,7 @@ public class BoardService {
                 .description(sharedBoard.getDescription())
                 .authorshipUser(sharedBoard.getAuthorshipUser())
                 .contents(sharedBoard.getContents())
+                .thumbnailUrl(sharedBoard.getThumbnailUrl())
                 .build();
 
         Board copyBoard = boardRepository.save(newBoard);
