@@ -114,4 +114,8 @@ public class Board extends BaseTimeEntity {
     public void updateIsShared(Boolean request) {
         this.isShared = request;
     }
+
+    public void addHeartCnt() {
+        this.heartCnt = heartCnt+1;
+    }
 }
