@@ -9,6 +9,7 @@ import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.service.TimeService;
+import io.sentry.Sentry;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,6 +77,7 @@ public class UserService {
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
+            Sentry.captureException(e);
             throw new IllegalArgumentException("파일 변환에 실패했습니다.");
         }
         return convertedFile;
