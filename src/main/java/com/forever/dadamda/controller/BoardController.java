@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
+import com.forever.dadamda.dto.board.GetBoardIsPublicResponse;
 import com.forever.dadamda.dto.board.GetBoardIsSharedResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.GetSharedBoardContentsResponse;
@@ -168,6 +169,32 @@ public class BoardController {
 
         String email = authentication.getName();
         boardService.updateBoardIsShared(email, UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "보드 게시 여부 조회", description = "보드의 게시 여부를 조회합니다.")
+    @GetMapping("/v1/boards/isPublic/{boardUUID}")
+    public ApiResponse<GetBoardIsPublicResponse> getBoardIsPublic(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(GetBoardIsPublicResponse.of(
+                boardService.getBoardIsPublic(email, UUID.fromString(boardUUID))));
+    }
+
+    @Operation(summary = "보드 게시 여부 변경", description = "보드의 게시 여부를 변경합니다.")
+    @PatchMapping("/v1/boards/isPublic/{boardUUID}")
+    public ApiResponse<String> updateBoardIsPublic(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        boardService.updateBoardIsPublic(email, UUID.fromString(boardUUID));
 
         return ApiResponse.success();
     }
