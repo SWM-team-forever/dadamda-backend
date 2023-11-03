@@ -23,6 +23,7 @@ import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,14 +101,15 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
-    @PatchMapping("/v1/boards/{boardUUID}")
+    @PostMapping(value = "/v1/boards/{boardUUID}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse<String> updateBoards(
             @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID,
-            @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
+            @Valid @RequestPart UpdateBoardRequest updateBoardRequest,
+            @RequestPart(required = false) MultipartFile file,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest);
+        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest, file);
         return ApiResponse.success();
     }
 

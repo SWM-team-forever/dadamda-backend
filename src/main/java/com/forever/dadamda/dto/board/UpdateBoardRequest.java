@@ -2,10 +2,15 @@ package com.forever.dadamda.dto.board;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Builder
 public class UpdateBoardRequest {
 
@@ -18,4 +23,6 @@ public class UpdateBoardRequest {
 
     @NotBlank(message = "태그를 입력해주세요.")
     private String tag;
+
+    private Boolean isDeleted;
 }

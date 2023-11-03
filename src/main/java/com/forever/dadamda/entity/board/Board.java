@@ -116,6 +116,10 @@ public class Board extends BaseTimeEntity {
         this.isShared = request;
     }
 
+    public void deleteThumbnailUrl() {
+        this.thumbnailUrl = null;
+    }
+
     public void addHeartCnt() {
         this.heartCnt = heartCnt+1;
     }

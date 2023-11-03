@@ -137,10 +137,11 @@ public class BoardServiceTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
+        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest, null);
 
         //then
         Board board = boardRepository.findById(boardId).get();
@@ -161,10 +162,11 @@ public class BoardServiceTest {
                 .tag("ENTERTAINMENT_ART")
                 .title("board1")
                 .description("test")
+                .isDeleted(false)
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
+        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest, null);
 
         //then
         Board board = boardRepository.findById(boardId).get();

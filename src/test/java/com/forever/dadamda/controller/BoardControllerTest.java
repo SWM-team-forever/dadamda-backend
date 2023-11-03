@@ -3,6 +3,7 @@ package com.forever.dadamda.controller;
 import static com.forever.dadamda.entity.board.TAG.LIFE_SHOPPING;
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,6 +17,7 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.mock.WithCustomMockUser;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.repository.board.BoardRepository;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
@@ -183,15 +186,18 @@ public class BoardControllerTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
         String content = objectMapper.writeValueAsString(updateBoardRequest);
+        MockPart part = new MockPart("updateBoardRequest", content.getBytes(StandardCharsets.UTF_8));
+        part.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         //when
         //then
-        mockMvc.perform(patch("/v1/boards/{boardUUID}", board1UUID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+        mockMvc.perform(multipart("/v1/boards/{boardUUID}", board1UUID)
+                        .part(part)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
