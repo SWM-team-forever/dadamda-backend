@@ -147,6 +147,14 @@ public class BoardService {
     }
 
     @Transactional
+    public Boolean getBoardIsPublic(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        return boardRepository.findIsPublicByBoardUUID(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional
     public void updateBoardIsShared(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
@@ -154,6 +162,16 @@ public class BoardService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateIsShared(!board.isShared());
+    }
+
+    @Transactional
+    public void updateBoardIsPublic(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateIsPublic(!board.isPublic());
     }
 
     @Transactional(readOnly = true)
