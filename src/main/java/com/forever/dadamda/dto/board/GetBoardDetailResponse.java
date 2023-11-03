@@ -3,6 +3,7 @@ package com.forever.dadamda.dto.board;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.board.TAG;
 import com.forever.dadamda.service.TimeService;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,31 +12,19 @@ import lombok.Getter;
 public class GetBoardDetailResponse {
 
     private Long boardId;
-    private String boardUUID;
+    private UUID boardUUID;
     private String title;
-    private boolean isPublic;
-    private boolean isShared;
-    private Long fixedDate;
     private String description;
     private TAG tag;
-    private Long heartCnt;
-    private Long viewCnt;
-    private Long shareCnt;
     private String thumbnailUrl;
 
     public static GetBoardDetailResponse of(Board board) {
         return GetBoardDetailResponse.builder()
                 .boardId(board.getId())
-                .boardUUID(board.getUuid().toString())
+                .boardUUID(board.getUuid())
                 .title(board.getTitle())
-                .isPublic(board.isPublic())
-                .isShared(board.isShared())
-                .fixedDate(TimeService.fromLocalDateTime(board.getFixedDate()))
                 .description(board.getDescription())
                 .tag(board.getTag())
-                .heartCnt(board.getHeartCnt())
-                .viewCnt(board.getViewCnt())
-                .shareCnt(board.getShareCnt())
                 .thumbnailUrl(board.getThumbnailUrl())
                 .build();
     }
