@@ -137,6 +137,7 @@ public class BoardServiceTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
 
         //when
@@ -161,6 +162,7 @@ public class BoardServiceTest {
                 .tag("ENTERTAINMENT_ART")
                 .title("board1")
                 .description("test")
+                .isDeleted(false)
                 .build();
 
         //when

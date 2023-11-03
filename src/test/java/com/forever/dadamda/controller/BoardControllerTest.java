@@ -186,6 +186,7 @@ public class BoardControllerTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
         String content = objectMapper.writeValueAsString(updateBoardRequest);
         MockPart part = new MockPart("updateBoardRequest", content.getBytes(StandardCharsets.UTF_8));
