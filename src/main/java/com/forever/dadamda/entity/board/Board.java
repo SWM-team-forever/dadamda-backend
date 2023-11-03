@@ -3,8 +3,11 @@ package com.forever.dadamda.entity.board;
 import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.BaseTimeEntity;
+import com.forever.dadamda.entity.heart.Heart;
 import com.forever.dadamda.entity.user.User;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -73,6 +77,9 @@ public class Board extends BaseTimeEntity {
     @JoinColumn(name = "authorship_id", nullable = false)
     private User authorshipUser;
 
+    @OneToMany(mappedBy = "board")
+    private List<Heart> heartList = new ArrayList<>();
+
     @Builder
     Board(User user, String title, TAG tag, UUID uuid, String description,
             LocalDateTime fixedDate, User authorshipUser, String contents, String thumbnailUrl) {
@@ -109,6 +116,10 @@ public class Board extends BaseTimeEntity {
         this.isShared = request;
     }
 
+    public void addHeartCnt() {
+        this.heartCnt = heartCnt+1;
+    }
+  
     public void updateIsPublic(Boolean request) {
         this.isPublic = request;
     }

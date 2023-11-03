@@ -16,4 +16,6 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     Optional<Board> findByUserAndUuidAndDeletedDateIsNull(User user, UUID uuid);
 
     Optional<Board> findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(UUID uuid);
+
+    Optional<Board> findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(UUID uuid);
 }
