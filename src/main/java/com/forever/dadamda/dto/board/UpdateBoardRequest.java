@@ -23,4 +23,6 @@ public class UpdateBoardRequest {
 
     @NotBlank(message = "태그를 입력해주세요.")
     private String tag;
+
+    private Boolean isDeleted;
 }

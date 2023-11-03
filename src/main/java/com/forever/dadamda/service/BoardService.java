@@ -2,6 +2,7 @@ package com.forever.dadamda.service;
 
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.forever.dadamda.dto.ErrorCode;
@@ -94,7 +95,14 @@ public class BoardService {
 
         board.updateBoard(updateBoardRequest);
 
-        if(file != null) {
+        if(updateBoardRequest.getIsDeleted()) {
+            try {
+                s3Client.deleteObject(bucketName, "thumbnail/" + board.getUuid());
+            } catch(AmazonServiceException e) {
+                throw new IllegalArgumentException("파일 삭제에 실패했습니다.");
+            }
+            board.deleteThumbnailUrl();
+        } else if(file != null) {
             uploadThumbnailImage(board, file);
         }
     }
