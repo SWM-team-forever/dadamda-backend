@@ -14,4 +14,6 @@ public interface BoardRepositoryCustom {
     Slice<Board> searchKeywordInBoardList(User user, String keyword, Pageable pageable);
 
     Optional<Boolean> findIsSharedByBoardUUID(User user, UUID boardUUID);
+
+    Optional<Boolean> findIsPublicByBoardUUID(User user, UUID boardUUID);
 }

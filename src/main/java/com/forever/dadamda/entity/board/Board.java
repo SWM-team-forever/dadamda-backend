@@ -108,4 +108,8 @@ public class Board extends BaseTimeEntity {
     public void updateIsShared(Boolean request) {
         this.isShared = request;
     }
+
+    public void updateIsPublic(Boolean request) {
+        this.isPublic = request;
+    }
 }
