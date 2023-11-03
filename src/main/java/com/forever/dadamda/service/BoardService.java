@@ -125,6 +125,7 @@ public class BoardService {
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
+            Sentry.captureException(e);
             throw new IllegalArgumentException("파일 변환에 실패했습니다.");
         }
         return convertedFile;
