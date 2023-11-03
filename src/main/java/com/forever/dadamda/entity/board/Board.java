@@ -119,4 +119,8 @@ public class Board extends BaseTimeEntity {
     public void addHeartCnt() {
         this.heartCnt = heartCnt+1;
     }
+  
+    public void updateIsPublic(Boolean request) {
+        this.isPublic = request;
+    }
 }

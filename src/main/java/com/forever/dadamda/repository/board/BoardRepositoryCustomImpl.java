@@ -63,6 +63,20 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         return Optional.ofNullable(isShared);
     }
 
+    @Override
+    public Optional<Boolean> findIsPublicByBoardUUID(User user, UUID boardUUID) {
+
+        Boolean isPublic = queryFactory.select(board.isPublic)
+                .from(board)
+                .where(
+                        board.user.eq(user)
+                                .and(board.uuid.eq(boardUUID))
+                                .and(board.deletedDate.isNull())
+                )
+                .fetchOne();
+        return Optional.ofNullable(isPublic);
+    }
+
 
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {
