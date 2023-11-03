@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,19 @@ public class TrendController {
 
         String email = authentication.getName();
         trendService.addHearts(email, UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "하트 취소하기", description = "트랜딩 보드의 하트를 취소할 수 있습니다.")
+    @DeleteMapping("/v1/trends/heart/{boardUUID}")
+    public ApiResponse<String> deleteHearts(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        trendService.deleteHearts(email, UUID.fromString(boardUUID));
 
         return ApiResponse.success();
     }

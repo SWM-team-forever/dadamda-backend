@@ -53,4 +53,26 @@ public class TrendServiceTest {
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
         assertThat(heart.getBoard().getUuid()).isEqualTo(board1UUID);
     }
+
+    @Test
+    @Transactional
+    void should_the_number_of_hearts_on_the_board_decreases_and_heart_is_deleted_When_heart_is_canceled_on_a_board() {
+        // 트랜딩 보드의 하트를 취소할 때, 보드의 하트 개수가 감소하고, 하트가 삭제되는지 확인한다.
+        //given
+        trendService.addHearts(existentEmail, board1UUID);
+
+        //when
+        trendService.deleteHearts(existentEmail, board1UUID);
+
+        //then
+        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID).get();
+        List<Heart> heartList = heartRepository.findAll();
+        Heart heart = heartList.get(0);
+
+        assertThat(board.getHeartCnt()).isEqualTo(0);
+        assertThat(heartList.size()).isEqualTo(1);
+        assertThat(heart.getDeletedDate()).isNotNull();
+        assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
+        assertThat(heart.getBoard().getUuid()).isEqualTo(board1UUID);
+    }
 }
