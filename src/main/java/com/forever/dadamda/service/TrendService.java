@@ -4,10 +4,12 @@ import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.heart.Heart;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.HeartRepository;
 import com.forever.dadamda.service.user.UserService;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,24 @@ public class TrendService {
                 .build();
 
         heartRepository.save(heart);
+    }
+
+    @Transactional
+    public void deleteHearts(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        if(board.getHeartCnt() > 0) {
+            board.deleteHeartCnt(board.getHeartCnt()-1);
+        } else {
+            throw new InvalidException(ErrorCode.INVALID);
+        }
+
+        Heart heart = heartRepository.findByUserAndBoardAndDeletedDateIsNull(user, board)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.INVALID_HEART));
+
+        heart.updateDeletedDate(LocalDateTime.now());
     }
 }
