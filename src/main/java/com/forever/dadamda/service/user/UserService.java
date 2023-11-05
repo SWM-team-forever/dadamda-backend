@@ -66,6 +66,7 @@ public class UserService {
 
         String fileName = "profileImage/" + user.getUuid();
 
+        validateExist(file);
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(file.getContentType());
@@ -78,6 +79,12 @@ public class UserService {
 
         String url = s3Client.getUrl(bucketName, fileName).toString();
         user.updateProfileImage(url);
+    }
+    
+    private void validateExist(MultipartFile file) {
+        if(file.isEmpty()) {
+            throw new InvalidException(ErrorCode.NOT_EXISTS);
+        }
     }
 
     @Transactional
