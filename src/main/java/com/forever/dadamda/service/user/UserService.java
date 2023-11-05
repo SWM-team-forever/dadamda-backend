@@ -63,25 +63,21 @@ public class UserService {
         User user = userRepository.findByEmailAndDeletedDateIsNull(email)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER));
 
-        File fileObj = convertMultiPartFileToFile(file);
-        String fileName = "profileImage/" + user.getUuid();
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-        fileObj.delete();
+        String fileName;
+        try {
+            File tempFile = File.createTempFile("upload_", "_temp",
+                    new File(System.getProperty("java.io.tmpdir")));
+            file.transferTo(tempFile);
+
+            fileName = "profileImage/" + user.getUuid();
+            s3Client.putObject(new PutObjectRequest(bucketName, fileName, tempFile));
+            tempFile.delete();
+        } catch (IOException e) {
+            throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
+        }
 
         String url = s3Client.getUrl(bucketName, fileName).toString();
         user.updateProfileImage(url);
-    }
-
-    private File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            fos.write(file.getBytes());
-        } catch (IOException e) {
-            Sentry.captureException(e);
-            e.printStackTrace();
-            throw new IllegalArgumentException("파일 변환에 실패했습니다.");
-        }
-        return convertedFile;
     }
 
     @Transactional
