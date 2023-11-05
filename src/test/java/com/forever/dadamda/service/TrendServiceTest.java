@@ -47,7 +47,7 @@ public class TrendServiceTest {
         List<Heart> heartList = heartRepository.findAll();
         Heart heart = heartList.get(0);
 
-        assertThat(board.getHeartCnt()).isEqualTo(1);
+        assertThat(board.getHeartCnt()).isEqualTo(11);
         assertThat(heartList.size()).isEqualTo(1);
         assertThat(heart.getDeletedDate()).isNull();
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
@@ -69,7 +69,7 @@ public class TrendServiceTest {
         List<Heart> heartList = heartRepository.findAll();
         Heart heart = heartList.get(0);
 
-        assertThat(board.getHeartCnt()).isEqualTo(0);
+        assertThat(board.getHeartCnt()).isEqualTo(10);
         assertThat(heartList.size()).isEqualTo(1);
         assertThat(heart.getDeletedDate()).isNotNull();
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
