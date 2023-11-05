@@ -1,6 +1,7 @@
 package com.forever.dadamda.service;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.trend.GetTrendBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.heart.Heart;
 import com.forever.dadamda.entity.user.User;
@@ -9,9 +10,11 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.HeartRepository;
 import com.forever.dadamda.service.user.UserService;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +60,14 @@ public class TrendService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.INVALID_HEART));
 
         heart.updateDeletedDate(LocalDateTime.now());
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> getTrendBoardList(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, Pageable pageable) {
+
+        return boardRepository.getTrendBoardListOrderByHeartCnt(trendStartDateTime,
+                        trendEndDateTime, pageable)
+                .map(GetTrendBoardResponse::of);
     }
 }
