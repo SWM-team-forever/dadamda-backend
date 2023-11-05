@@ -13,10 +13,10 @@ INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_dat
 VALUES (1, 2, 'board2', 'test', '0782ef48-a439-12', 1 ,'2023-01-01 11:11:01', 0, '2023-01-02 11:11:01', '2023-01-03 11:11:01', 'test contents', 1);
 
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, is_shared, modified_date, contents, authorship_id, heart_cnt, view_cnt, share_cnt)
-VALUES (1, 3, 'board3', 'test', '0782ef48-a439-13', 0 ,'2023-01-01 11:11:01', 1, 1, '2023-01-03 11:11:01', 'test contents3', 1, 10, 11, 13);
+VALUES (1, 3, 'board3', 'test', '0782ef48-a439-13', 1 ,'2023-01-01 11:11:01', 1, 1, '2023-01-03 11:11:01', 'test contents3', 1, 10, 11, 13);
 
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, modified_date, fixed_date, authorship_id, heart_cnt, view_cnt, share_cnt)
-VALUES (1, 4, 'board4', 'test', '0782ef48-a439-14', 0 ,'2023-01-01 11:11:01', 1, '2023-01-04 11:11:01', '2023-01-04 11:11:01', 1, 9, 11, 14);
+VALUES (1, 4, 'board4', 'test', '0782ef48-a439-14', 2 ,'2023-01-01 11:11:01', 1, '2023-01-04 11:11:01', '2023-01-04 11:11:01', 1, 9, 11, 14);
 
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, modified_date, deleted_date, authorship_id, heart_cnt, view_cnt, share_cnt)
 VALUES (1, 5, 'board5', 'test', '0782ef48-a439-15', 0 ,'2023-01-01 11:11:01', 1, '2023-01-04 11:11:01', '2023-01-04 11:11:01', 1, 6, 11, 12);

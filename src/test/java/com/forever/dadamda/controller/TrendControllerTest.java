@@ -105,4 +105,21 @@ public class TrendControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty());
     }
+
+    @Test
+    public void should_it_returns_the_boards_When_getting_trending_boards_by_tags()
+            throws Exception {
+        // 태그로 트랜딩 보드를 조회할 때, 보드를 조회할 수 있다.
+        mockMvc.perform(get("/ov1/trends/boards")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-01-31 23:59:59")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("tag", "ENTERTAINMENT_ART")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").doesNotExist());
+    }
 }
