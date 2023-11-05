@@ -3,8 +3,10 @@ package com.forever.dadamda.repository.board;
 import static com.forever.dadamda.entity.board.QBoard.board;
 
 import com.forever.dadamda.entity.board.Board;
+import com.forever.dadamda.entity.board.TAG;
 import com.forever.dadamda.entity.user.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,6 +77,24 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 )
                 .fetchOne();
         return Optional.ofNullable(isPublic);
+    }
+
+    @Override
+    public Slice<Board> getTrendBoardListOrderByHeartCnt(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, Pageable pageable, String tag) {
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.deletedDate.isNull()
+                                .and(board.isPublic.isTrue())
+                                .and(board.createdDate.between(trendStartDateTime, trendEndDateTime))
+                                .and(tag == null ? null : board.tag.eq(TAG.from(tag)))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.heartCnt.desc(), board.shareCnt.desc(), board.viewCnt.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
 
 
