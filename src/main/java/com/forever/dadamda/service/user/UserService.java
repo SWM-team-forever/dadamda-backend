@@ -1,6 +1,7 @@
 package com.forever.dadamda.service.user;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.user.GetUserInfoResponse;
@@ -63,17 +64,16 @@ public class UserService {
         User user = userRepository.findByEmailAndDeletedDateIsNull(email)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_MEMBER));
 
-        String fileName;
-        try {
-            File tempFile = File.createTempFile("upload_", "_temp",
-                    new File(System.getProperty("java.io.tmpdir")));
-            file.transferTo(tempFile);
+        String fileName = "profileImage/" + user.getUuid();
 
-            fileName = "profileImage/" + user.getUuid();
-            s3Client.putObject(new PutObjectRequest(bucketName, fileName, tempFile));
-            tempFile.delete();
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
         } catch (IOException e) {
-            throw new IllegalArgumentException("파일 업로드에 실패했습니다.");
+            Sentry.captureException(e);
+            throw new IllegalArgumentException("파일 업로드 중 에러가 발생했습니다.");
         }
 
         String url = s3Client.getUrl(bucketName, fileName).toString();
