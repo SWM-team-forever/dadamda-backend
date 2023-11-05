@@ -5,12 +5,12 @@ import com.forever.dadamda.dto.trend.GetTrendBoardResponse;
 import com.forever.dadamda.service.TrendService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,15 +53,11 @@ public class TrendController {
     @Operation(summary = "트랜드 보드 조회하기", description = "트랜딩 보드를 조회할 수 있습니다.")
     @GetMapping("/ov1/trends/boards")
     public ApiResponse<Slice<GetTrendBoardResponse>> getTrendBoardList(
-            String startDate, String endDate, Pageable pageable) {
-
-        String dateStr = "yyyy-MM-dd HH:mm:ss";
-        LocalDateTime startDateTime = LocalDateTime.parse(startDate,
-                DateTimeFormatter.ofPattern(dateStr));
-        LocalDateTime endDateTime = LocalDateTime.parse(endDate,
-                DateTimeFormatter.ofPattern(dateStr));
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+            Pageable pageable, String tag) {
 
         return ApiResponse.success(
-                trendService.getTrendBoardList(startDateTime, endDateTime, pageable));
+                trendService.getTrendBoardList(startDate, endDate, pageable, tag));
     }
 }

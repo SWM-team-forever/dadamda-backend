@@ -64,10 +64,10 @@ public class TrendService {
 
     @Transactional(readOnly = true)
     public Slice<GetTrendBoardResponse> getTrendBoardList(LocalDateTime trendStartDateTime,
-            LocalDateTime trendEndDateTime, Pageable pageable) {
+            LocalDateTime trendEndDateTime, Pageable pageable, String tag) {
 
         return boardRepository.getTrendBoardListOrderByHeartCnt(trendStartDateTime,
-                        trendEndDateTime, pageable)
+                        trendEndDateTime, pageable, tag)
                 .map(GetTrendBoardResponse::of);
     }
 }

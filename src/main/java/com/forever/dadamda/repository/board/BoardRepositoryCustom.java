@@ -19,5 +19,5 @@ public interface BoardRepositoryCustom {
     Optional<Boolean> findIsPublicByBoardUUID(User user, UUID boardUUID);
 
     Slice<Board> getTrendBoardListOrderByHeartCnt(LocalDateTime trendStartDateTime,
-            LocalDateTime trendEndDateTime, Pageable pageable);
+            LocalDateTime trendEndDateTime, Pageable pageable, String tag);
 }
