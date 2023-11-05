@@ -5,6 +5,7 @@ import com.forever.dadamda.dto.trend.GetTrendBoardResponse;
 import com.forever.dadamda.service.TrendService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,15 @@ public class TrendController {
     @Operation(summary = "트랜드 보드 조회하기", description = "트랜딩 보드를 조회할 수 있습니다.")
     @GetMapping("/ov1/trends/boards")
     public ApiResponse<Slice<GetTrendBoardResponse>> getTrendBoardList(
-            LocalDateTime trendStartDateTime, LocalDateTime trendEndDateTime, Pageable pageable) {
+            String startDate, String endDate, Pageable pageable) {
+
+        String dateStr = "yyyy-MM-dd HH:mm:ss";
+        LocalDateTime startDateTime = LocalDateTime.parse(startDate,
+                DateTimeFormatter.ofPattern(dateStr));
+        LocalDateTime endDateTime = LocalDateTime.parse(endDate,
+                DateTimeFormatter.ofPattern(dateStr));
 
         return ApiResponse.success(
-                trendService.getTrendBoardList(trendStartDateTime, trendEndDateTime, pageable));
+                trendService.getTrendBoardList(startDateTime, endDateTime, pageable));
     }
 }
