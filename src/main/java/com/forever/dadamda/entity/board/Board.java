@@ -131,4 +131,8 @@ public class Board extends BaseTimeEntity {
     public void deleteHeartCnt(Long request) {
         this.heartCnt = request;
     }
+
+    public void addViewCnt() {
+        this.viewCnt += 1;
+    }
 }

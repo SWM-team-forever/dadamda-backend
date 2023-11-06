@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,5 +60,16 @@ public class TrendController {
 
         return ApiResponse.success(
                 trendService.getTrendBoardList(startDate, endDate, pageable, tag));
+    }
+
+    @Operation(summary = "보드 조회수 증가", description = "보드 조회수를 증가시킵니다.")
+    @PatchMapping("/ov1/trends/boards/{boardUUID}")
+    public ApiResponse<String> updateViewCnt(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID) {
+
+        trendService.updateViewCnt(UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
     }
 }
