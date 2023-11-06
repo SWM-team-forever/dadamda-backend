@@ -73,25 +73,24 @@ public class Board extends BaseTimeEntity {
     @Column(length = 2084)
     private String thumbnailUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "authorship_id", nullable = false)
-    private User authorshipUser;
+    private Long originalBoardId;
 
     @OneToMany(mappedBy = "board")
     private List<Heart> heartList = new ArrayList<>();
 
     @Builder
     Board(User user, String title, TAG tag, UUID uuid, String description,
-            LocalDateTime fixedDate, User authorshipUser, String contents, String thumbnailUrl) {
+            LocalDateTime fixedDate, Long originalBoardId, String contents, String thumbnailUrl) {
         this.user = user;
         this.title = title;
         this.tag = tag;
         this.uuid = uuid;
         this.description = description;
         this.fixedDate = fixedDate;
-        this.authorshipUser = authorshipUser;
+        this.originalBoardId = originalBoardId;
         this.contents = contents;
         this.thumbnailUrl = thumbnailUrl;
+        this.shareCnt = 0L;
     }
 
     public void updateFixedDate(LocalDateTime fixedDate) {
@@ -123,7 +122,7 @@ public class Board extends BaseTimeEntity {
     public void addHeartCnt() {
         this.heartCnt = heartCnt+1;
     }
-  
+
     public void updateIsPublic(Boolean request) {
         this.isPublic = request;
     }
@@ -134,5 +133,9 @@ public class Board extends BaseTimeEntity {
 
     public void addViewCnt() {
         this.viewCnt += 1;
+    }
+
+    public void addShareCnt() {
+        this.shareCnt += 1;
     }
 }
