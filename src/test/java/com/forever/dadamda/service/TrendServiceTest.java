@@ -75,4 +75,16 @@ public class TrendServiceTest {
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
         assertThat(heart.getBoard().getUuid()).isEqualTo(board1UUID);
     }
+
+    void should_the_number_of_viewCnt_on_the_board_increases_When_viewing_the_board() {
+        // 트랜딩 보드를 조회할 때, 보드의 조회수가 증가하는지 확인한다.
+        //given
+        //when
+        trendService.updateViewCnt(board1UUID);
+
+        //then
+        Board board = boardRepository.findByUuidAndDeletedDateIsNull(board1UUID).get();
+
+        assertThat(board.getViewCnt()).isEqualTo(1);
+    }
 }
