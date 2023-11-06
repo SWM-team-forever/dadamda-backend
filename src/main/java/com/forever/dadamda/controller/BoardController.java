@@ -101,8 +101,20 @@ public class BoardController {
     }
 
     @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
-    @PostMapping(value = "/v1/boards/{boardUUID}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/v2/boards/{boardUUID}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse<String> updateBoards(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
+            Authentication authentication) {
+        String email = authentication.getName();
+        boardService.updateBoard(email, UUID.fromString(boardUUID), updateBoardRequest);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
+    @PostMapping(value = "/v1/boards/{boardUUID}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<String> updateBoard(
             @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID,
             @Valid @RequestPart UpdateBoardRequest updateBoardRequest,

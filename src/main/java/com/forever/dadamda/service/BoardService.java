@@ -110,6 +110,16 @@ public class BoardService {
     }
 
     @Transactional
+    public void updateBoard(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateBoard(updateBoardRequest);
+    }
+
+    @Transactional
     public void uploadThumbnailImage(Board board, MultipartFile file) {
          File fileObj = convertMultiPartFileToFile(file);
          String fileName = "thumbnail/" + board.getUuid();
