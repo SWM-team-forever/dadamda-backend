@@ -70,4 +70,11 @@ public class TrendService {
                         trendEndDateTime, pageable, tag)
                 .map(GetTrendBoardResponse::of);
     }
+
+    public void updateViewCnt(UUID boardUUID) {
+        Board board = boardRepository.findByUuidAndDeletedDateIsNull(boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.addViewCnt();
+    }
 }
