@@ -34,7 +34,6 @@ public class CreateBoardRequest {
                 .description(description)
                 .tag(TAG.from(tag))
                 .uuid(uuid)
-                .authorshipUser(user)
                 .build();
     }
 }
