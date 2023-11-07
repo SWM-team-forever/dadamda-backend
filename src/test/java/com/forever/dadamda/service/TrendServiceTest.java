@@ -79,6 +79,7 @@ public class TrendServiceTest {
     }
 
     @Test
+    @Transactional
     void should_the_number_of_viewCnt_on_the_board_increases_When_viewing_the_board() {
         // 트랜딩 보드를 조회할 때, 보드의 조회수가 증가하는지 확인한다.
         //given
