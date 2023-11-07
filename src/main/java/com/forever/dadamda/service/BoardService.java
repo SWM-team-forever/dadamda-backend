@@ -219,6 +219,10 @@ public class BoardService {
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
+        if(board.getOriginalBoardId() != null) {
+            throw new InvalidException(ErrorCode.INVALID_AUTHENTICATION_TO_PUBLISH);
+        }
+
         board.updateIsPublic(!board.isPublic());
     }
 
