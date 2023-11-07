@@ -243,7 +243,10 @@ public class BoardService {
 
         Board copyBoard = null;
 
-        if(type.equals("trend")) {
+        if(type==null) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else if(type.equals("trend")) {
             copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
                     .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
         } else if (type.equals("share")) {

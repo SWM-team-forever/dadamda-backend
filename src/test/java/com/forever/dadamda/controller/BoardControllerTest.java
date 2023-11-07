@@ -490,4 +490,33 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
     }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_OK_if_isPublic_is_true_if_owning_a_shared_board_without_type()
+            throws Exception {
+        // type이 없이 공유된 보드를 내 보드에 담을 때, isPublic가 true이면 성공 응답이 온다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board board = Board.builder()
+                .title("board10")
+                .tag(LIFE_SHOPPING)
+                .uuid(boardUUID)
+                .user(user)
+                .build();
+        board.updateIsShared(true);
+        boardRepository.save(board);
+
+        //when
+        //then
+        mockMvc.perform(post("/v1/copy/boards/{boardUUID}", boardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
+    }
 }
