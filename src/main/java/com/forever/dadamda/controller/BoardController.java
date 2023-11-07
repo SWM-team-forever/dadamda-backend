@@ -108,7 +108,7 @@ public class BoardController {
             @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.updateBoard(email, UUID.fromString(boardUUID), updateBoardRequest);
+        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest);
         return ApiResponse.success();
     }
 
@@ -121,7 +121,7 @@ public class BoardController {
             @RequestPart(required = false) MultipartFile file,
             Authentication authentication) {
         String email = authentication.getName();
-        boardService.updateBoards(email, UUID.fromString(boardUUID), updateBoardRequest, file);
+        boardService.updateBoardsWithImage(email, UUID.fromString(boardUUID), updateBoardRequest, file);
         return ApiResponse.success();
     }
 

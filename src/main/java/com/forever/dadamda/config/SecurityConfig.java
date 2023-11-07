@@ -77,6 +77,7 @@ public class SecurityConfig {
                         "/login/**", "/oauth2/**", "/oauth-login",
                         "/ov1/**").permitAll()
                 .antMatchers("/v1/**").hasRole(Role.USER.name())
+                .antMatchers("/v2/**").hasRole(Role.USER.name())
                 .anyRequest().authenticated()
                 .and()
                 .logout()

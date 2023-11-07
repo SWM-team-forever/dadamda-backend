@@ -88,7 +88,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest, MultipartFile file) {
+    public void updateBoardsWithImage(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest, MultipartFile file) {
         User user = userService.validateUser(email);
 
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
@@ -110,7 +110,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoard(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
+    public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
         User user = userService.validateUser(email);
 
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
