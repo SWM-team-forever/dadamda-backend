@@ -12,6 +12,7 @@ import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.UserRepository;
@@ -381,5 +382,17 @@ public class BoardServiceTest {
 
         assertThat(SharedBoard2.getOriginalBoardId()).isEqualTo(2L);
         assertThat(OwnSharedBoard.getOriginalBoardId()).isEqualTo(SharedBoard2.getOriginalBoardId());
+    }
+
+    @Test
+    @Transactional
+    void should_the_copy_board_is_denied_when_publish(){
+        // 복제한 보드는 공개 시 원작자인지 확인하고 아니라면 예외 처리한다.
+        //given
+        //when
+        //then
+
+        assertThatThrownBy(() -> boardService.updateBoardIsPublic(existentEmail, board2UUID))
+                .isInstanceOf(InvalidException.class);
     }
 }
