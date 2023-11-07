@@ -40,7 +40,7 @@ public class TrendServiceTest {
         // 트랜딩 보드의 하트를 추가할 때, 보드의 하트개수가 증가하고, 하트가 추가되는지 확인한다.
         //given
         //when
-        trendService.addHearts(existentEmail, board1UUID);
+        Boolean isHeart = trendService.updateHearts(existentEmail, board1UUID);
 
         //then
         Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID).get();
@@ -52,6 +52,7 @@ public class TrendServiceTest {
         assertThat(heart.getDeletedDate()).isNull();
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
         assertThat(heart.getBoard().getUuid()).isEqualTo(board1UUID);
+        assertThat(isHeart).isTrue();
     }
 
     @Test
@@ -59,10 +60,10 @@ public class TrendServiceTest {
     void should_the_number_of_hearts_on_the_board_decreases_and_heart_is_deleted_When_heart_is_canceled_on_a_board() {
         // 트랜딩 보드의 하트를 취소할 때, 보드의 하트 개수가 감소하고, 하트가 삭제되는지 확인한다.
         //given
-        trendService.addHearts(existentEmail, board1UUID);
+        trendService.updateHearts(existentEmail, board1UUID);
 
         //when
-        trendService.deleteHearts(existentEmail, board1UUID);
+        Boolean isHeart = trendService.updateHearts(existentEmail, board1UUID);
 
         //then
         Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID).get();
@@ -74,8 +75,10 @@ public class TrendServiceTest {
         assertThat(heart.getDeletedDate()).isNotNull();
         assertThat(heart.getUser().getEmail()).isEqualTo(existentEmail);
         assertThat(heart.getBoard().getUuid()).isEqualTo(board1UUID);
+        assertThat(isHeart).isFalse();
     }
 
+    @Test
     void should_the_number_of_viewCnt_on_the_board_increases_When_viewing_the_board() {
         // 트랜딩 보드를 조회할 때, 보드의 조회수가 증가하는지 확인한다.
         //given
@@ -85,6 +88,6 @@ public class TrendServiceTest {
         //then
         Board board = boardRepository.findByUuidAndDeletedDateIsNull(board1UUID).get();
 
-        assertThat(board.getViewCnt()).isEqualTo(1);
+        assertThat(board.getViewCnt()).isEqualTo(12);
     }
 }
