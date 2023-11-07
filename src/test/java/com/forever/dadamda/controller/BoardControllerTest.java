@@ -194,7 +194,7 @@ public class BoardControllerTest {
 
         //when
         //then
-        mockMvc.perform(multipart("/v1/boards/{boardUUID}", board1UUID)
+        mockMvc.perform(multipart("/v2/boards/{boardUUID}", board1UUID)
                         .part(part)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
