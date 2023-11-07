@@ -446,7 +446,6 @@ public class BoardControllerTest {
                 .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
                 .uuid(boardUUID)
                 .user(user)
-                .authorshipUser(user)
                 .build();
         board.updateIsShared(true);
         boardRepository.save(board);
