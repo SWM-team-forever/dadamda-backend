@@ -121,13 +121,13 @@ public class BoardService {
 
     @Transactional
     public void uploadThumbnailImage(Board board, MultipartFile file) {
-         File fileObj = convertMultiPartFileToFile(file);
-         String fileName = "thumbnail/" + board.getUuid();
-         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
-         fileObj.delete();
+        File fileObj = convertMultiPartFileToFile(file);
+        String fileName = "thumbnail/" + board.getUuid();
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        fileObj.delete();
 
-         String url = s3Client.getUrl(bucketName, fileName).toString();
-         board.updateThumbnailUrl(url);
+        String url = s3Client.getUrl(bucketName, fileName).toString();
+        board.updateThumbnailUrl(url);
     }
 
     private File convertMultiPartFileToFile(MultipartFile file) {
@@ -240,7 +240,8 @@ public class BoardService {
     public UUID copyBoards(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
-        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(
+                        boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         Board newBoard = Board.builder()
@@ -249,12 +250,15 @@ public class BoardService {
                 .tag(sharedBoard.getTag())
                 .uuid(generateUUID())
                 .description(sharedBoard.getDescription())
-                .authorshipUser(sharedBoard.getAuthorshipUser())
+                .originalBoardId(sharedBoard.getOriginalBoardId() == null ? sharedBoard.getId()
+                        : sharedBoard.getOriginalBoardId())
                 .contents(sharedBoard.getContents())
                 .thumbnailUrl(sharedBoard.getThumbnailUrl())
                 .build();
 
         Board copyBoard = boardRepository.save(newBoard);
+
+        sharedBoard.addShareCnt();
 
         return copyBoard.getUuid();
     }
