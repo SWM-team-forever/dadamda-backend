@@ -330,7 +330,7 @@ public class BoardServiceTest {
         boardRepository.save(SharedBoard);
 
         //when
-        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID);
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID, "share");
 
         //then
         User user2 = userRepository.findById(2L).get();
@@ -372,7 +372,7 @@ public class BoardServiceTest {
         boardRepository.save(SharedBoard);
 
         //when
-        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID);
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID, "share");
 
         //then
         User user2 = userRepository.findById(2L).get();
