@@ -19,6 +19,7 @@ public class GetBoardResponse {
     private TAG tag;
     private Long modifiedDate;
     private String thumbnailUrl;
+    private String contents;
 
     public static GetBoardResponse of(Board board) {
         return GetBoardResponse.builder()
@@ -29,6 +30,7 @@ public class GetBoardResponse {
                 .tag(board.getTag())
                 .modifiedDate(TimeService.fromLocalDateTime(board.getModifiedDate()))
                 .thumbnailUrl(board.getThumbnailUrl())
+                .contents(board.getContents())
                 .build();
     }
 }

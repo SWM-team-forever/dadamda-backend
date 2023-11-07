@@ -10,6 +10,7 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.HeartRepository;
 import com.forever.dadamda.service.user.UserService;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,39 +28,35 @@ public class TrendService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public void addHearts(String email, UUID boardUUID) {
+    public Boolean updateHearts(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
         Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
-        board.addHeartCnt();
+        Optional<Heart> heart = heartRepository.findByUserAndBoardAndDeletedDateIsNull(user, board);
 
-        Heart heart = Heart.builder()
-                .user(user)
-                .board(board)
-                .build();
+        if(heart.isPresent()) { // 하트 취소
+            if(board.getHeartCnt() > 0) {
+                board.updateHeartCnt(board.getHeartCnt()-1);
+            } else {
+                throw new InvalidException(ErrorCode.INVALID);
+            }
 
-        heartRepository.save(heart);
-    }
+            heart.get().updateDeletedDate(LocalDateTime.now());
+            return false;
+        } else { // 하트 추가
+            board.updateHeartCnt(board.getHeartCnt()+1);
 
-    @Transactional
-    public void deleteHearts(String email, UUID boardUUID) {
-        User user = userService.validateUser(email);
+            Heart newheart = Heart.builder()
+                    .user(user)
+                    .board(board)
+                    .build();
 
-        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
-
-        if(board.getHeartCnt() > 0) {
-            board.deleteHeartCnt(board.getHeartCnt()-1);
-        } else {
-            throw new InvalidException(ErrorCode.INVALID);
+            heartRepository.save(newheart);
         }
 
-        Heart heart = heartRepository.findByUserAndBoardAndDeletedDateIsNull(user, board)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.INVALID_HEART));
-
-        heart.updateDeletedDate(LocalDateTime.now());
+        return true;
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +68,7 @@ public class TrendService {
                 .map(GetTrendBoardResponse::of);
     }
 
+    @Transactional
     public void updateViewCnt(UUID boardUUID) {
         Board board = boardRepository.findByUuidAndDeletedDateIsNull(boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));

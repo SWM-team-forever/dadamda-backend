@@ -162,9 +162,9 @@ public class BoardControllerTest {
 
     @Test
     @WithCustomMockUser
-    public void should_board_tag_is_returned_to_english_When_getting_a_list_of_boards()
+    public void should_board_tag_is_returned_to_english_and_it_returns_board_contents_When_getting_a_list_of_boards()
             throws Exception {
-        //보드 목록을 조회할 떄, tag가 영어로 반환되는지 확인
+        //보드 목록을 조회할 떄, tag가 영어로 반환되고 컨텐츠를 반환하는지 확인
         mockMvc.perform(get("/v1/boards")
                         .param("page", "0")
                         .param("size", "10")
@@ -173,6 +173,7 @@ public class BoardControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("HOBBY_TRAVEL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].contents").value("test contents4"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].tag").value("LIFE_SHOPPING"));
     }
 
