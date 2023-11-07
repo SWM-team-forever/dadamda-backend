@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_DUPLICATED_SCRAP("BR002","이미 저장된 URL입니다."),
     INVALID_DUPLICATED_NICKNAME("BR003", "이미 사용중인 닉네임입니다."),
     INVALID_HEART("BR004", "좋아요를 누르지 않은 글입니다."),
+    INVALID_AUTHENTICATION_TO_PUBLISH("BR005", "게시 권한이 없습니다."),
 
     /**
      * 404 Not Found (존재하지 않는 리소스)
