@@ -16,6 +16,7 @@ import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
@@ -217,6 +218,10 @@ public class BoardService {
 
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        if(board.getOriginalBoardId() != null) {
+            throw new InvalidException(ErrorCode.INVALID_AUTHENTICATION_TO_PUBLISH);
+        }
 
         board.updateIsPublic(!board.isPublic());
     }
