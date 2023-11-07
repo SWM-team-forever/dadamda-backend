@@ -15,6 +15,7 @@ import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -214,17 +215,17 @@ public class BoardController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "공유 보드 복제", description = "공유 보드를 내 보드로 복제합니다")
+    @Operation(summary = "공유 보드 복제", description = "보드를 내 보드로 복제합니다")
     @PostMapping("/v1/copy/boards/{boardUUID}")
     public ApiResponse<PostCopyBoardsResponse> copyBoards(
             @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID,
-            Authentication authentication) {
+            @Parameter String type, Authentication authentication) {
 
         String email = authentication.getName();
 
         return ApiResponse.success(PostCopyBoardsResponse.of(
-                boardService.copyBoards(email, UUID.fromString(boardUUID))));
+                boardService.copyBoards(email, UUID.fromString(boardUUID), type)));
     }
 
     @Operation(summary = "공유된 보드 컨텐츠 조회", description = "공유된 보드 컨텐츠를 조회합니다.")

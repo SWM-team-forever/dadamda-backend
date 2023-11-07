@@ -16,6 +16,7 @@ import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
@@ -237,29 +238,40 @@ public class BoardService {
 
 
     @Transactional
-    public UUID copyBoards(String email, UUID boardUUID) {
+    public UUID copyBoards(String email, UUID boardUUID, String type) {
         User user = userService.validateUser(email);
 
-        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(
-                        boardUUID)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        Board copyBoard = null;
+
+        if(type==null) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else if(type.equals("trend")) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else if (type.equals("share")) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else {
+            throw new InvalidException(ErrorCode.INVALID);
+        }
 
         Board newBoard = Board.builder()
                 .user(user)
-                .title(sharedBoard.getTitle())
-                .tag(sharedBoard.getTag())
+                .title(copyBoard.getTitle())
+                .tag(copyBoard.getTag())
                 .uuid(generateUUID())
-                .description(sharedBoard.getDescription())
-                .originalBoardId(sharedBoard.getOriginalBoardId() == null ? sharedBoard.getId()
-                        : sharedBoard.getOriginalBoardId())
-                .contents(sharedBoard.getContents())
-                .thumbnailUrl(sharedBoard.getThumbnailUrl())
+                .description(copyBoard.getDescription())
+                .originalBoardId(copyBoard.getOriginalBoardId() == null ? copyBoard.getId()
+                        : copyBoard.getOriginalBoardId())
+                .contents(copyBoard.getContents())
+                .thumbnailUrl(copyBoard.getThumbnailUrl())
                 .build();
 
-        Board copyBoard = boardRepository.save(newBoard);
+        Board copyedBoard = boardRepository.save(newBoard);
 
-        sharedBoard.addShareCnt();
+        copyBoard.addShareCnt();
 
-        return copyBoard.getUuid();
+        return copyedBoard.getUuid();
     }
 }
