@@ -3,6 +3,7 @@ package com.forever.dadamda.controller;
 import static com.forever.dadamda.entity.board.TAG.LIFE_SHOPPING;
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,6 +17,7 @@ import com.forever.dadamda.entity.user.User;
 import com.forever.dadamda.mock.WithCustomMockUser;
 import com.forever.dadamda.repository.UserRepository;
 import com.forever.dadamda.repository.board.BoardRepository;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
@@ -159,9 +162,9 @@ public class BoardControllerTest {
 
     @Test
     @WithCustomMockUser
-    public void should_board_tag_is_returned_to_english_When_getting_a_list_of_boards()
+    public void should_board_tag_is_returned_to_english_and_it_returns_board_contents_When_getting_a_list_of_boards()
             throws Exception {
-        //보드 목록을 조회할 떄, tag가 영어로 반환되는지 확인
+        //보드 목록을 조회할 떄, tag가 영어로 반환되고 컨텐츠를 반환하는지 확인
         mockMvc.perform(get("/v1/boards")
                         .param("page", "0")
                         .param("size", "10")
@@ -169,7 +172,8 @@ public class BoardControllerTest {
                         .header("X-AUTH-TOKEN", "aaaaaaa")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("ENTERTAINMENT_ART"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].tag").value("HOBBY_TRAVEL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].contents").value("test contents4"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].tag").value("LIFE_SHOPPING"));
     }
 
@@ -183,15 +187,18 @@ public class BoardControllerTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
         String content = objectMapper.writeValueAsString(updateBoardRequest);
+        MockPart part = new MockPart("updateBoardRequest", content.getBytes(StandardCharsets.UTF_8));
+        part.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         //when
         //then
-        mockMvc.perform(patch("/v1/boards/{boardUUID}", board1UUID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(content)
+        mockMvc.perform(multipart("/v2/boards/{boardUUID}", board1UUID)
+                        .part(part)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -213,7 +220,7 @@ public class BoardControllerTest {
     @WithCustomMockUser
     public void should_the_board_name_description_and_tag_are_successfully_returned_When_getting_board_individually()
             throws Exception {
-        // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그가 반환된다.
+        // 보드 개별 조회할 때, 성공적으로 보드명, 설명, 태그, 썸네일이 반환된다.
         mockMvc.perform(get("/v1/boards/{boardUUID}", board1UUID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-AUTH-TOKEN", "aaaaaaa")
@@ -222,7 +229,22 @@ public class BoardControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.description").value("test"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.tag").value("ENTERTAINMENT_ART"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.thumbnailUrl").value("board1 thumbnail url"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_the_thumbnailUrl_is_not_returned_When_getting_individually_board_that_does_not_have_thumbnail()
+            throws Exception {
+        // 썸네일이 없는 보드를 개별 조회할 때, thumbnailUrl이 반환되지 않는다.
+        mockMvc.perform(get("/v1/boards/{boardUUID}", board2UUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.boardId").value(2L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.thumbnailUrl").doesNotExist());
     }
 
     @Test
@@ -424,7 +446,66 @@ public class BoardControllerTest {
                 .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
                 .uuid(boardUUID)
                 .user(user)
-                .authorshipUser(user)
+                .build();
+        board.updateIsShared(true);
+        boardRepository.save(board);
+
+        //when
+        //then
+        mockMvc.perform(post("/v1/copy/boards/{boardUUID}", boardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("type", "share")
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_OK_if_isPublic_is_true_if_owning_a_trend_board()
+            throws Exception {
+        // 트랜드 보드를 내 보드에 담을 때, isPublic가 true이면 성공 응답이 온다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board board = Board.builder()
+                .title("board10")
+                .tag(LIFE_SHOPPING)
+                .uuid(boardUUID)
+                .user(user)
+                .build();
+        board.updateIsPublic(true);
+        boardRepository.save(board);
+
+        //when
+        //then
+        mockMvc.perform(post("/v1/copy/boards/{boardUUID}", boardUUID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("type", "trend")
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.uuid").exists());
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_it_returns_OK_if_isPublic_is_true_if_owning_a_shared_board_without_type()
+            throws Exception {
+        // type이 없이 공유된 보드를 내 보드에 담을 때, isPublic가 true이면 성공 응답이 온다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board board = Board.builder()
+                .title("board10")
+                .tag(LIFE_SHOPPING)
+                .uuid(boardUUID)
+                .user(user)
                 .build();
         board.updateIsShared(true);
         boardRepository.save(board);

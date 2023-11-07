@@ -68,4 +68,32 @@ public class CustomOAuth2UserServiceTest {
         assertThat(user.getModifiedDate()).isAfter(user.getCreatedDate());
         assertThat(user.getUuid()).isEqualTo(uuid);
     }
+
+    @Test
+    void should_the_existing_profile_url_is_not_changed_When_logging_in_by_changing_the_profileUrl() {
+        //  유저의 프로필을 변경하여 로그인할때, 기존의 프로필 이미지는 변경되지 않는다.
+        //given
+        String existentProfileUrl = "123";
+        String changedProfileUrl = "456";
+
+        UUID uuid = UUIDService.generateUUID();
+        User savedUser = User.builder().name("test").email(email).nickname("test")
+                .provider(Provider.GOOGLE).role(Role.USER).uuid(uuid)
+                .profileUrl(existentProfileUrl)
+                .build();
+        userRepository.save(savedUser);
+
+        OAuthAttributes attributes = OAuthAttributes.builder().name("test")
+                .email(email).provider(Provider.GOOGLE)
+                .profileUrl(changedProfileUrl)
+                .build();
+
+        //when
+        customOAuth2UserService.saveOrUpdate(attributes);
+
+        //then
+        User user = userRepository.findByEmailAndDeletedDateIsNull(email).get();
+        assertThat(user.getProfileUrl()).isEqualTo(existentProfileUrl);
+        assertThat(user.getModifiedDate()).isEqualTo(user.getCreatedDate());
+    }
 }

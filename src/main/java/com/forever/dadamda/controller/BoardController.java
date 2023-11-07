@@ -4,6 +4,7 @@ import com.forever.dadamda.dto.ApiResponse;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
 import com.forever.dadamda.dto.board.GetBoardCountResponse;
+import com.forever.dadamda.dto.board.GetBoardIsPublicResponse;
 import com.forever.dadamda.dto.board.GetBoardIsSharedResponse;
 import com.forever.dadamda.dto.board.GetBoardResponse;
 import com.forever.dadamda.dto.board.GetSharedBoardContentsResponse;
@@ -14,6 +15,7 @@ import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardDetailResponse;
 import com.forever.dadamda.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.UUID;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -22,6 +24,7 @@ import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +34,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RequiredArgsConstructor
@@ -108,6 +113,19 @@ public class BoardController {
         return ApiResponse.success();
     }
 
+    @Operation(summary = "보드 내용 수정", description = "1개의 보드의 이름, 설명, 태그를 수정합니다.")
+    @PostMapping(value = "/v2/boards/{boardUUID}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse<String> updateBoardsWithImage(
+            @PathVariable @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            @Valid @RequestPart UpdateBoardRequest updateBoardRequest,
+            @RequestPart(required = false) MultipartFile file,
+            Authentication authentication) {
+        String email = authentication.getName();
+        boardService.updateBoardsWithImage(email, UUID.fromString(boardUUID), updateBoardRequest, file);
+        return ApiResponse.success();
+    }
+
     @Operation(summary = "보드 검색", description = "보드를 보드명으로 검색할 수 있습니다.")
     @GetMapping("/v1/boards/search")
     public ApiResponse<Slice<GetBoardResponse>> searchBoards(
@@ -171,17 +189,43 @@ public class BoardController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "공유 보드 복제", description = "공유 보드를 내 보드로 복제합니다")
-    @PostMapping("/v1/copy/boards/{boardUUID}")
-    public ApiResponse<PostCopyBoardsResponse> copyBoards(
+    @Operation(summary = "보드 게시 여부 조회", description = "보드의 게시 여부를 조회합니다.")
+    @GetMapping("/v1/boards/isPublic/{boardUUID}")
+    public ApiResponse<GetBoardIsPublicResponse> getBoardIsPublic(
             @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
                     message = "UUID가 올바르지 않습니다.") String boardUUID,
             Authentication authentication) {
 
         String email = authentication.getName();
 
+        return ApiResponse.success(GetBoardIsPublicResponse.of(
+                boardService.getBoardIsPublic(email, UUID.fromString(boardUUID))));
+    }
+
+    @Operation(summary = "보드 게시 여부 변경", description = "보드의 게시 여부를 변경합니다.")
+    @PatchMapping("/v1/boards/isPublic/{boardUUID}")
+    public ApiResponse<String> updateBoardIsPublic(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        boardService.updateBoardIsPublic(email, UUID.fromString(boardUUID));
+
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "공유 보드 복제", description = "보드를 내 보드로 복제합니다")
+    @PostMapping("/v1/copy/boards/{boardUUID}")
+    public ApiResponse<PostCopyBoardsResponse> copyBoards(
+            @PathVariable @NotNull @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    message = "UUID가 올바르지 않습니다.") String boardUUID,
+            @Parameter String type, Authentication authentication) {
+
+        String email = authentication.getName();
+
         return ApiResponse.success(PostCopyBoardsResponse.of(
-                boardService.copyBoards(email, UUID.fromString(boardUUID))));
+                boardService.copyBoards(email, UUID.fromString(boardUUID), type)));
     }
 
     @Operation(summary = "공유된 보드 컨텐츠 조회", description = "공유된 보드 컨텐츠를 조회합니다.")

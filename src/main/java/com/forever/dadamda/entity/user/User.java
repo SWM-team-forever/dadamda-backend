@@ -62,13 +62,24 @@ public class User extends BaseTimeEntity implements Serializable {
         this.uuid = uuid;
     }
 
-    public User update(String name, String profileUrl) {
+    public User updateName(String name) {
         this.name = name;
-        this.profileUrl = profileUrl;
         return this;
     }
 
     public String getRoleKey() {
         return this.role.getKey();
+    }
+
+    public void updateProfileImage(String url) {
+        this.profileUrl = url;
+    }
+
+    public void deleteProfileImage() {
+        this.profileUrl = null;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

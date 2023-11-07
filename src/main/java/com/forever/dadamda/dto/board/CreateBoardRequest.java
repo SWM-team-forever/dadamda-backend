@@ -9,10 +9,12 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class CreateBoardRequest {
 
     @NotBlank(message = "보드명을 입력해주세요.")
@@ -32,7 +34,6 @@ public class CreateBoardRequest {
                 .description(description)
                 .tag(TAG.from(tag))
                 .uuid(uuid)
-                .authorshipUser(user)
                 .build();
     }
 }

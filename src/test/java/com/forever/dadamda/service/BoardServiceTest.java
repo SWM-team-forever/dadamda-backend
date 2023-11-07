@@ -137,10 +137,11 @@ public class BoardServiceTest {
                 .tag("LIFE_SHOPPING")
                 .title("test")
                 .description("test123")
+                .isDeleted(false)
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
+        boardService.updateBoardsWithImage(existentEmail, board1UUID, updateBoardRequest, null);
 
         //then
         Board board = boardRepository.findById(boardId).get();
@@ -161,10 +162,11 @@ public class BoardServiceTest {
                 .tag("ENTERTAINMENT_ART")
                 .title("board1")
                 .description("test")
+                .isDeleted(false)
                 .build();
 
         //when
-        boardService.updateBoards(existentEmail, board1UUID, updateBoardRequest);
+        boardService.updateBoardsWithImage(existentEmail, board1UUID, updateBoardRequest, null);
 
         //then
         Board board = boardRepository.findById(boardId).get();
@@ -308,7 +310,7 @@ public class BoardServiceTest {
 
     @Test
     @Transactional
-    void should_the_title_description_tag_and_content_is_the_same_uuid_is_the_different_and_owner_of_shared_board_is_same_as_authorship_of_owned_board_When_owning_a_shared_board() {
+    void should_the_title_description_tag_and_content_thumbnail_is_the_same_uuid_is_the_different_and_owner_of_shared_board_is_same_as_authorship_of_owned_board_When_owning_a_shared_board() {
         // 공유된 보드를 내 보드에 담을 때, 공유된 보드와 담은 보드의 타이틀, 설명, 컨텐츠, 태그는 같고, uuid와 고정된 날짜는 다르다. 그리고 공유된 보드의 소유자와 담은 보드의 원작자가 같다.
         //given
         boardRepository.deleteAll();
@@ -322,20 +324,21 @@ public class BoardServiceTest {
                 .fixedDate(LocalDateTime.of(2023, 1, 30, 11, 11, 1))
                 .uuid(boardUUID)
                 .user(user)
-                .authorshipUser(user)
+                .thumbnailUrl("test thumbnail url")
                 .build();
         SharedBoard.updateIsShared(true);
         boardRepository.save(SharedBoard);
 
         //when
-        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID);
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID, "share");
 
         //then
         User user2 = userRepository.findById(2L).get();
         Board SharedBoard2 = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID).get();
         Board OwnSharedBoard = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user2, copyBoardUUID).get();
 
-        assertThat(OwnSharedBoard.getAuthorshipUser()).isEqualTo(SharedBoard2.getUser());
+        assertThat(SharedBoard2.getOriginalBoardId()).isNull();
+        assertThat(OwnSharedBoard.getOriginalBoardId()).isEqualTo(SharedBoard2.getId());
         assertThat(OwnSharedBoard.isShared()).isEqualTo(false);
         assertThat(OwnSharedBoard.getUser().getEmail()).isEqualTo(existentEmail2);
         assertThat(OwnSharedBoard.getUuid()).isNotSameAs(SharedBoard2.getUuid());
@@ -344,5 +347,39 @@ public class BoardServiceTest {
         assertThat(OwnSharedBoard.getTitle()).isEqualTo(SharedBoard2.getTitle());
         assertThat(OwnSharedBoard.getTag()).isEqualTo(SharedBoard2.getTag());
         assertThat(OwnSharedBoard.getFixedDate()).isNull();
+        assertThat(OwnSharedBoard.getThumbnailUrl()).isEqualTo(SharedBoard2.getThumbnailUrl());
+        assertThat(OwnSharedBoard.getShareCnt()).isEqualTo(0L);
+        assertThat(SharedBoard2.getShareCnt()).isEqualTo(1L);
+    }
+
+    @Test
+    @Transactional
+    void should_the_original_board_of_the_own_shared_board_is_the_same_as_shared_board_When_owning_a_shared_board_that_is_not_original() {
+        // 공유된 보드를 내 보드에 담을 때, 공유된 보드가 원작이 아닌 경우 원작의 정보를 가져온다.
+        //given
+        boardRepository.deleteAll();
+
+        UUID boardUUID = generateUUID();
+        User user = userRepository.findById(1L).get();
+        Board SharedBoard = Board.builder()
+                .title("board10")
+                .tag(LIFE_SHOPPING)
+                .uuid(boardUUID)
+                .user(user)
+                .originalBoardId(2L)
+                .build();
+        SharedBoard.updateIsShared(true);
+        boardRepository.save(SharedBoard);
+
+        //when
+        UUID copyBoardUUID = boardService.copyBoards(existentEmail2, boardUUID, "share");
+
+        //then
+        User user2 = userRepository.findById(2L).get();
+        Board SharedBoard2 = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID).get();
+        Board OwnSharedBoard = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user2, copyBoardUUID).get();
+
+        assertThat(SharedBoard2.getOriginalBoardId()).isEqualTo(2L);
+        assertThat(OwnSharedBoard.getOriginalBoardId()).isEqualTo(SharedBoard2.getOriginalBoardId());
     }
 }

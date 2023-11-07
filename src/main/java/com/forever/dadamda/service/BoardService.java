@@ -2,6 +2,9 @@ package com.forever.dadamda.service;
 
 import static com.forever.dadamda.service.UUIDService.generateUUID;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.forever.dadamda.dto.ErrorCode;
 import com.forever.dadamda.dto.board.CreateBoardRequest;
 import com.forever.dadamda.dto.board.GetBoardContentsResponse;
@@ -13,23 +16,35 @@ import com.forever.dadamda.dto.board.UpdateBoardContentsRequest;
 import com.forever.dadamda.dto.board.UpdateBoardRequest;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
+import com.forever.dadamda.exception.InvalidException;
 import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.service.user.UserService;
+
+import io.sentry.Sentry;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
+    @Value("${application.bucket.name}")
+    private String bucketName;
+
     private final UserService userService;
     private final BoardRepository boardRepository;
+    private final AmazonS3 s3Client;
 
     @Transactional
     public void createBoards(String email, CreateBoardRequest createBoardRequest) {
@@ -74,6 +89,28 @@ public class BoardService {
     }
 
     @Transactional
+    public void updateBoardsWithImage(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest, MultipartFile file) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateBoard(updateBoardRequest);
+
+        if(updateBoardRequest.getIsDeleted()) {
+            try {
+                s3Client.deleteObject(bucketName, "thumbnail/" + board.getUuid());
+            } catch(AmazonServiceException e) {
+                Sentry.captureException(e);
+                throw new IllegalArgumentException("파일 삭제에 실패했습니다.");
+            }
+            board.deleteThumbnailUrl();
+        } else if(file != null) {
+            uploadThumbnailImage(board, file);
+        }
+    }
+
+    @Transactional
     public void updateBoards(String email, UUID boardUUID, UpdateBoardRequest updateBoardRequest) {
         User user = userService.validateUser(email);
 
@@ -81,6 +118,28 @@ public class BoardService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateBoard(updateBoardRequest);
+    }
+
+    @Transactional
+    public void uploadThumbnailImage(Board board, MultipartFile file) {
+        File fileObj = convertMultiPartFileToFile(file);
+        String fileName = "thumbnail/" + board.getUuid();
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        fileObj.delete();
+
+        String url = s3Client.getUrl(bucketName, fileName).toString();
+        board.updateThumbnailUrl(url);
+    }
+
+    private File convertMultiPartFileToFile(MultipartFile file) {
+        File convertedFile = new File(file.getOriginalFilename());
+        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
+            fos.write(file.getBytes());
+        } catch (IOException e) {
+            Sentry.captureException(e);
+            throw new IllegalArgumentException("파일 변환에 실패했습니다.");
+        }
+        return convertedFile;
     }
 
     @Transactional(readOnly = true)
@@ -136,6 +195,14 @@ public class BoardService {
     }
 
     @Transactional
+    public Boolean getBoardIsPublic(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        return boardRepository.findIsPublicByBoardUUID(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+    }
+
+    @Transactional
     public void updateBoardIsShared(String email, UUID boardUUID) {
         User user = userService.validateUser(email);
 
@@ -143,6 +210,16 @@ public class BoardService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.updateIsShared(!board.isShared());
+    }
+
+    @Transactional
+    public void updateBoardIsPublic(String email, UUID boardUUID) {
+        User user = userService.validateUser(email);
+
+        Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+
+        board.updateIsPublic(!board.isPublic());
     }
 
     @Transactional(readOnly = true)
@@ -161,24 +238,40 @@ public class BoardService {
 
 
     @Transactional
-    public UUID copyBoards(String email, UUID boardUUID) {
+    public UUID copyBoards(String email, UUID boardUUID, String type) {
         User user = userService.validateUser(email);
 
-        Board sharedBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        Board copyBoard = null;
+
+        if(type==null) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else if(type.equals("trend")) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else if (type.equals("share")) {
+            copyBoard = boardRepository.findByUuidAndDeletedDateIsNullAndIsSharedIsTrue(boardUUID)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
+        } else {
+            throw new InvalidException(ErrorCode.INVALID);
+        }
 
         Board newBoard = Board.builder()
                 .user(user)
-                .title(sharedBoard.getTitle())
-                .tag(sharedBoard.getTag())
+                .title(copyBoard.getTitle())
+                .tag(copyBoard.getTag())
                 .uuid(generateUUID())
-                .description(sharedBoard.getDescription())
-                .authorshipUser(sharedBoard.getAuthorshipUser())
-                .contents(sharedBoard.getContents())
+                .description(copyBoard.getDescription())
+                .originalBoardId(copyBoard.getOriginalBoardId() == null ? copyBoard.getId()
+                        : copyBoard.getOriginalBoardId())
+                .contents(copyBoard.getContents())
+                .thumbnailUrl(copyBoard.getThumbnailUrl())
                 .build();
 
-        Board copyBoard = boardRepository.save(newBoard);
+        Board copyedBoard = boardRepository.save(newBoard);
 
-        return copyBoard.getUuid();
+        copyBoard.addShareCnt();
+
+        return copyedBoard.getUuid();
     }
 }
