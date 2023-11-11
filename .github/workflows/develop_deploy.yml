@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Declare some variables
+        shell: bash
+        run: |
+          echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v2
 
       - name: Set up JDK 11
@@ -55,7 +60,7 @@ jobs:
         run: cp ./scripts/*.sh ./deploy
 
       - name: Make zip file
-        run: zip -r ./dadamda-api.zip ./deploy
+        run: zip -r ./dadamda-api.${{ env.sha_short }}.zip ./deploy
         shell: bash
 
       - name: Configure AWS credentials
@@ -66,7 +71,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./dadamda-api.zip s3://$S3_BUCKET_NAME/
+        run: aws s3 cp --region ap-northeast-2 ./dadamda-api.${{ env.sha_short }}.zip s3://$S3_BUCKET_NAME/${{ env.sha_short }}/
 
       # Deploy
       - name: Deploy
@@ -78,5 +83,5 @@ jobs:
           --application-name dadamda \
           --deployment-group-name dadamda-group \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=dadamda-deploy,bundleType=zip,key=dadamda-api.zip \
+          --s3-location bucket=dadamda-deploy,bundleType=zip,key=dadamda-api.${{ env.sha_short }}.zip \
           --region ap-northeast-2
