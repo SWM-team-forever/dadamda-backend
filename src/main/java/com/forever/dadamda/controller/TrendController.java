@@ -1,11 +1,13 @@
 package com.forever.dadamda.controller;
 
 import com.forever.dadamda.dto.ApiResponse;
+import com.forever.dadamda.dto.trend.GetPopularUsersResponse;
 import com.forever.dadamda.dto.trend.GetTrendBoardResponse;
 import com.forever.dadamda.dto.trend.PostTrendHeartResponse;
 import com.forever.dadamda.service.TrendService;
 import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +59,15 @@ public class TrendController {
         trendService.updateViewCnt(UUID.fromString(boardUUID));
 
         return ApiResponse.success();
+    }
+
+    @Operation(summary = "트렌딩 인기 유저 조회", description = "트렌딩 인기 유저를 조회합니다.")
+    @GetMapping("/ov1/trends/popularUsers")
+    public ApiResponse<List<GetPopularUsersResponse>> getPopularUsers(
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+            Long limit) {
+
+        return ApiResponse.success(trendService.getPopularUsers(startDate, endDate, limit));
     }
 }
