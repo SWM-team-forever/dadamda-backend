@@ -97,6 +97,23 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
 
+    @Override
+    public List<User> getPopularUsersByHeartTotalCnt(LocalDateTime startDate, LocalDateTime endDate,
+            Long limit) {
+        return queryFactory.select(board.user)
+                .where(
+                        board.deletedDate.isNull()
+                                .and(board.isPublic.isTrue())
+                                .and(board.user.deletedDate.isNull())
+                                .and(board.createdDate.between(startDate, endDate))
+                )
+                .from(board)
+                .groupBy(board.user)
+                .having(board.count().gt(0))
+                .orderBy(board.heartCnt.sum().desc(), board.count().desc())
+                .limit(limit)
+                .fetch();
+    }
 
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {
