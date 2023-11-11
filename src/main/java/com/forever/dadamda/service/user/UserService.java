@@ -67,15 +67,25 @@ public class UserService {
         String fileName = "profileImage/" + user.getUuid();
 
         validateExist(file);
-        try {
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(file.getContentType());
-            metadata.setContentLength(file.getSize());
-            s3Client.putObject(bucketName, fileName, file.getInputStream(), metadata);
+
+        File convertedFile = new File(file.getOriginalFilename());
+        try (FileOutputStream fileOutputStream = new FileOutputStream(convertedFile)){
+            fileOutputStream.write(file.getBytes());
         } catch (IOException e) {
             Sentry.captureException(e);
             throw new IllegalArgumentException("파일 업로드 중 에러가 발생했습니다.");
         }
+
+        // upload file
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, convertedFile);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+        request.setMetadata(metadata);
+        s3Client.putObject(request);
+
+        // delete file
+        convertedFile.delete();
 
         String url = s3Client.getUrl(bucketName, fileName).toString();
         user.updateProfileImage(url);
