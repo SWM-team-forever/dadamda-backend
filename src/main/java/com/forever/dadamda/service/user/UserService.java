@@ -68,12 +68,12 @@ public class UserService {
 
         validateExist(file);
 
-        File convertedFile = new File(file.getOriginalFilename());
+        File convertedFile = new File("/tmp/" + file.getOriginalFilename());
         try (FileOutputStream fileOutputStream = new FileOutputStream(convertedFile)){
             fileOutputStream.write(file.getBytes());
         } catch (IOException e) {
             Sentry.captureException(e);
-            throw new IllegalArgumentException("파일 업로드 중 에러가 발생했습니다.");
+            throw new IllegalArgumentException("파일 저장 중 에러가 발생했습니다.");
         }
 
         // upload file
