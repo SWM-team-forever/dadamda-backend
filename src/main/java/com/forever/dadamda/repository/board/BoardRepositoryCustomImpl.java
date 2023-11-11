@@ -110,7 +110,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .from(board)
                 .groupBy(board.user)
                 .having(board.count().gt(0))
-                .orderBy(board.heartCnt.sum().desc(), board.count().desc())
+                .orderBy(board.heartCnt.sum().desc(), board.shareCnt.sum().desc(),
+                        board.viewCnt.sum().desc(), board.count().desc())
                 .limit(limit)
                 .fetch();
     }
