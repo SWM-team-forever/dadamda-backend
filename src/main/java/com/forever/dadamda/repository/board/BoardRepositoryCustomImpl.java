@@ -116,6 +116,25 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public Slice<Board> getMyTrendBoardsListOrderByHeartCnt(LocalDateTime startDate, LocalDateTime endDate,
+            User user, Pageable pageable) {
+
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.deletedDate.isNull()
+                                .and(board.isPublic.isTrue())
+                                .and(board.createdDate.between(startDate, endDate))
+                                .and(board.user.eq(user))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.heartCnt.desc(), board.shareCnt.desc(), board.viewCnt.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
+    }
+
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {
             contents.remove(pageSize);
