@@ -89,4 +89,13 @@ public class TrendService {
                 .map(user -> GetPopularUsersResponse.of(user.getProfileUrl(), user.getNickname()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> searchTrendBoards(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, String keyword, Pageable pageable) {
+
+        return boardRepository.searchKeywordInTrendBoardList(trendStartDateTime, trendEndDateTime,
+                        keyword, pageable)
+                .map(GetTrendBoardResponse::of);
+    }
 }
