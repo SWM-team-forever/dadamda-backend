@@ -92,12 +92,12 @@ public class TrendService {
 
     @Transactional(readOnly = true)
     public Slice<GetTrendBoardResponse> getMyTrendBoardList(LocalDateTime trendStartDateTime,
-            LocalDateTime trendEndDateTime, Pageable pageable, String email) {
+            LocalDateTime trendEndDateTime, Pageable pageable, String tag, String email) {
 
         User user = userService.validateUser(email);
 
         return boardRepository.getMyTrendBoardsListOrderByHeartCnt(trendStartDateTime,
-                        trendEndDateTime, user, pageable)
+                        trendEndDateTime, user, tag, pageable)
                 .map(GetTrendBoardResponse::of);
     }
 }
