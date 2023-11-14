@@ -76,10 +76,10 @@ public class TrendController {
     public ApiResponse<Slice<GetTrendBoardResponse>> getMyTrendBoardList(
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-            Pageable pageable, Authentication authentication) {
+            Pageable pageable, String tag, Authentication authentication) {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(trendService.getMyTrendBoardList(startDate, endDate, pageable, email));
+        return ApiResponse.success(trendService.getMyTrendBoardList(startDate, endDate, pageable, tag, email));
     }
 }

@@ -118,13 +118,14 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
     @Override
     public Slice<Board> getMyTrendBoardsListOrderByHeartCnt(LocalDateTime startDate, LocalDateTime endDate,
-            User user, Pageable pageable) {
+            User user, String tag, Pageable pageable) {
 
         List<Board> contents = queryFactory.selectFrom(board)
                 .where(
                         board.deletedDate.isNull()
                                 .and(board.isPublic.isTrue())
                                 .and(board.createdDate.between(startDate, endDate))
+                                .and(tag == null ? null : board.tag.eq(TAG.from(tag)))
                                 .and(board.user.eq(user))
                 )
                 .offset(pageable.getOffset())
