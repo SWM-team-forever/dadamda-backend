@@ -89,4 +89,15 @@ public class TrendService {
                 .map(user -> GetPopularUsersResponse.of(user.getProfileUrl(), user.getNickname()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> getMyTrendBoardList(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, Pageable pageable, String email) {
+
+        User user = userService.validateUser(email);
+
+        return boardRepository.getMyTrendBoardsListOrderByHeartCnt(trendStartDateTime,
+                        trendEndDateTime, user, pageable)
+                .map(GetTrendBoardResponse::of);
+    }
 }
