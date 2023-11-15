@@ -48,11 +48,17 @@ public class BoardServiceTest {
 
     String existentEmail2 = "12345@naver.com";
 
+    String existentEmail3 = "123456@naver.com";
+
     UUID board2UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3132");
 
     UUID board1UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3131");
 
     UUID board5UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3135");
+
+    UUID board16UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3236");
+
+    UUID board17UUID = UUID.fromString("30373832-6566-3438-2d61-3433392d3237");
 
     @Test
     void should_the_description_and_heart_count_are_generated_normally_When_creating_the_board() {
@@ -385,14 +391,54 @@ public class BoardServiceTest {
     }
 
     @Test
-    @Transactional
     void should_the_copy_board_is_denied_when_publish(){
         // 복제한 보드는 공개 시 원작자인지 확인하고 아니라면 예외 처리한다.
         //given
         //when
         //then
-
         assertThatThrownBy(() -> boardService.updateBoardIsPublic(existentEmail, board2UUID))
                 .isInstanceOf(InvalidException.class);
+    }
+
+    @Test
+    void should_both_isShared_and_isPublic_are_true_when_changing_the_isPublic_status_of_board_to_true(){
+        // 보드의 공개 여부를 true로 변경할 때, 공유 여부와 공개여부 모두 true로 변경되는지 확인한다.
+        //given
+        //when
+        boardService.updateBoardIsPublic(existentEmail3, board17UUID);
+
+        //then
+        Board board = boardRepository.findByUuidAndDeletedDateIsNull(board17UUID).get();
+        assertThat(board.getTitle()).isEqualTo("board17");
+        assertThat(board.isPublic()).isEqualTo(true);
+        assertThat(board.isShared()).isEqualTo(true);
+    }
+
+    @Test
+    void should_isShared_is_not_changed_when_changing_the_isPublic_status_of_board_to_false(){
+        // 보드의 공개 여부를 false로 변경할 때, 공유 여부는 변경되지 않는지 확인한다.
+        //given
+        //when
+        boardService.updateBoardIsPublic(existentEmail3, board16UUID);
+
+        //then
+        Board board = boardRepository.findByUuidAndDeletedDateIsNull(board16UUID).get();
+        assertThat(board.getTitle()).isEqualTo("board16");
+        assertThat(board.isPublic()).isEqualTo(false);
+        assertThat(board.isShared()).isEqualTo(true);
+    }
+
+    @Test
+    void should_both_isShared_and_isPublic_are_false_when_changing_the_isShared_status_of_board_to_false(){
+        // 보드의 공유 여부를 false로 변경할 때, 공개 여부와 공개 여부 모두 false로 변경되는지 확인한다.
+        //given
+        //when
+        boardService.updateBoardIsShared(existentEmail3, board16UUID);
+
+        //then
+        Board board = boardRepository.findByUuidAndDeletedDateIsNull(board16UUID).get();
+        assertThat(board.getTitle()).isEqualTo("board16");
+        assertThat(board.isPublic()).isEqualTo(false);
+        assertThat(board.isShared()).isEqualTo(false);
     }
 }
