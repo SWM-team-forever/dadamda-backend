@@ -159,8 +159,6 @@ public class TrendControllerTest {
             throws Exception {
         // 트랜딩 보드에 나의 게시된 보드를 조회할 때, 나의 보드만 조회되고, 하트 순, 공유 순, 조회 순으로 정렬된다.
         mockMvc.perform(get("/v1/trends/boards")
-                        .param("startDate", "2023-01-01 00:00:00")
-                        .param("endDate", "2023-03-31 23:59:59")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -181,8 +179,6 @@ public class TrendControllerTest {
             throws Exception {
         // 트랜딩 보드에 나의 게시된 보드를 조회할 때, 태그를 입력하면 해당 태그의 보드만 조회된다.
         mockMvc.perform(get("/v1/trends/boards")
-                        .param("startDate", "2023-01-01 00:00:00")
-                        .param("endDate", "2023-03-31 23:59:59")
                         .param("page", "0")
                         .param("size", "10")
                         .param("tag", "ENTERTAINMENT_ART")
