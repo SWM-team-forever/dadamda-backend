@@ -80,8 +80,8 @@ public class TrendControllerTest {
             throws Exception {
         // 트랜딩 보드를 조회할 때, 날짜 안에 생성된 보드가 없으면 content가 비어있다.
         mockMvc.perform(get("/ov1/trends/boards")
-                        .param("startDate", "2023-02-01 00:00:00")
-                        .param("endDate", "2023-02-28 23:59:59")
+                        .param("startDate", "2022-02-01 00:00:00")
+                        .param("endDate", "2022-02-28 23:59:59")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,5 +105,101 @@ public class TrendControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").doesNotExist());
+    }
+
+    @Test
+    public void should_it_returns_user_nickname_When_getting_popular_users()
+            throws Exception {
+        // 인기 유저를 조회할 때, 유저의 닉네임을 조회할 수 있다.
+        mockMvc.perform(get("/ov1/trends/popularUsers")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-01-31 23:59:59")
+                        .param("limit", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].nickname").value("귀여운해달1"));
+    }
+
+    @Test
+    public void should_the_number_of_hearts_is_arranged_in_the_order_of_large_numbers_When_getting_popular_users()
+            throws Exception {
+        // 인기 유저를 조회할 때, 하트의 개수가 많은 순서대로 정렬된다.
+        mockMvc.perform(get("/ov1/trends/popularUsers")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-02-20 23:59:59")
+                        .param("limit", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].nickname").value("귀여운해달2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].nickname").value("귀여운해달1"));
+    }
+
+    @Test
+    public void should_the_number_of_boards_is_arranged_in_the_order_of_large_number_if_the_number_of_hearts_is_the_same_When_getting_popular_users()
+            throws Exception {
+        // 인기 유저를 조회할 때, 하트의 개수가 동일한 경우 보드의 개수가 많은 순서대로 정렬된다.
+        mockMvc.perform(get("/ov1/trends/popularUsers")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-03-31 23:59:59")
+                        .param("limit", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].nickname").value("귀여운해달3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].nickname").value("귀여운해달2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data[2].nickname").value("귀여운해달1"));
+    }
+
+    @Test
+    public void should_the_content_is_empty_if_there_is_no_corresponding_board_When_searching_for_trending_board_name()
+            throws Exception {
+        // 트렌딩 보드명 검색할 때, 해당하는 보드가 없는 경우 content가 비어있다.
+        mockMvc.perform(get("/ov1/trends/search")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-03-31 23:59:59")
+                        .param("keyword", "test")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty());
+    }
+
+    @Test
+    public void should_the_content_is_empty_if_you_search_for_an_unpublished_board_When_searching_for_trending_board_name()
+            throws Exception {
+        // 트렌딩 보드명 검색할 때, 게시되지 않은 보드를 검색하면 content가 비어있다.
+        mockMvc.perform(get("/ov1/trends/search")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-01-31 23:59:59")
+                        .param("keyword", "board2")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty());
+    }
+
+    @Test
+    public void should_it_is_arranged_in_the_order_of_heart_share_view_and_deleted_boards_are_not_searched_When_searching_for_trending_board_name()
+            throws Exception {
+        // 트렌딩 보드명 검색할 때, 하트 순, 공유 순, 조회 순으로 정렬되고, 삭제된 보드는 검색되지 않는다.
+        mockMvc.perform(get("/ov1/trends/search")
+                        .param("startDate", "2023-01-01 00:00:00")
+                        .param("endDate", "2023-01-31 23:59:59")
+                        .param("keyword", "board")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].title").value("board4"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[3].title").doesNotExist());
     }
 }

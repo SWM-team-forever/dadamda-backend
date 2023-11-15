@@ -97,6 +97,42 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
 
+    @Override
+    public List<User> getPopularUsersByHeartTotalCnt(LocalDateTime startDate, LocalDateTime endDate,
+            Long limit) {
+        return queryFactory.select(board.user)
+                .where(
+                        board.deletedDate.isNull()
+                                .and(board.isPublic.isTrue())
+                                .and(board.user.deletedDate.isNull())
+                                .and(board.createdDate.between(startDate, endDate))
+                )
+                .from(board)
+                .groupBy(board.user)
+                .having(board.count().gt(0))
+                .orderBy(board.heartCnt.sum().desc(), board.shareCnt.sum().desc(),
+                        board.viewCnt.sum().desc(), board.count().desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate,
+            LocalDateTime endDate, String keyword, Pageable pageable) {
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.isPublic.isTrue()
+                                .and(board.deletedDate.isNull())
+                                .and(board.title.containsIgnoreCase(keyword))
+                                .and(board.createdDate.between(startDate, endDate))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.heartCnt.desc(), board.shareCnt.desc(), board.viewCnt.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
+    }
 
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {

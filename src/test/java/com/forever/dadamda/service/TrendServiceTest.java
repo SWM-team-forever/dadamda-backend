@@ -2,10 +2,12 @@ package com.forever.dadamda.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.forever.dadamda.dto.trend.GetPopularUsersResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.heart.Heart;
 import com.forever.dadamda.repository.HeartRepository;
 import com.forever.dadamda.repository.board.BoardRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,8 @@ public class TrendServiceTest {
         Boolean isHeart = trendService.updateHearts(existentEmail, board1UUID);
 
         //then
-        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID).get();
+        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID)
+                .get();
         List<Heart> heartList = heartRepository.findAll();
         Heart heart = heartList.get(0);
 
@@ -66,7 +69,8 @@ public class TrendServiceTest {
         Boolean isHeart = trendService.updateHearts(existentEmail, board1UUID);
 
         //then
-        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID).get();
+        Board board = boardRepository.findByUuidAndDeletedDateIsNullAndIsPublicIsTrue(board1UUID)
+                .get();
         List<Heart> heartList = heartRepository.findAll();
         Heart heart = heartList.get(0);
 
@@ -90,5 +94,21 @@ public class TrendServiceTest {
         Board board = boardRepository.findByUuidAndDeletedDateIsNull(board1UUID).get();
 
         assertThat(board.getViewCnt()).isEqualTo(12);
+    }
+
+    @Test
+    void should_the_size_of_the_popular_user_list_is_1_When_getting_popular_users() {
+        // 인기 유저를 조회할 때, 인기 유저 리스트의 사이즈를 확인한다.
+        //given
+        LocalDateTime localDateTime = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
+        LocalDateTime localDateTime2 = LocalDateTime.of(2023, 1, 31, 23, 59, 59);
+        Long limit = 5L;
+
+        //when
+        List<GetPopularUsersResponse> getPopularUsersResponseList = trendService.getPopularUsers(
+                localDateTime, localDateTime2, limit);
+
+        //then
+        assertThat(getPopularUsersResponseList.size()).isEqualTo(1);
     }
 }

@@ -1,6 +1,7 @@
 package com.forever.dadamda.service;
 
 import com.forever.dadamda.dto.ErrorCode;
+import com.forever.dadamda.dto.trend.GetPopularUsersResponse;
 import com.forever.dadamda.dto.trend.GetTrendBoardResponse;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.heart.Heart;
@@ -10,7 +11,9 @@ import com.forever.dadamda.exception.NotFoundException;
 import com.forever.dadamda.repository.board.BoardRepository;
 import com.forever.dadamda.repository.HeartRepository;
 import com.forever.dadamda.service.user.UserService;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,9 +39,9 @@ public class TrendService {
 
         Optional<Heart> heart = heartRepository.findByUserAndBoardAndDeletedDateIsNull(user, board);
 
-        if(heart.isPresent()) { // 하트 취소
-            if(board.getHeartCnt() > 0) {
-                board.updateHeartCnt(board.getHeartCnt()-1);
+        if (heart.isPresent()) { // 하트 취소
+            if (board.getHeartCnt() > 0) {
+                board.updateHeartCnt(board.getHeartCnt() - 1);
             } else {
                 throw new InvalidException(ErrorCode.INVALID);
             }
@@ -46,7 +49,7 @@ public class TrendService {
             heart.get().updateDeletedDate(LocalDateTime.now());
             return false;
         } else { // 하트 추가
-            board.updateHeartCnt(board.getHeartCnt()+1);
+            board.updateHeartCnt(board.getHeartCnt() + 1);
 
             Heart newheart = Heart.builder()
                     .user(user)
@@ -74,5 +77,25 @@ public class TrendService {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
         board.addViewCnt();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetPopularUsersResponse> getPopularUsers(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, Long limit) {
+
+        return boardRepository.getPopularUsersByHeartTotalCnt(trendStartDateTime, trendEndDateTime,
+                        limit)
+                .stream()
+                .map(user -> GetPopularUsersResponse.of(user.getProfileUrl(), user.getNickname()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> searchTrendBoards(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, String keyword, Pageable pageable) {
+
+        return boardRepository.searchKeywordInTrendBoardList(trendStartDateTime, trendEndDateTime,
+                        keyword, pageable)
+                .map(GetTrendBoardResponse::of);
     }
 }

@@ -3,6 +3,7 @@ package com.forever.dadamda.repository.board;
 import com.forever.dadamda.entity.board.Board;
 import com.forever.dadamda.entity.user.User;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,9 @@ public interface BoardRepositoryCustom {
 
     Slice<Board> getTrendBoardListOrderByHeartCnt(LocalDateTime trendStartDateTime,
             LocalDateTime trendEndDateTime, Pageable pageable, String tag);
+
+    List<User> getPopularUsersByHeartTotalCnt(LocalDateTime startDate, LocalDateTime endDate, Long limit);
+
+    Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate, LocalDateTime endDate,
+            String keyword, Pageable pageable);
 }
