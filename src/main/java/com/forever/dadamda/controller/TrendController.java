@@ -73,13 +73,11 @@ public class TrendController {
 
     @Operation(summary = "트렌딩 내 보드 조회", description = "트렌딩에 게시한 내 보드를 조회합니다.")
     @GetMapping("/v1/trends/boards")
-    public ApiResponse<Slice<GetTrendBoardResponse>> getMyTrendBoardList(
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
-            Pageable pageable, String tag, Authentication authentication) {
+    public ApiResponse<Slice<GetTrendBoardResponse>> getMyTrendBoardList(Pageable pageable,
+            String tag, Authentication authentication) {
 
         String email = authentication.getName();
 
-        return ApiResponse.success(trendService.getMyTrendBoardList(startDate, endDate, pageable, tag, email));
+        return ApiResponse.success(trendService.getMyTrendBoardList(pageable, tag, email));
     }
 }
