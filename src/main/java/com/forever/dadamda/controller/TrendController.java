@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -79,5 +81,16 @@ public class TrendController {
         String email = authentication.getName();
 
         return ApiResponse.success(trendService.getMyTrendBoardList(pageable, tag, email));
+    }
+
+    @Operation(summary = "트렌딩 보드 검색", description = "트렌딩에서 보드명을 검색할 수 있습니다.")
+    @GetMapping("/ov1/trends/search")
+    public ApiResponse<Slice<GetTrendBoardResponse>> searchTrendBoards(
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
+            @RequestParam("keyword") @NotBlank String keyword,
+            Pageable pageable) {
+
+        return ApiResponse.success(trendService.searchTrendBoards(startDate, endDate, keyword, pageable));
     }
 }

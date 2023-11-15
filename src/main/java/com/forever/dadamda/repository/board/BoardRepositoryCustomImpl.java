@@ -135,6 +135,24 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
         return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
     }
+    
+    @Override
+    public Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate,
+            LocalDateTime endDate, String keyword, Pageable pageable) {
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.isPublic.isTrue()
+                                .and(board.deletedDate.isNull())
+                                .and(board.title.containsIgnoreCase(keyword))
+                                .and(board.createdDate.between(startDate, endDate))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.heartCnt.desc(), board.shareCnt.desc(), board.viewCnt.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
+    }
 
     private boolean hasNextPage(List<Board> contents, int pageSize) {
         if (contents.size() > pageSize) {

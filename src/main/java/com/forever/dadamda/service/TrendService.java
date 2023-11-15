@@ -98,4 +98,13 @@ public class TrendService {
         return boardRepository.getMyTrendBoardsListOrderByHeartCnt(user, tag, pageable)
                 .map(GetTrendBoardResponse::of);
     }
+    
+    @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> searchTrendBoards(LocalDateTime trendStartDateTime,
+            LocalDateTime trendEndDateTime, String keyword, Pageable pageable) {
+
+        return boardRepository.searchKeywordInTrendBoardList(trendStartDateTime, trendEndDateTime,
+                        keyword, pageable)
+                .map(GetTrendBoardResponse::of);
+    }
 }
