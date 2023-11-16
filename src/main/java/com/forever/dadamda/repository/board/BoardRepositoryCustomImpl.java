@@ -86,7 +86,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .where(
                         board.deletedDate.isNull()
                                 .and(board.isPublic.isTrue())
-                                .and(board.createdDate.between(trendStartDateTime, trendEndDateTime))
+                                .and(board.createdDate.between(trendStartDateTime,
+                                        trendEndDateTime))
                                 .and(tag == null ? null : board.tag.eq(TAG.from(tag)))
                 )
                 .offset(pageable.getOffset())
@@ -116,6 +117,25 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public Slice<Board> getMyTrendBoardsListOrderByHeartCnt(User user, String tag,
+            Pageable pageable) {
+
+        List<Board> contents = queryFactory.selectFrom(board)
+                .where(
+                        board.deletedDate.isNull()
+                                .and(board.isPublic.isTrue())
+                                .and(tag == null ? null : board.tag.eq(TAG.from(tag)))
+                                .and(board.user.eq(user))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
+                .orderBy(board.heartCnt.desc(), board.shareCnt.desc(), board.viewCnt.desc())
+                .fetch();
+
+        return new SliceImpl<>(contents, pageable, hasNextPage(contents, pageable.getPageSize()));
+    }
+    
     @Override
     public Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate,
             LocalDateTime endDate, String keyword, Pageable pageable) {
