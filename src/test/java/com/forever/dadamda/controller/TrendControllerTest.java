@@ -153,6 +153,43 @@ public class TrendControllerTest {
     }
 
     @Test
+    @WithCustomMockUser
+    public void should_it_is_arranged_in_the_order_of_heart_share_view_and_only_my_board_is_gotten_When_getting_my_trending_boards()
+            throws Exception {
+        // 트랜딩 보드에 나의 게시된 보드를 조회할 때, 나의 보드만 조회되고, 하트 순, 공유 순, 조회 순으로 정렬된다.
+        mockMvc.perform(get("/v1/trends/boards")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].nickname").value("귀여운해달1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].nickname").value("귀여운해달1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].nickname").value("귀여운해달1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].title").value("board4"));
+    }
+
+    @Test
+    @WithCustomMockUser
+    public void should_only_the_boards_of_that_tag_are_returned_When_getting_my_trending_boards_with_tags()
+            throws Exception {
+        // 트랜딩 보드에 나의 게시된 보드를 조회할 때, 태그를 입력하면 해당 태그의 보드만 조회된다.
+        mockMvc.perform(get("/v1/trends/boards")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("tag", "ENTERTAINMENT_ART")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-AUTH-TOKEN", "aaaaaaa")
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1]").doesNotExist());
+    }
+  
+    @Test  
     public void should_the_content_is_empty_if_there_is_no_corresponding_board_When_searching_for_trending_board_name()
             throws Exception {
         // 트렌딩 보드명 검색할 때, 해당하는 보드가 없는 경우 content가 비어있다.

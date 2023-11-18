@@ -91,6 +91,15 @@ public class TrendService {
     }
 
     @Transactional(readOnly = true)
+    public Slice<GetTrendBoardResponse> getMyTrendBoardList(Pageable pageable, String tag, String email) {
+
+        User user = userService.validateUser(email);
+
+        return boardRepository.getMyTrendBoardsListOrderByHeartCnt(user, tag, pageable)
+                .map(GetTrendBoardResponse::of);
+    }
+    
+    @Transactional(readOnly = true)
     public Slice<GetTrendBoardResponse> searchTrendBoards(LocalDateTime trendStartDateTime,
             LocalDateTime trendEndDateTime, String keyword, Pageable pageable) {
 

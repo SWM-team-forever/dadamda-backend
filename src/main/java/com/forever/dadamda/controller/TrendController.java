@@ -73,6 +73,16 @@ public class TrendController {
         return ApiResponse.success(trendService.getPopularUsers(startDate, endDate, limit));
     }
 
+    @Operation(summary = "트렌딩 내 보드 조회", description = "트렌딩에 게시한 내 보드를 조회합니다.")
+    @GetMapping("/v1/trends/boards")
+    public ApiResponse<Slice<GetTrendBoardResponse>> getMyTrendBoardList(Pageable pageable,
+            String tag, Authentication authentication) {
+
+        String email = authentication.getName();
+
+        return ApiResponse.success(trendService.getMyTrendBoardList(pageable, tag, email));
+    }
+
     @Operation(summary = "트렌딩 보드 검색", description = "트렌딩에서 보드명을 검색할 수 있습니다.")
     @GetMapping("/ov1/trends/search")
     public ApiResponse<Slice<GetTrendBoardResponse>> searchTrendBoards(
