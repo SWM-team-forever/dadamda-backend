@@ -49,7 +49,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList("https://dadamda.me",
                 "https://www.dadamda.me", "chrome-extension://kgaiabolccidmgihificdfaimdlfmcfj",
                 "chrome-extension://phcggikoaniecbgkjammhcnnfcfepgnf",
-                "https://dev.dadamda.me"));
+                "https://dev.dadamda.me",
+                "whale-extension://kinhgililbhcdmdjpdlinnllhocgfpbi"));
         config.setAllowedMethods(
                 Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
