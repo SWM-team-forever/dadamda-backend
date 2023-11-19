@@ -100,11 +100,9 @@ public class TrendService {
     }
     
     @Transactional(readOnly = true)
-    public Slice<GetTrendBoardResponse> searchTrendBoards(LocalDateTime trendStartDateTime,
-            LocalDateTime trendEndDateTime, String keyword, Pageable pageable) {
+    public Slice<GetTrendBoardResponse> searchTrendBoards(String keyword, Pageable pageable) {
 
-        return boardRepository.searchKeywordInTrendBoardList(trendStartDateTime, trendEndDateTime,
-                        keyword, pageable)
+        return boardRepository.searchKeywordInTrendBoardList(keyword, pageable)
                 .map(GetTrendBoardResponse::of);
     }
 }
