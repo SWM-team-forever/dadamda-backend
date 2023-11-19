@@ -137,14 +137,12 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     }
     
     @Override
-    public Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate,
-            LocalDateTime endDate, String keyword, Pageable pageable) {
+    public Slice<Board> searchKeywordInTrendBoardList(String keyword, Pageable pageable) {
         List<Board> contents = queryFactory.selectFrom(board)
                 .where(
                         board.isPublic.isTrue()
                                 .and(board.deletedDate.isNull())
                                 .and(board.title.containsIgnoreCase(keyword))
-                                .and(board.createdDate.between(startDate, endDate))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)

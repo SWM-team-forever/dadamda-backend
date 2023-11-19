@@ -86,11 +86,9 @@ public class TrendController {
     @Operation(summary = "트렌딩 보드 검색", description = "트렌딩에서 보드명을 검색할 수 있습니다.")
     @GetMapping("/ov1/trends/search")
     public ApiResponse<Slice<GetTrendBoardResponse>> searchTrendBoards(
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
             @RequestParam("keyword") @NotBlank String keyword,
             Pageable pageable) {
 
-        return ApiResponse.success(trendService.searchTrendBoards(startDate, endDate, keyword, pageable));
+        return ApiResponse.success(trendService.searchTrendBoards(keyword, pageable));
     }
 }

@@ -194,8 +194,6 @@ public class TrendControllerTest {
             throws Exception {
         // 트렌딩 보드명 검색할 때, 해당하는 보드가 없는 경우 content가 비어있다.
         mockMvc.perform(get("/ov1/trends/search")
-                        .param("startDate", "2023-01-01 00:00:00")
-                        .param("endDate", "2023-03-31 23:59:59")
                         .param("keyword", "test")
                         .param("page", "0")
                         .param("size", "10")
@@ -210,8 +208,6 @@ public class TrendControllerTest {
             throws Exception {
         // 트렌딩 보드명 검색할 때, 게시되지 않은 보드를 검색하면 content가 비어있다.
         mockMvc.perform(get("/ov1/trends/search")
-                        .param("startDate", "2023-01-01 00:00:00")
-                        .param("endDate", "2023-01-31 23:59:59")
                         .param("keyword", "board2")
                         .param("page", "0")
                         .param("size", "10")
@@ -226,17 +222,14 @@ public class TrendControllerTest {
             throws Exception {
         // 트렌딩 보드명 검색할 때, 하트 순, 공유 순, 조회 순으로 정렬되고, 삭제된 보드는 검색되지 않는다.
         mockMvc.perform(get("/ov1/trends/search")
-                        .param("startDate", "2023-01-01 00:00:00")
-                        .param("endDate", "2023-01-31 23:59:59")
                         .param("keyword", "board")
                         .param("page", "0")
                         .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board3"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("board1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].title").value("board4"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[3].title").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value("board6"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].title").value("board3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[2].title").value("board8"));
     }
 }

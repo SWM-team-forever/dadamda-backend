@@ -26,6 +26,5 @@ public interface BoardRepositoryCustom {
 
     Slice<Board> getMyTrendBoardsListOrderByHeartCnt(User user, String tag, Pageable pageable);
 
-    Slice<Board> searchKeywordInTrendBoardList(LocalDateTime startDate, LocalDateTime endDate,
-            String keyword, Pageable pageable);
+    Slice<Board> searchKeywordInTrendBoardList(String keyword, Pageable pageable);
 }
