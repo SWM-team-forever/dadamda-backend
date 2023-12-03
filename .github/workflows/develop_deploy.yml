@@ -83,5 +83,5 @@ jobs:
           --application-name dadamda \
           --deployment-group-name dadamda-group \
           --file-exists-behavior OVERWRITE \
-          --s3-location bucket=dadamda-deploy,bundleType=zip,key=dadamda-api.${{ env.sha_short }}.zip \
+          --s3-location bucket=prod-dadamda-deploy,bundleType=zip,key=dadamda-api.${{ env.sha_short }}.zip \
           --region ap-northeast-2
