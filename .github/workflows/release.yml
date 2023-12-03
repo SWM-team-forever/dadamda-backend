@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  S3_BUCKET_NAME: dadamda-deploy
+  S3_BUCKET_NAME: dadamda-deploy-prod
 
 jobs:
   build:
