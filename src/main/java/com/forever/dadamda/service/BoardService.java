@@ -209,7 +209,12 @@ public class BoardService {
         Board board = boardRepository.findByUserAndUuidAndDeletedDateIsNull(user, boardUUID)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_EXISTS_BOARD));
 
-        board.updateIsShared(!board.isShared());
+        if(board.isShared()) {
+            board.updateIsShared(false);
+            board.updateIsPublic(false);
+        } else {
+            board.updateIsShared(true);
+        }
     }
 
     @Transactional
@@ -223,7 +228,12 @@ public class BoardService {
             throw new InvalidException(ErrorCode.INVALID_AUTHENTICATION_TO_PUBLISH);
         }
 
-        board.updateIsPublic(!board.isPublic());
+        if(board.isPublic()) {
+            board.updateIsPublic(false);
+        } else {
+            board.updateIsPublic(true);
+            board.updateIsShared(true);
+        }
     }
 
     @Transactional(readOnly = true)

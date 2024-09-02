@@ -56,3 +56,6 @@ VALUES (3, 15, 'board15', 'test', '0782ef48-a439-25', 0 ,'2023-03-01 11:11:01', 
 
 INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, is_shared, modified_date, thumbnail_url, heart_cnt, view_cnt, share_cnt)
 VALUES (3, 16, 'board16', 'test', '0782ef48-a439-26', 0 ,'2023-03-01 11:11:01', 1, 1, '2023-02-01 11:11:01', 'board1 thumbnail url', 1, 11, 12);
+
+INSERT INTO board (user_id, board_id, title, description, uuid, tag, created_date, is_public, is_shared, modified_date, thumbnail_url, heart_cnt, view_cnt, share_cnt)
+VALUES (3, 17, 'board17', 'test', '0782ef48-a439-27', 0 ,'2023-04-01 11:11:01', 0, 0, '2023-04-01 11:11:01', 'board17 thumbnail url', 1, 11, 12);
