@@ -223,22 +223,3 @@ erDiagram
 }
 
 ```
-
-# ✨ 팀원 소개
-<table>
-    <tr>
-        <td align="center"><a href="https://github.com/SmileJune"><img src="https://avatars.githubusercontent.com/SmileJune" width="130px;" alt=""></a></td>
-        <td align="center"><a href="https://github.com/HanDaYeon-coder"><img src="https://avatars.githubusercontent.com/HanDaYeon-coder" width="130px;" alt=""></a></td>
-        <td align="center"><a href="https://github.com/ShinYoung-Kim"><img src="https://avatars.githubusercontent.com/ShinYoung-Kim" width="130px;" alt=""></a></td>
-    </tr>
-    <tr>
-        <td align="center"><a href="https://github.com/SmileJune"><b>윤일준 (제이크)</b></a></td>
-        <td align="center"><a href="https://github.com/HanDaYeon-coder"><b>한다연 (다나)</b></a></td>
-        <td align="center"><a href="https://github.com/ShinYoung-Kim"><b>김신영 (제로)</b></a></td>
-    </tr>
-    <tr> 
-        <td align="center"><b>백엔드, 인프라</b></td>
-        <td align="center"><b>백엔드, 크롬익스텐션</b></td>
-        <td align="center"><b>프론트엔드</b></td>
-    </tr> 
-</table>
